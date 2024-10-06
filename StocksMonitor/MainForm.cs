@@ -272,8 +272,11 @@ namespace StocksMonitor
             StockMonitorLogger.WriteMsg("Refreshing data grid");
 
             dataGrid.Rows.Clear(); // Clear existing rows
-
-            //+ CalculateWarnings();
+            
+            underMa200Warning = 0;
+            overProfitWarning = 0;
+            overLossLimitWarning = 0;
+            
 
             foreach (var stock in store.stocks)
             {
@@ -303,6 +306,7 @@ namespace StocksMonitor
                     stock.filters.multiChart ? "X" : "");
                 dataGrid.Rows.Add(row);
 
+                stock.filters.warning = false;
 
                 //private string[] columns = { "Name", "Price", "MA200", "Owned", "Earned", "Hidden", "Interested", "MultiChart" };
                 if (MA200Warning(stock))
@@ -457,7 +461,7 @@ namespace StocksMonitor
         {
             dataGrid_SelectionChanged(sender, e);
         }
-    }
+
 
 #if DEBUG
         private void TestWarningCalculations()
@@ -633,9 +637,8 @@ namespace StocksMonitor
                 StockMonitorLogger.WriteMsg($"ERROR: {lhs} and {rhs} are not as expected");
             }
         }
-    }
-
 #endif
+    }
 }
 
 

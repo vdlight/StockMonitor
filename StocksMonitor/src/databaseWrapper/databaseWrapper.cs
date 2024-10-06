@@ -238,7 +238,7 @@ namespace StocksMonitor.src.databaseWrapper
             using (var db = new StockDataContext())
             {
                 var stocksWithHistory = await db.stockData
-                    .Include(S => S.History)
+                    .Include(S => S.History.OrderBy(h => h.Date))
                     .ToListAsync();
 
                 StockMonitorLogger.WriteMsg($"Read {stocksWithHistory.Count} stocks from DB");

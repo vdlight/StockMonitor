@@ -22,13 +22,15 @@ namespace StocksMonitor.src
             this.chart = chart;
             random = new Random();
             // Set dark background for the chart area
-            chart.ChartAreas["ChartArea1"].BackColor = Color.Black;
+            chart.ChartAreas["ChartArea1"].BackColor = Color.Gray;
 
             // Remove grid lines
-            chart.ChartAreas["ChartArea1"].AxisX.MajorGrid.LineColor = Color.Transparent;
-            chart.ChartAreas["ChartArea1"].AxisY.MajorGrid.LineColor = Color.Transparent;
-            chart.ChartAreas["ChartArea1"].AxisX.MinorGrid.LineColor = Color.Transparent;
-            chart.ChartAreas["ChartArea1"].AxisY.MinorGrid.LineColor = Color.Transparent;
+            chart.ChartAreas["ChartArea1"].AxisX.MajorGrid.LineColor = Color.Black;
+            chart.ChartAreas["ChartArea1"].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.DashDot;
+            chart.ChartAreas["ChartArea1"].AxisY.MajorGrid.LineColor = Color.Black;
+            chart.ChartAreas["ChartArea1"].AxisY.MajorGrid.LineDashStyle = ChartDashStyle.DashDot;
+            chart.ChartAreas["ChartArea1"].AxisX.MinorGrid.LineColor = Color.Black;
+            chart.ChartAreas["ChartArea1"].AxisY.MinorGrid.LineColor = Color.Black;
 
             // Optional: Set dark background for the entire chart
             chart.BackColor = Color.Black;

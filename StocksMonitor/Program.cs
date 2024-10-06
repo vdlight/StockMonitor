@@ -17,8 +17,6 @@ namespace StocksMonitor
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
-
-
             
         }
     }
@@ -27,10 +25,8 @@ namespace StocksMonitor
 
 /*
  * TODO
- *  Parsa resterande av data som behövs från Avanza
- * Istället för knappar, gör menyer 
- * 
- * 
+ * REfactorera
+ * fler testfall
  * 
  * 
  * */

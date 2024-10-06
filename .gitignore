@@ -1,2 +1,6 @@
 StocksMonitor/Bin/
 StocksMonitor/obj/
+StocksMonitor/.vs/
+
+StocksMonitor/src/avanzaParser/innehav.txt
+StocksMonitor/src/avanzaParser/SE_listan.txt
