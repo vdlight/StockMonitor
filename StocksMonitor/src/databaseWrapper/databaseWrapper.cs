@@ -141,7 +141,6 @@ namespace StocksMonitor.src.databaseWrapper
         {
             public bool intrested = false;
             public bool hidden = false;
-            public bool multiChart = false;
             public bool warning = false;
         }
     }

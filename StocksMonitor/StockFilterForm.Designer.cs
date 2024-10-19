@@ -32,7 +32,6 @@
             dataGridView1 = new DataGridView();
             intrestedButton = new Button();
             hiddenButton = new Button();
-            multiChartButton = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -74,22 +73,12 @@
             hiddenButton.UseVisualStyleBackColor = true;
             hiddenButton.Click += hiddenButton_Click;
             // 
-            // multiChartButton
-            // 
-            multiChartButton.Location = new Point(174, 35);
-            multiChartButton.Name = "multiChartButton";
-            multiChartButton.Size = new Size(75, 23);
-            multiChartButton.TabIndex = 4;
-            multiChartButton.Text = "MultiChart";
-            multiChartButton.UseVisualStyleBackColor = true;
-            multiChartButton.Click += multiChartButton_Click;
-            // 
             // StockFilterForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(449, 234);
-            Controls.Add(multiChartButton);
+          
             Controls.Add(hiddenButton);
             Controls.Add(intrestedButton);
             Controls.Add(dataGridView1);
@@ -106,6 +95,6 @@
         private DataGridView dataGridView1;
         private Button intrestedButton;
         private Button hiddenButton;
-        private Button multiChartButton;
+        
     }
 }

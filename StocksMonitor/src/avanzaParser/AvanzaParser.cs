@@ -15,6 +15,10 @@ namespace StocksMonitor.src.avanzaParser
             new StockListParser(stocks).Parse();
             new OwnedListParser(stocks).Parse();
 
+            var skipCount = stocks.Count(s => s.Price < minimumPrice);
+
+            StockMonitorLogger.WriteMsg($"Skipping {skipCount} stocks that are below, {minimumPrice} kr");
+
             stocks.RemoveAll(s => s.Price < minimumPrice);
 
             foreach (var item in stocks)

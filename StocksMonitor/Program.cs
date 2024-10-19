@@ -27,6 +27,6 @@ namespace StocksMonitor
  * TODO
  * REfactorera
  * fler testfall
- * 
- * 
+ * Fixa så att när jag markerar en aktie så blir den kopierad till clipboard, för att klistra in sök i Avanza
+ * Lägg till så att jag kan börja filtrera bort aktier i en separat dialog, sätt hide hidden, till default Enabl.
  * */

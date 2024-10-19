@@ -46,11 +46,11 @@
             intrestedCheckBox = new CheckBox();
             ownedCheckBox = new CheckBox();
             wantedCheckbox = new CheckBox();
-            underMa_label = new Label();
+            Ma_label = new Label();
             showWarnings_checkbox = new CheckBox();
-            overLossLabel = new Label();
-            undeMa200limit = new TextBox();
-            overLossTextbox = new TextBox();
+            refillLabel = new Label();
+            Ma200limit = new TextBox();
+            refillTextbox = new TextBox();
             overProfit_label = new Label();
             overProfit_textbox = new TextBox();
             stockListLabel = new Label();
@@ -58,13 +58,14 @@
             clearInterested = new Button();
             clearAll = new Button();
             label2 = new Label();
-            multiChartButton = new Button();
             hiddenButton = new Button();
             intrestedButton = new Button();
             StockFiltersGroupBox = new GroupBox();
             groupBox2 = new GroupBox();
             oneMonthRadioButton = new RadioButton();
             oneWeekRadioButton = new RadioButton();
+            selectedLabel = new Label();
+            Ma200Highlimit = new TextBox();
             ((System.ComponentModel.ISupportInitialize)stockChart).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGrid).BeginInit();
             StockFiltersGroupBox.SuspendLayout();
@@ -182,14 +183,14 @@
             wantedCheckbox.Text = "Wanted";
             wantedCheckbox.UseVisualStyleBackColor = true;
             // 
-            // underMa_label
+            // Ma_label
             // 
-            underMa_label.AutoSize = true;
-            underMa_label.Location = new Point(6, 96);
-            underMa_label.Name = "underMa_label";
-            underMa_label.Size = new Size(54, 15);
-            underMa_label.TabIndex = 16;
-            underMa_label.Text = "Ma200: 0";
+            Ma_label.AutoSize = true;
+            Ma_label.Location = new Point(6, 96);
+            Ma_label.Name = "Ma_label";
+            Ma_label.Size = new Size(54, 15);
+            Ma_label.TabIndex = 16;
+            Ma_label.Text = "Ma200: 0";
             // 
             // showWarnings_checkbox
             // 
@@ -201,28 +202,28 @@
             showWarnings_checkbox.Text = "Enable";
             showWarnings_checkbox.UseVisualStyleBackColor = true;
             // 
-            // overLossLabel
+            // refillLabel
             // 
-            overLossLabel.AutoSize = true;
-            overLossLabel.Location = new Point(6, 123);
-            overLossLabel.Name = "overLossLabel";
-            overLossLabel.Size = new Size(42, 15);
-            overLossLabel.TabIndex = 18;
-            overLossLabel.Text = "Loss: 0";
+            refillLabel.AutoSize = true;
+            refillLabel.Location = new Point(6, 123);
+            refillLabel.Name = "refillLabel";
+            refillLabel.Size = new Size(45, 15);
+            refillLabel.TabIndex = 18;
+            refillLabel.Text = "Refill: 0";
             // 
-            // undeMa200limit
+            // Ma200limit
             // 
-            undeMa200limit.Location = new Point(86, 85);
-            undeMa200limit.Name = "undeMa200limit";
-            undeMa200limit.Size = new Size(73, 23);
-            undeMa200limit.TabIndex = 19;
+            Ma200limit.Location = new Point(86, 85);
+            Ma200limit.Name = "Ma200limit";
+            Ma200limit.Size = new Size(30, 23);
+            Ma200limit.TabIndex = 19;
             // 
-            // overLossTextbox
+            // refillTextbox
             // 
-            overLossTextbox.Location = new Point(86, 114);
-            overLossTextbox.Name = "overLossTextbox";
-            overLossTextbox.Size = new Size(73, 23);
-            overLossTextbox.TabIndex = 20;
+            refillTextbox.Location = new Point(86, 114);
+            refillTextbox.Name = "refillTextbox";
+            refillTextbox.Size = new Size(73, 23);
+            refillTextbox.TabIndex = 20;
             // 
             // overProfit_label
             // 
@@ -289,16 +290,6 @@
             label2.TabIndex = 28;
             label2.Text = "Percentage";
             // 
-            // multiChartButton
-            // 
-            multiChartButton.Location = new Point(19, 133);
-            multiChartButton.Name = "multiChartButton";
-            multiChartButton.Size = new Size(75, 23);
-            multiChartButton.TabIndex = 31;
-            multiChartButton.Text = "MultiChart";
-            multiChartButton.UseVisualStyleBackColor = true;
-            multiChartButton.Click += multiChartButton_Click;
-            // 
             // hiddenButton
             // 
             hiddenButton.Location = new Point(19, 104);
@@ -322,7 +313,6 @@
             // StockFiltersGroupBox
             // 
             StockFiltersGroupBox.Controls.Add(intrestedButton);
-            StockFiltersGroupBox.Controls.Add(multiChartButton);
             StockFiltersGroupBox.Controls.Add(hiddenButton);
             StockFiltersGroupBox.Location = new Point(845, 309);
             StockFiltersGroupBox.Name = "StockFiltersGroupBox";
@@ -333,13 +323,14 @@
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(undeMa200limit);
-            groupBox2.Controls.Add(overLossTextbox);
+            groupBox2.Controls.Add(Ma200Highlimit);
+            groupBox2.Controls.Add(Ma200limit);
+            groupBox2.Controls.Add(refillTextbox);
             groupBox2.Controls.Add(label2);
             groupBox2.Controls.Add(overProfit_textbox);
-            groupBox2.Controls.Add(underMa_label);
+            groupBox2.Controls.Add(Ma_label);
             groupBox2.Controls.Add(showWarnings_checkbox);
-            groupBox2.Controls.Add(overLossLabel);
+            groupBox2.Controls.Add(refillLabel);
             groupBox2.Controls.Add(overProfit_label);
             groupBox2.Location = new Point(845, 55);
             groupBox2.Name = "groupBox2";
@@ -372,11 +363,28 @@
             oneWeekRadioButton.UseVisualStyleBackColor = true;
             oneWeekRadioButton.CheckedChanged += oneWeekRadioButton_CheckedChanged;
             // 
+            // selectedLabel
+            // 
+            selectedLabel.AutoSize = true;
+            selectedLabel.Location = new Point(268, 716);
+            selectedLabel.Name = "selectedLabel";
+            selectedLabel.Size = new Size(72, 15);
+            selectedLabel.TabIndex = 36;
+            selectedLabel.Text = "Selected psc";
+            // 
+            // Ma200Highlimit
+            // 
+            Ma200Highlimit.Location = new Point(126, 85);
+            Ma200Highlimit.Name = "Ma200Highlimit";
+            Ma200Highlimit.Size = new Size(30, 23);
+            Ma200Highlimit.TabIndex = 29;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(2234, 828);
+            Controls.Add(selectedLabel);
             Controls.Add(oneWeekRadioButton);
             Controls.Add(oneMonthRadioButton);
             Controls.Add(groupBox2);
@@ -422,11 +430,11 @@
         private CheckBox intrestedCheckBox;
         private CheckBox ownedCheckBox;
         private CheckBox wantedCheckbox;
-        private Label underMa_label;
+        private Label Ma_label;
         private CheckBox showWarnings_checkbox;
-        private Label overLossLabel;
-        private TextBox undeMa200limit;
-        private TextBox overLossTextbox;
+        private Label refillLabel;
+        private TextBox Ma200limit;
+        private TextBox refillTextbox;
         private Label overProfit_label;
         private TextBox overProfit_textbox;
         private Label stockListLabel;
@@ -434,12 +442,13 @@
         private Button clearInterested;
         private Button clearAll;
         private Label label2;
-        private Button multiChartButton;
         private Button hiddenButton;
         private Button intrestedButton;
         private GroupBox StockFiltersGroupBox;
         private GroupBox groupBox2;
         private RadioButton oneMonthRadioButton;
         private RadioButton oneWeekRadioButton;
+        private Label selectedLabel;
+        private TextBox Ma200Highlimit;
     }
 }

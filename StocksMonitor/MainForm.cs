@@ -20,11 +20,11 @@ namespace StocksMonitor
     {
         DataStore store = new DataStore();
         private bool startup = true;
-        private string[] columns = { "Name", "Price", "MA200 %", "Owned", "Earned %", "Hidden", "Interested", "MultiChart" };
+        private string[] columns = { "Name", "Price", "MA200 %", "Owned", "Earned %", "Value", "Hidden", "Interested" };
         private DataVisualization dataVisualization;
-        private int underMa200Warning = 0;
+        private int Ma200Warning = 0;
         private int overProfitWarning = 0;
-        private int overLossLimitWarning = 0;
+        private int refillWarning = 0;
 
         private int investmentTarget = 500; // TODO, make adjustable
 
@@ -72,6 +72,12 @@ namespace StocksMonitor
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
+                Name = "Value",
+                HeaderText = "Value",
+                ValueType = typeof(string)
+            });
+            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
+            {
                 Name = "Hidden",
                 HeaderText = "Hidden",
                 ValueType = typeof(string)
@@ -82,15 +88,6 @@ namespace StocksMonitor
                 HeaderText = "Intrested",
                 ValueType = typeof(string)
             });
-            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "MultiChart",
-                HeaderText = "MultiChart",
-                ValueType = typeof(string)
-            });
-
-
-
 
             // Set properties for better appearance
             dataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
@@ -108,9 +105,10 @@ namespace StocksMonitor
             }
 
 
-            undeMa200limit.Text = "0";
+            Ma200limit.Text = "-2";
+            Ma200Highlimit.Text = "40";
             overProfit_textbox.Text = "20";
-            overLossTextbox.Text = "10";
+            refillTextbox.Text = "10";
 
             StockMonitorLogger.SetOutput(consoleOutput);
             timer1000.Enabled = true;
@@ -216,8 +214,10 @@ namespace StocksMonitor
         private bool MA200Warning(Stock stock)
         {
             decimal MA200 = stock.MA200;
-            decimal MA200Limit = decimal.Parse(undeMa200limit.Text);
-            if (MA200 < MA200Limit)
+            decimal MA200Limit = decimal.Parse(Ma200limit.Text);
+            decimal highMa200Limit = decimal.Parse(Ma200Highlimit.Text);
+
+            if (stock.OwnedCnt > 0 && (MA200 < MA200Limit) || MA200 > highMa200Limit)
             {
                 return true;
             }
@@ -238,20 +238,27 @@ namespace StocksMonitor
             }
             return false;
         }
-        private bool OverLossWarning(Stock stock)
+        private bool RefillWarning(Stock stock)
         {
             if (stock.OwnedCnt == 0)
-                return false;
-
-            bool loss = stock.Price < stock.PurPrice;
-            decimal lostValue = ((stock.PurPrice - stock.Price) / stock.PurPrice) * 100; // Using PurPrice for correct calculation
-            decimal loss_limit = decimal.Parse(overLossTextbox.Text);
-            if (loss & (lostValue > loss_limit))
             {
-                return true;
+                return false;
             }
+
+            decimal value = stock.Price * stock.OwnedCnt;
+            decimal valueIfBuyOne = value + stock.Price;
+
+            decimal minValue = investmentTarget - decimal.Parse(refillTextbox.Text) / 100 * investmentTarget;
+            
+            if( (valueIfBuyOne < investmentTarget) && 
+                (stock.MA200 > 0 && stock.MA200 < 15) &&
+                (value < minValue)){
+                
+                    return true;
+                }
             return false;
         }
+      
         private decimal CalculateEarning(Stock stock)
         {
             decimal earned;
@@ -273,9 +280,9 @@ namespace StocksMonitor
 
             dataGrid.Rows.Clear(); // Clear existing rows
             
-            underMa200Warning = 0;
+            Ma200Warning = 0;
             overProfitWarning = 0;
-            overLossLimitWarning = 0;
+            refillWarning = 0;
             
 
             foreach (var stock in store.stocks)
@@ -301,18 +308,18 @@ namespace StocksMonitor
                     stock.MA200,
                     stock.OwnedCnt,
                     earned,
+                    stock.OwnedCnt > 0 ? stock.Price * stock.OwnedCnt : "", // Value
                     stock.filters.hidden ? "X" : "",
-                    stock.filters.intrested ? "X" : "",
-                    stock.filters.multiChart ? "X" : "");
+                    stock.filters.intrested ? "X" : "");
                 dataGrid.Rows.Add(row);
 
                 stock.filters.warning = false;
 
-                //private string[] columns = { "Name", "Price", "MA200", "Owned", "Earned", "Hidden", "Interested", "MultiChart" };
+                //private string[] columns = { "Name", "Price", "MA200", "Owned", "Earned", "Value", "Hidden", "Interested"};
                 if (MA200Warning(stock))
                 {
                     stock.filters.warning = true;
-                    underMa200Warning++;
+                    Ma200Warning++;
                     row.Cells[2].Style.BackColor = Color.LightSalmon;
                 }
                 if (OverProfitWarning(stock))
@@ -321,11 +328,15 @@ namespace StocksMonitor
                     overProfitWarning++;
                     row.Cells[1].Style.BackColor = Color.LightGreen;
                 }
-                else if (OverLossWarning(stock))
+                else if (RefillWarning(stock))
                 {
                     stock.filters.warning = true;
-                    overLossLimitWarning++;
-                    row.Cells[1].Style.BackColor = Color.Red;
+                    refillWarning++;
+                    row.Cells[1].Style.BackColor = Color.Yellow;
+                }
+                else if(stock.Price > investmentTarget)
+                {
+                    row.Cells["Price"].Style.BackColor = Color.Red;
                 }
             }
             // TODO, write testcase to confirm order of columns
@@ -339,9 +350,9 @@ namespace StocksMonitor
             // -1 rows since, empty row to write at the end
             stockListLabel.Text = $"Showing {dataGrid.RowCount - 1} of {store.stocks.Count} pcs";
 
-            underMa_label.Text = $"Ma200:  {underMa200Warning}";
+            Ma_label.Text = $"Ma200:  {Ma200Warning}";
             overProfit_label.Text = $"Profit:  {overProfitWarning}";
-            overLossLabel.Text = $"Loss:  {overLossLimitWarning}";
+            refillLabel.Text = $"Refill:  {refillWarning}";
         }
 
         private void RefreshButton_Click(object sender, EventArgs e)
@@ -351,13 +362,29 @@ namespace StocksMonitor
 
         private void intrestedButton_Click(object sender, EventArgs e)
         {
-            selectedStock.filters.intrested = !selectedStock.filters.intrested;
+            // the selected stock is master, to set filter on or off for possibly all selected
+            var setToStatus = !selectedStock.filters.intrested;
+            List<string> names = [];
 
-            if (selectedStock.filters.intrested)
+            foreach(DataGridViewRow row in dataGrid.SelectedRows)
             {
-                selectedStock.filters.hidden = false;
+                names.Add(row.Cells["Name"].Value.ToString());
+                row.Cells["Intrested"].Value = setToStatus? "X" : "";
+                if (row.Cells["Hidden"].Value == "X")
+                {
+                    row.Cells["Hidden"].Value = "";
+                }
             }
 
+            var filtredStocks = store.stocks.Where(s => names.Contains(s.Name)).ToList();
+            
+            foreach(var stock in filtredStocks)
+            {
+                stock.filters.intrested = setToStatus;
+                
+                if(stock.filters.intrested)
+                    stock.filters.hidden = false;
+            }
             updateStockFilterInformation();
         }
         private void updateStockFilterInformation()
@@ -367,32 +394,42 @@ namespace StocksMonitor
 
             intrestedButton.BackColor = selectedStock.filters.intrested ? selectedColor : defaultColor;
             hiddenButton.BackColor = selectedStock.filters.hidden ? selectedColor : defaultColor;
-            multiChartButton.BackColor = selectedStock.filters.multiChart ? selectedColor : defaultColor;
+   
 
             selectedRow.Cells["Hidden"].Value = selectedStock.filters.hidden ? "X" : "";
             selectedRow.Cells["Intrested"].Value = selectedStock.filters.intrested ? "X" : "";
-            selectedRow.Cells["MultiChart"].Value = selectedStock.filters.multiChart ? "X" : "";
             dataGrid.Focus();
         }
 
         private void hiddenButton_Click(object sender, EventArgs e)
         {
-            selectedStock.filters.hidden = !selectedStock.filters.hidden;
-            if (selectedStock.filters.hidden)
+            var setToStatus = !selectedStock.filters.hidden;
+            List<string> names = [];
+
+            foreach(DataGridViewRow row in dataGrid.SelectedRows)
             {
-                selectedStock.filters.intrested = false;
+                names.Add(row.Cells["Name"].Value.ToString());
+                row.Cells["Hidden"].Value = setToStatus ? "X" : "";
+                if (row.Cells["Intrested"].Value == "X")
+                {
+                    row.Cells["Intrested"].Value = "";
+                }
+            }
+
+            var filtredStocks = store.stocks.Where(s => names.Contains(s.Name)).ToList();
+
+            foreach (var stock in filtredStocks)
+            {
+                stock.filters.hidden = setToStatus;
+
+                if (stock.filters.hidden)
+                    stock.filters.intrested = false;
             }
 
             updateStockFilterInformation();
         }
 
-        private void multiChartButton_Click(object sender, EventArgs e)
-        {
-            selectedStock.filters.multiChart = !selectedStock.filters.multiChart;
-
-            updateStockFilterInformation();
-        }
-
+        
         private void clearHiddenButton_Click(object sender, EventArgs e)
         {
             foreach (Stock stock in store.stocks)
@@ -422,6 +459,8 @@ namespace StocksMonitor
         {
             string? name;
 
+            selectedLabel.Text = "Selected " + dataGrid.SelectedRows.Count.ToString() + " pcs";
+
             if (dataGrid.SelectedRows.Count > 0) // Ensure at least one row is selected
             {
                 selectedRow = dataGrid.SelectedRows[0]; // Get the first selected row
@@ -434,8 +473,16 @@ namespace StocksMonitor
                 try
                 {
                     name = selectedRow.Cells["Name"].Value.ToString();
+                    if(name == null)
+                    {
+                        StockMonitorLogger.WriteMsg("WARNING: could not read name of selected stock");
+                        return; 
+                    }
+
                     selectedStock = store.stocks.Single(s => s.Name == name);
                     StockFiltersGroupBox.Text = selectedStock.Name;
+                    Clipboard.SetText(name);
+
                     updateStockFilterInformation();
 
                     List<string> selectedNames = [];

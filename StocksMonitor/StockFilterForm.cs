@@ -102,8 +102,6 @@ namespace StocksMonitor
 
             intrestedButton.BackColor = stock.filters.intrested ? selectedColor : defaultColor;
             hiddenButton.BackColor = stock.filters.hidden ? selectedColor : defaultColor;
-            multiChartButton.BackColor = stock.filters.multiChart ? selectedColor : defaultColor;
-
         }
 
         private void hiddenButton_Click(object sender, EventArgs e)
@@ -114,13 +112,6 @@ namespace StocksMonitor
             {
                 stock.filters.intrested = false;
             }
-
-            updateButtonColors();
-        }
-
-        private void multiChartButton_Click(object sender, EventArgs e)
-        {
-            stock.filters.multiChart = !stock.filters.multiChart;
 
             updateButtonColors();
         }
