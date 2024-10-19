@@ -106,7 +106,7 @@ namespace StocksMonitor
 
 
             Ma200limit.Text = "-2";
-            Ma200Highlimit.Text = "40";
+            Ma200Highlimit.Text = "35";
             overProfit_textbox.Text = "20";
             refillTextbox.Text = "10";
 

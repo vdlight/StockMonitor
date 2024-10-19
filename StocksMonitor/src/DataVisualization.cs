@@ -113,8 +113,27 @@ namespace StocksMonitor.src
                     chart.Series[MA].MarkerSize = 8;
                     chart.Series[MA].ToolTip = "Date: #VALX, MA200: #VALY{N2}";
 
+                    var buyOrSellPoints = $"buy/sell point {names[i]}";
+                    chart.Series.Add(buyOrSellPoints);
+                    chart.Series[buyOrSellPoints].Color = Color.Green;
+                    chart.Series[buyOrSellPoints].Legend = "Legend1";
+                    chart.Series[buyOrSellPoints].ChartArea = "ChartArea1";
+                    chart.Series[buyOrSellPoints].ChartType = SeriesChartType.Point;
+                    chart.Series[buyOrSellPoints].MarkerStyle = MarkerStyle.Star5;
+                    chart.Series[buyOrSellPoints].MarkerSize = 16;
+                    chart.Series[buyOrSellPoints].ToolTip = "Action point";
+
+                    bool oldOwned = false;
                     foreach (var history in stock.History.Where(h => h.Date > range))
                     {
+
+                        if((history.OwnedCnt >= 0) != oldOwned)
+                        {
+                            chart.Series[buyOrSellPoints].Points.AddXY(history.Date, history.Price);
+                        }
+                        oldOwned = history.OwnedCnt > 0;
+
+
                         chart.Series[price].Points.AddXY(history.Date, history.Price);
                         chart.Series[MA].Points.AddXY(history.Date, CalculateMAFromPriceAndMAPercentage(history.Price, history.MA200));
                     }
