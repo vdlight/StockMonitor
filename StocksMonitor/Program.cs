@@ -22,11 +22,7 @@ namespace StocksMonitor
     }
 }
 
-
-/*
- * TODO
- * REfactorera
- * fler testfall
- * Fixa så att när jag markerar en aktie så blir den kopierad till clipboard, för att klistra in sök i Avanza
- * Lägg till så att jag kan börja filtrera bort aktier i en separat dialog, sätt hide hidden, till default Enabl.
- * */
+// TODO Lägg till så att jag kan börja filtrera bort aktier i en separat dialog, sätt hide hidden, till default Enabl.
+// TODO, när jag lägger upp resultat och historik, i vanliga fönstret, kan jag jämföra hur simuleringar har gått.
+// TODO, en dialog med simuleringsresultat enbart, där jag kan se historiken och hur det gått. 
+// TODO, export av master databas till sql, kan importeras in sedan, för att fylla Simulerings / test databas vid behov.

@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using StocksMonitor.src;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Windows.Forms.DataVisualization.Charting;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace StocksMonitor
 {
@@ -20,13 +21,9 @@ namespace StocksMonitor
     {
         DataStore store = new DataStore();
         private bool startup = true;
-        private string[] columns = { "Name", "Price", "MA200 %", "Owned", "Earned %", "Value", "Hidden", "Interested" };
         private DataVisualization dataVisualization;
-        private int Ma200Warning = 0;
-        private int overProfitWarning = 0;
-        private int refillWarning = 0;
+        private DataContainer dataContainer;
 
-        private int investmentTarget = 500; // TODO, make adjustable
 
         private List<Stock> multiSelect = new List<Stock>();
         private Stock selectedStock;
@@ -36,95 +33,50 @@ namespace StocksMonitor
         {
             InitializeComponent();
             BuildMainMenu();
+#if DEBUG
+            this.Text = "StockMonitor debug";
+            dataContainer = new StockDataContainer(dataGrid, store);
+            dataContainer.init();
 
-            dataGrid.Columns.Clear(); // Clear any existing columns
+            // TODO, react for changes
+            dataContainer.SetLimits(
+                decimal.Parse(Ma200limit.Text),
+                decimal.Parse(Ma200Highlimit.Text),
+                decimal.Parse(refillTextbox.Text),
+                decimal.Parse(overProfit_textbox.Text)
+            );
+#elif SIMULATIONS
+            this.Text = "StockMonitor simulations";
+            WarningsGroupBox.Visible = false;
+            StockFiltersGroupBox.Visible = false;
 
-            // Define your columns
-            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Name",
-                HeaderText = "Price",
-                ValueType = typeof(String)
-            });
-            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Price",
-                HeaderText = "Price",
-                ValueType = typeof(decimal)
-            });
-            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "MA200",
-                HeaderText = "MA200 %",
-                ValueType = typeof(decimal)
-            });
-            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Owned",
-                HeaderText = "Owned",
-                ValueType = typeof(int)
-            });
-            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Earned",
-                HeaderText = "Earned %",
-                ValueType = typeof(decimal)
-            });
-            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Value",
-                HeaderText = "Value",
-                ValueType = typeof(string)
-            });
-            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Hidden",
-                HeaderText = "Hidden",
-                ValueType = typeof(string)
-            });
-            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Intrested",
-                HeaderText = "Intrested",
-                ValueType = typeof(string)
-            });
+#else
+            this.Text = "StockMonitor " + "RELEASE ";
+            dataContainer = new DataContainer(dataGrid, store);
+            dataContainer.init();
 
-            // Set properties for better appearance
-            dataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-            dataGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            // TODO, react for changes
+            dataContainer.SetLimits(
+                decimal.Parse(Ma200limit.Text),
+                decimal.Parse(Ma200Highlimit.Text),
+                decimal.Parse(refillTextbox.Text),
+                decimal.Parse(overProfit_textbox.Text)
+            );
 
-            for (int i = 0; i < dataGrid.Columns.Count; i++)
-            {
-                if (i == 0)
-                {
-                    // name shall be leftaligned, rest, center
-                    dataGrid.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
-                    continue;
-                }
-                dataGrid.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            }
-
+#endif
 
             Ma200limit.Text = "-2";
             Ma200Highlimit.Text = "35";
             overProfit_textbox.Text = "20";
             refillTextbox.Text = "10";
-
+            
             StockMonitorLogger.SetOutput(consoleOutput);
             timer1000.Enabled = true;
 
             dataVisualization = new DataVisualization(stockChart);
 
             oneMonthRadioButton.Checked = true;
-
-
-#if DEBUG
-            this.Text = "StockMonitor debug";
-#else
-            this.Text = "StockMonitor " + "RELEASE ";
-#endif
         }
-
 
         private void BuildMainMenu()
         {
@@ -133,8 +85,10 @@ namespace StocksMonitor
             // top level menus
             var fileMenu = new ToolStripMenuItem("File");
             var testMenu = new ToolStripMenuItem("Test");
+            var simulationMenu = new ToolStripMenuItem("Simulation");
 
             menuStrip1.Items.Add(fileMenu);
+            menuStrip1.Items.Add(simulationMenu);
             menuStrip1.Items.Add(testMenu);
 
             // sub level menus
@@ -144,17 +98,21 @@ namespace StocksMonitor
             var testRun = new ToolStripMenuItem("Test run");
             testMenu.DropDownItems.Add(testRun);
 
+            var simulationRun = new ToolStripMenuItem("Simulation run");
+            simulationMenu.DropDownItems.Add(simulationRun);
 
+            
             // event handlers
             parseData.Click += new EventHandler(ParseData_Click);
             testRun.Click += new EventHandler(TestRun_Click);
+            simulationRun.Click += new EventHandler(SimulationRun_Click);
+            
 
             // add menustrip to form
             this.Controls.Add(menuStrip1);
             this.MainMenuStrip = menuStrip1;
 
-#if RELEASE
-            // disable test, when running against master
+#if !DEBUG
             testMenu.Enabled = false;
 #endif
         }
@@ -181,13 +139,24 @@ namespace StocksMonitor
             );
 
         }
+        private void SimulationRun_Click(object? sender, EventArgs e)
+        {
+            store.ReadFromDB();
+
+
+
+
+
+        }
+        
+
         private async void TestRun_Click(object? sender, EventArgs e)
         {
             if (sender == null)
             {
                 return;
             }
-#if DEBUG
+#if false
             StockMonitorLogger.WriteMsg("Test Start");
             // Test
             await store.TestRun();
@@ -211,153 +180,40 @@ namespace StocksMonitor
 
         //   TODO, kan jag högerklicka i listan och sätta en, filtrera, och dölj attribut som jag sparar tillsammans med aktien, så att jag lätt kan filtrera vad jag vill navigera emellan i grafen
 
-        private bool MA200Warning(Stock stock)
-        {
-            decimal MA200 = stock.MA200;
-            decimal MA200Limit = decimal.Parse(Ma200limit.Text);
-            decimal highMa200Limit = decimal.Parse(Ma200Highlimit.Text);
 
-            if (stock.OwnedCnt > 0 && (MA200 < MA200Limit) || MA200 > highMa200Limit)
-            {
-                return true;
-            }
-            return false;
-        }
-        private bool OverProfitWarning(Stock stock)
-        {
-            if (stock.OwnedCnt == 0)
-                return false;
-
-            decimal value = (stock.Price) * stock.OwnedCnt;
-            decimal valueIfSoldOne = value - stock.Price;
-            decimal minValue = investmentTarget + decimal.Parse(overProfit_textbox.Text) / 100 * investmentTarget;
-            if (valueIfSoldOne > investmentTarget &&
-                (value > minValue))
-            {
-                return true;
-            }
-            return false;
-        }
-        private bool RefillWarning(Stock stock)
-        {
-            if (stock.OwnedCnt == 0)
-            {
-                return false;
-            }
-
-            decimal value = stock.Price * stock.OwnedCnt;
-            decimal valueIfBuyOne = value + stock.Price;
-
-            decimal minValue = investmentTarget - decimal.Parse(refillTextbox.Text) / 100 * investmentTarget;
-            
-            if( (valueIfBuyOne < investmentTarget) && 
-                (stock.MA200 > 0 && stock.MA200 < 15) &&
-                (value < minValue)){
-                
-                    return true;
-                }
-            return false;
-        }
       
-        private decimal CalculateEarning(Stock stock)
-        {
-            decimal earned;
-            if (stock.OwnedCnt > 0)
-            {
-                earned = Math.Round(((stock.Price - stock.PurPrice) / stock.PurPrice) * 100, 2);
-            }
-            else
-            {
-                earned = 0;
-            }
-
-            return earned;
-        }
-
+ 
         private void UpdateStocksView()
         {
             StockMonitorLogger.WriteMsg("Refreshing data grid");
 
-            dataGrid.Rows.Clear(); // Clear existing rows
-            
-            Ma200Warning = 0;
-            overProfitWarning = 0;
-            refillWarning = 0;
-            
-
-            foreach (var stock in store.stocks)
-            {
-                // Check filters, skip if
-                if (
-                    (showWarnings_checkbox.Checked && !stock.filters.warning) ||
-                    (hiddenCheckBox.Checked && stock.filters.hidden) ||
-                    (wantedCheckbox.Checked && stock.OwnedCnt > 0) ||
-                    (intrestedCheckBox.Checked && !stock.filters.intrested) ||
-                    (ownedCheckBox.Checked && stock.OwnedCnt == 0))
-                {
-                    continue;
-                }
-
-                // Add a new row with the stock data
-                decimal earned = CalculateEarning(stock);
-
-                DataGridViewRow row = new DataGridViewRow();
-                row.CreateCells(dataGrid,
-                    stock.Name,
-                    stock.Price,
-                    stock.MA200,
-                    stock.OwnedCnt,
-                    earned,
-                    stock.OwnedCnt > 0 ? stock.Price * stock.OwnedCnt : "", // Value
-                    stock.filters.hidden ? "X" : "",
-                    stock.filters.intrested ? "X" : "");
-                dataGrid.Rows.Add(row);
-
-                stock.filters.warning = false;
-
-                //private string[] columns = { "Name", "Price", "MA200", "Owned", "Earned", "Value", "Hidden", "Interested"};
-                if (MA200Warning(stock))
-                {
-                    stock.filters.warning = true;
-                    Ma200Warning++;
-                    row.Cells[2].Style.BackColor = Color.LightSalmon;
-                }
-                if (OverProfitWarning(stock))
-                {
-                    stock.filters.warning = true;
-                    overProfitWarning++;
-                    row.Cells[1].Style.BackColor = Color.LightGreen;
-                }
-                else if (RefillWarning(stock))
-                {
-                    stock.filters.warning = true;
-                    refillWarning++;
-                    row.Cells[1].Style.BackColor = Color.Yellow;
-                }
-                else if(stock.Price > investmentTarget)
-                {
-                    row.Cells["Price"].Style.BackColor = Color.Red;
-                }
-            }
-            // TODO, write testcase to confirm order of columns
-
+            dataContainer.UpdateData(
+                showWarnings_checkbox.Checked, 
+                hiddenCheckBox.Checked,
+                wantedCheckbox.Checked,
+                intrestedCheckBox.Checked,
+                ownedCheckBox.Checked);
+          
             UpdateInfotexts();
             StockMonitorLogger.WriteMsg("Refreshing data grid DONE");
         }
 
         private void UpdateInfotexts()
         {
+#if !SIMULATIONS
             // -1 rows since, empty row to write at the end
             stockListLabel.Text = $"Showing {dataGrid.RowCount - 1} of {store.stocks.Count} pcs";
 
-            Ma_label.Text = $"Ma200:  {Ma200Warning}";
-            overProfit_label.Text = $"Profit:  {overProfitWarning}";
-            refillLabel.Text = $"Refill:  {refillWarning}";
+            Ma_label.Text = $"Ma200:  {dataContainer.GetMa200Warnings}";
+            overProfit_label.Text = $"Profit:  {dataContainer.GetOverOverProfitWarnings}";
+            refillLabel.Text = $"Refill:  {dataContainer.GetRefillWarnings}";
+#endif
         }
 
         private void RefreshButton_Click(object sender, EventArgs e)
         {
             UpdateStocksView();
+       //     Task.Run(async() => await store.CalculateHistorySums()); TODO, ska beräkna Summeringar för att kontrolelra Index
         }
 
         private void intrestedButton_Click(object sender, EventArgs e)
@@ -510,7 +366,7 @@ namespace StocksMonitor
         }
 
 
-#if DEBUG
+#if false
         private void TestWarningCalculations()
         {
             // clear stocks data in store

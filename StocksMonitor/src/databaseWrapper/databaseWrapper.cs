@@ -18,7 +18,9 @@ namespace StocksMonitor.src.databaseWrapper
 
 
 #if DEBUG
-        private string connString = "Server=JENSA;Database=TestDatabase;Integrated Security=True;TrustServerCertificate=True;";
+        private string connString = "Server=JENSA;Database=Test;Integrated Security=True;TrustServerCertificate=True;";
+#elif SIMULATIONS
+        private string connString = "Server=JENSA;Database=Simulations;Integrated Security=True;TrustServerCertificate=True;";
 #else
         private string connString = "Server=JENSA;Database=master;Integrated Security=True;TrustServerCertificate=True;";
 #endif
@@ -58,6 +60,10 @@ namespace StocksMonitor.src.databaseWrapper
                 .HasColumnType("decimal(10,2)")
                 .IsRequired(); // Setting as NOT NULL
 
+            modelBuilder.Entity<Stock>()
+                .Property(s => s.List)
+                .HasMaxLength(130)
+                .IsRequired();
 
             // HISTORY
             modelBuilder.Entity<History>()
@@ -123,6 +129,7 @@ namespace StocksMonitor.src.databaseWrapper
         public decimal Price { get; set; }      // current price of stock
         public int OwnedCnt { get; set; }       // Number of stocks i own, 0 --> Not owned at all
         public decimal PurPrice { get; set; }   // My purchase price per stock at investment
+        public string List { get; set; }       // List stock belongs to
         public ICollection<History> History { get; set; } = []; // One-to-Many relationship
         public StockMisc? Misc { get; set; } = new(); // One-to-One relationship
 
@@ -135,6 +142,7 @@ namespace StocksMonitor.src.databaseWrapper
             this.Price = rhs.Price;
             this.OwnedCnt = rhs.OwnedCnt;
             this.PurPrice = rhs.PurPrice;
+            this.List = rhs.List;
         }
 
         public class FilterSelections

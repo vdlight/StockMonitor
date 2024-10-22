@@ -1,6 +1,6 @@
 ﻿namespace StocksMonitor
 {
-    partial class StockFilterForm
+    partial class SimulationsForm
     {
         /// <summary>
         /// Required designer variable.
@@ -73,18 +73,17 @@
             hiddenButton.UseVisualStyleBackColor = true;
             hiddenButton.Click += hiddenButton_Click;
             // 
-            // StockFilterForm
+            // SimulationsForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(449, 234);
-          
+            ClientSize = new Size(1154, 779);
             Controls.Add(hiddenButton);
             Controls.Add(intrestedButton);
             Controls.Add(dataGridView1);
             Controls.Add(closeButton);
-            Name = "StockFilterForm";
-            Text = "StockFilterForm";
+            Name = "SimulationsForm";
+            Text = "Simulations";
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }

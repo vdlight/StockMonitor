@@ -1,5 +1,8 @@
 ﻿using StocksMonitor.Migrations;
 using StocksMonitor.src.databaseWrapper;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
+using System.Windows.Forms;
+using System;
 
 namespace StocksMonitor.src.avanzaParser
 {
@@ -12,8 +15,9 @@ namespace StocksMonitor.src.avanzaParser
         {
 
             StockMonitorLogger.WriteMsg("Parsing avanza stocks");
-            new StockListParser(stocks).Parse();
-            new OwnedListParser(stocks).Parse();
+            var allOK =  new StockListParser(stocks).Parse();
+                allOK &= new OwnedListParser(stocks).Parse();
+
 
             var skipCount = stocks.Count(s => s.Price < minimumPrice);
 
@@ -29,7 +33,16 @@ namespace StocksMonitor.src.avanzaParser
                 item.Price = Math.Round(item.Price, decimals);
                 item.MA200 = Math.Round(item.MA200, decimals);
             }
-            StockMonitorLogger.WriteMsg($"Parsing avanza stocks, {stocks.Count} pcs DONE");
+
+            if (!allOK)
+            {
+                StockMonitorLogger.WriteMsg($"ERROR Parsing avanza stocks failed, ABORT");
+            }
+            else
+            {
+                StockMonitorLogger.WriteMsg($"Parsing avanza stocks, {stocks.Count} pcs DONE");
+            }
+            
             return stocks;
         }
     }
@@ -129,6 +142,7 @@ namespace StocksMonitor.src.avanzaParser
                 var splitted = line.Split('\t');
                 var sma = splitted[0];
                 var price = splitted[1];
+                var list = splitted[2];
 
                 if (sma != "-") // if SMA has not been calculated, to new stock
                 {
@@ -145,19 +159,59 @@ namespace StocksMonitor.src.avanzaParser
                 { 
                     stock.Price = decimal.Parse(splitted[1]);
                 }
+
+                stock.List = list;
             }
         }
 
-        public void Parse()
+        private bool CorrectPageParsed()
+        {
+            var expectedStack = new Stack<string>(
+            [
+                "Anpassad",
+                "Jensa Monitor",
+                "Historik",
+                "Kurs",
+                "Standard",
+            ]);
+
+            var expectedHeadlineCategories = "Avs. SMA 200 %\tSenast\tLista";
+
+            foreach (var row in lines)
+            {
+                if(expectedStack.Count > 0 && row == expectedStack.Peek())
+                {
+                    expectedStack.Pop();    
+                }
+                if(row == expectedHeadlineCategories)
+                {
+                    expectedHeadlineCategories = "";
+                }
+            }
+            if(expectedStack.Count != 0 || expectedHeadlineCategories != "")
+            {
+                StockMonitorLogger.WriteMsg("ERROR: When parsing StockList, headlines does not correspond expected, ABORT");
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool Parse()
         {
             StockMonitorLogger.WriteMsg("Parsing Avanza stock list");
             Read();
-
+            if(! CorrectPageParsed())
+            {
+                return false;
+            }
             removeTopMostInfoText();
             removeBottomMostInfoText();
 
             populateStockNames();
             populateStockSMAValues();
+
+            return true;
         }
     }
 
@@ -257,16 +311,56 @@ namespace StocksMonitor.src.avanzaParser
             }
         }
 
+        private bool CorrectPageParsed()
+        {
+            var expectedStack = new Stack<string>(
+            [
+                "Nyckeltal",
+                "Historik",
+                "Inköpsinfo",
+                "Utveckling",
+                "Min konfig",
+                "Aktier"
+            ]);
+            
+            var expectedHeadlineCategories = " Land\tNamn \t Antal\t 1 vecka\t 1 dag %\t Värde\t Inköpskurs\t Direktavkastn.\t Sedan köp %\tVerktyg";
 
-        public void Parse()
+
+            foreach (var row in lines)
+            {
+                if (expectedStack.Count > 0 && row == expectedStack.Peek())
+                {
+                    expectedStack.Pop();
+                }
+                if (row == expectedHeadlineCategories)
+                {
+                    expectedHeadlineCategories = "";
+                }
+            }
+            if (expectedStack.Count != 0 || expectedHeadlineCategories != "")
+            {
+                StockMonitorLogger.WriteMsg("ERROR: When parsing innehav, headlines does not correspond expected, ABORT");
+                return false;
+            }
+
+            return true;
+        }
+
+
+        public bool Parse()
         {
             StockMonitorLogger.WriteMsg("Parsing owned Avanza stocks");
             readLines();
+            if(! CorrectPageParsed() ){
+                return false;
+            }
 
             removeTopMostInfoText();
             removeBottomMostInfoText();
 
             populateStocks();
+
+            return true;
         }
     }
 }

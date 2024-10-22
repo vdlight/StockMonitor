@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             consoleOutput = new RichTextBox();
             helpProvider1 = new HelpProvider();
             menuStrip1 = new MenuStrip();
@@ -61,15 +61,15 @@
             hiddenButton = new Button();
             intrestedButton = new Button();
             StockFiltersGroupBox = new GroupBox();
-            groupBox2 = new GroupBox();
+            WarningsGroupBox = new GroupBox();
+            Ma200Highlimit = new TextBox();
             oneMonthRadioButton = new RadioButton();
             oneWeekRadioButton = new RadioButton();
             selectedLabel = new Label();
-            Ma200Highlimit = new TextBox();
             ((System.ComponentModel.ISupportInitialize)stockChart).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGrid).BeginInit();
             StockFiltersGroupBox.SuspendLayout();
-            groupBox2.SuspendLayout();
+            WarningsGroupBox.SuspendLayout();
             SuspendLayout();
             // 
             // consoleOutput
@@ -96,16 +96,16 @@
             // stockChart
             // 
             stockChart.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            chartArea1.Name = "ChartArea1";
-            stockChart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            stockChart.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            stockChart.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            stockChart.Legends.Add(legend2);
             stockChart.Location = new Point(1032, 55);
             stockChart.Name = "stockChart";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            stockChart.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            stockChart.Series.Add(series2);
             stockChart.Size = new Size(1190, 767);
             stockChart.TabIndex = 5;
             stockChart.Text = "chart1";
@@ -321,23 +321,30 @@
             StockFiltersGroupBox.TabStop = false;
             StockFiltersGroupBox.Text = "Stock filters";
             // 
-            // groupBox2
+            // WarningsGroupBox
             // 
-            groupBox2.Controls.Add(Ma200Highlimit);
-            groupBox2.Controls.Add(Ma200limit);
-            groupBox2.Controls.Add(refillTextbox);
-            groupBox2.Controls.Add(label2);
-            groupBox2.Controls.Add(overProfit_textbox);
-            groupBox2.Controls.Add(Ma_label);
-            groupBox2.Controls.Add(showWarnings_checkbox);
-            groupBox2.Controls.Add(refillLabel);
-            groupBox2.Controls.Add(overProfit_label);
-            groupBox2.Location = new Point(845, 55);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(165, 181);
-            groupBox2.TabIndex = 33;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Warnings";
+            WarningsGroupBox.Controls.Add(Ma200Highlimit);
+            WarningsGroupBox.Controls.Add(Ma200limit);
+            WarningsGroupBox.Controls.Add(refillTextbox);
+            WarningsGroupBox.Controls.Add(label2);
+            WarningsGroupBox.Controls.Add(overProfit_textbox);
+            WarningsGroupBox.Controls.Add(Ma_label);
+            WarningsGroupBox.Controls.Add(showWarnings_checkbox);
+            WarningsGroupBox.Controls.Add(refillLabel);
+            WarningsGroupBox.Controls.Add(overProfit_label);
+            WarningsGroupBox.Location = new Point(845, 55);
+            WarningsGroupBox.Name = "WarningsGroupBox";
+            WarningsGroupBox.Size = new Size(165, 181);
+            WarningsGroupBox.TabIndex = 33;
+            WarningsGroupBox.TabStop = false;
+            WarningsGroupBox.Text = "Warnings";
+            // 
+            // Ma200Highlimit
+            // 
+            Ma200Highlimit.Location = new Point(126, 85);
+            Ma200Highlimit.Name = "Ma200Highlimit";
+            Ma200Highlimit.Size = new Size(30, 23);
+            Ma200Highlimit.TabIndex = 29;
             // 
             // oneMonthRadioButton
             // 
@@ -372,13 +379,6 @@
             selectedLabel.TabIndex = 36;
             selectedLabel.Text = "Selected psc";
             // 
-            // Ma200Highlimit
-            // 
-            Ma200Highlimit.Location = new Point(126, 85);
-            Ma200Highlimit.Name = "Ma200Highlimit";
-            Ma200Highlimit.Size = new Size(30, 23);
-            Ma200Highlimit.TabIndex = 29;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -387,7 +387,7 @@
             Controls.Add(selectedLabel);
             Controls.Add(oneWeekRadioButton);
             Controls.Add(oneMonthRadioButton);
-            Controls.Add(groupBox2);
+            Controls.Add(WarningsGroupBox);
             Controls.Add(StockFiltersGroupBox);
             Controls.Add(clearAll);
             Controls.Add(clearInterested);
@@ -409,8 +409,8 @@
             ((System.ComponentModel.ISupportInitialize)stockChart).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGrid).EndInit();
             StockFiltersGroupBox.ResumeLayout(false);
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
+            WarningsGroupBox.ResumeLayout(false);
+            WarningsGroupBox.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -445,7 +445,7 @@
         private Button hiddenButton;
         private Button intrestedButton;
         private GroupBox StockFiltersGroupBox;
-        private GroupBox groupBox2;
+        private GroupBox WarningsGroupBox;
         private RadioButton oneMonthRadioButton;
         private RadioButton oneWeekRadioButton;
         private Label selectedLabel;

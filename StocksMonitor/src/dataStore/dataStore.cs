@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using StocksMonitor.src.avanzaParser;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Identity.Client;
 
 namespace StocksMonitor.src.dataStore
 {
@@ -15,7 +16,16 @@ namespace StocksMonitor.src.dataStore
         public List<Stock> stocks = new List<Stock>();
         private AvanzaParser avanza = new AvanzaParser();
         private Storage storage = new Storage();
-        
+
+        private string[] Markets = 
+        {
+            "First North Stockholm",
+            "Small Cap Stockholm",
+            "Mid Cap Stockholm",
+            "Large Cap Stockholm",
+            "Own",
+        };
+
         public async Task FetchDataFromAvanza()
         {
             StockMonitorLogger.WriteMsg("Parse data from Avanza");
@@ -31,6 +41,34 @@ namespace StocksMonitor.src.dataStore
                 StockMonitorLogger.WriteMsg("TOOD ERROR");
             }
         }
+
+        private async Task CalculateHistorySums()
+        {
+            Dictionary<string, List<decimal>> meanValues = [];
+
+            foreach(var stock in stocks)
+            {
+                foreach(var history in stock.History)
+                {
+                    if (stock.OwnedCnt > 0)
+                    {
+                        meanValues["Own"].Add(stock.Price);
+                    }
+
+                    meanValues[stock.List].Add(stock.Price);
+                }
+                if (stock.OwnedCnt > 0)
+                {
+                    meanValues["Own"].Add(stock.Price);
+                }
+
+                meanValues[stock.List].Add(stock.Price);
+            }
+
+            await Task.CompletedTask;
+        }
+        // TODO, När man markerar något i listan, så ska det visas procentutveckling i grafen, från hur det varit senaste, 1, 1w 1m 1y
+
         public async Task ReadFromDB()
         {
             stocks = await storage.ReadData();
@@ -67,6 +105,7 @@ namespace StocksMonitor.src.dataStore
                 existingStock.Price = stock.Price;
                 existingStock.MA200 = stock.MA200;
                 existingStock.OwnedCnt = stock.OwnedCnt;
+                existingStock.List = stock.List;
                 
                 if(existingStock.History.Any(h => h.Date == DateTime.Now.Date))
                 {

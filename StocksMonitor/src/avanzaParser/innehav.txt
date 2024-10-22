@@ -1,15 +1,15 @@
 
 OMXS30 
-0,33%
- 17:30 
+-0,70%
+ 17:29 
 (
-8,27%
+7,52%
  i år)
 DJ USA 
-0,27%
- 17:19 
+-0,34%
+ 19:05 
 (
-22,05%
+21,78%
  i år)
 Inloggad som Jens
 -
@@ -35,16 +35,16 @@ Kalender
 Analys
 
 Alla konton
-Senast uppdaterad: alldeles nyss
+Senast uppdaterad: 30 sek sedan
 
 Totalt värde
-98 062 kr
+97 212 kr
 
 Tillgängligt för köp
-3 649 kr
+7 852 kr
 
 Utveckling i år
-+16 406 kr
++19,86%
 
 Aktier
 Min konfig
@@ -52,370 +52,362 @@ Utveckling
 Inköpsinfo
 Historik
 Nyckeltal
- Land	Namn 	 Antal	 1 vecka	 1 dag %	Värde ▲	 Inköpskurs	 Direktavkastn.	 Sedan köp %	Verktyg
-Bure Equity
-1	+3,18%	+0,98%	390 kr	366,92 SEK	0,65%	+6,18%	
-Samhällsbyggnadsbo. i Norden B
-64	−12,68%	−1,97%	398 kr	6,60 SEK	—	−5,94%	
-Peab B
-6	−3,23%	−0,73%	450 kr	62,45 SEK	1,99%	+20,02%	
-Tele2 B
-4	−0,18%	0,00%	453 kr	99,60 SEK	6,09%	+13,80%	
-Fabege
-5	−3,96%	−0,59%	461 kr	95,67 SEK	1,94%	−3,57%	
-SEB A
-3	+2,65%	−0,39%	465 kr	153,38 SEK	5,46%	+1,06%	
-Öresund
-4	−0,85%	−3,64%	466 kr	121,75 SEK	5,79%	−4,23%	
-Nyfosa
-4	−2,50%	−0,09%	469 kr	113,50 SEK	—	+3,26%	
-Stenhus Fastigheter i Norden
-37	−3,65%	−1,25%	469 kr	13,54 SEK	—	−6,36%	
-Careium
-15	+2,62%	+0,32%	470 kr	33,47 SEK	—	−6,47%	
-Kakel Max
-40	−3,28%	0,00%	472 kr	12,53 SEK	—	−5,79%	
-Concejo B
-11	−4,01%	−1,82%	474 kr	45,73 SEK	—	−5,75%	
-Vestum
-51	0,00%	+0,21%	477 kr	9,92 SEK	—	−5,66%	
-Oneflow
-13	−0,54%	−0,81%	478 kr	38,38 SEK	—	−4,13%	
-CodeMill
-34	−4,08%	−1,40%	479 kr	14,35 SEK	—	−1,74%	
-SkiStar B
-3	+2,82%	+0,44%	482 kr	158,25 SEK	1,75%	+1,42%	
-Telia Company
-15	−1,65%	−0,28%	482 kr	33,87 SEK	6,21%	−5,10%	
-Cheffelo
-19	+2,42%	−1,93%	483 kr	26,58 SEK	6,87%	−4,44%	
-Besqab
-18	−0,37%	−1,10%	484 kr	27,94 SEK	—	−3,74%	
-Cavotec
-27	−2,45%	+0,84%	485 kr	19,00 SEK	—	−5,53%	
-Actic Group
-80	+5,94%	0,00%	485 kr	6,21 SEK	—	−2,45%	
-Seafire
-80	+0,33%	+0,33%	485 kr	6,25 SEK	—	−3,04%	
-Flexion Mobile
-57	+0,71%	−2,06%	488 kr	8,84 SEK	—	−3,19%	
-Platzer Fastigheter Holding B
-5	−7,58%	+0,10%	488 kr	101,40 SEK	2,05%	−3,75%	
-Projektengagemang Sweden B
-43	+0,89%	−0,87%	488 kr	11,53 SEK	—	−1,60%	
-Tingsvalvet Fastighets B
-16	−3,16%	+0,66%	490 kr	32,16 SEK	—	−4,84%	
-ByggPartner Gruppen
-28	−1,69%	−2,51%	490 kr	17,82 SEK	—	−1,80%	
-Annehem Fastigheter B
-26	−1,05%	+2,45%	490 kr	19,69 SEK	—	−4,28%	
-Atlas Copco B
-3	−3,74%	−1,09%	490 kr	149,63 SEK	1,69%	+9,20%	
-RaySearch Laboratories B
-3	+4,73%	+0,12%	491 kr	157,50 SEK	0,43%	+4,00%	
-Linc
-6	+0,12%	+1,74%	492 kr	87,33 SEK	—	−6,11%	
-Nordic Waterproofing Holding
-3	−5,95%	−0,60%	493 kr	166,50 SEK	3,02%	−1,26%	
-Polygiene Group
-47	−0,94%	0,00%	494 kr	10,87 SEK	—	−3,42%	
-Acrinova B
-52	−2,06%	−0,21%	494 kr	9,81 SEK	3,15%	−3,14%	
-Embracer Group B
-17	−0,31%	−0,21%	496 kr	25,70 SEK	—	+13,42%	
-Genova Property Group
-10	+0,61%	+0,40%	496 kr	50,10 SEK	—	−1,00%	
-Advenica AB
-43	+3,13%	−0,86%	497 kr	11,65 SEK	—	−0,86%	
-Systemair
-6	−1,54%	+0,73%	499 kr	85,33 SEK	1,45%	−2,62%	
-Bokusgruppen
-10	+2,25%	0,00%	499 kr	50,00 SEK	6,61%	−0,20%	
-Alligator Bioscience
-396	−4,10%	0,00%	500 kr	1,27 SEK	—	−0,65%	
-Fast. Balder B
-6	−0,97%	−0,31%	500 kr	84,67 SEK	—	−1,59%	
-I-Tech
-10	+0,81%	+4,17%	500 kr	48,90 SEK	1,56%	+2,25%	
-Qliro
-18	−1,59%	+0,54%	500 kr	24,00 SEK	—	+15,83%	
-NCC B
-3	−0,71%	−0,06%	501 kr	158,75 SEK	4,79%	+5,20%	
-Nederman Holding
-2	+5,47%	+0,20%	501 kr	220,33 SEK	1,58%	+13,69%	
-Idun Industrier B
-2	+1,21%	−1,57%	502 kr	248,50 SEK	0,35%	+1,01%	
-Yubico
-2	−6,17%	+0,40%	502 kr	227,67 SEK	—	+10,25%	
-Softronic B
-22	+5,26%	+0,44%	506 kr	23,36 SEK	5,90%	−1,56%	
-Byggmax Group
-13	−0,92%	+1,94%	506 kr	40,92 SEK	1,31%	−4,85%	
-Nordea Bank Abp
-4	+6,97%	+0,72%	507 kr	125,75 SEK	8,31%	+0,72%	
-Eltel
-70	+1,97%	−0,55%	507 kr	7,21 SEK	—	+0,36%	
-Arion Banki SDB
-43	−0,84%	+0,43%	507 kr	11,77 SEK	5,89%	+0,28%	
-Flat Capital B
-33	+10,00%	0,00%	508 kr	14,88 SEK	—	+3,50%	
-Betsson B
-4	−2,15%	−1,09%	509 kr	126,00 SEK	—	+0,95%	
-Intellego Technologies
-19	+6,14%	+0,19%	509 kr	27,16 SEK	—	−1,32%	
-Sleep Cycle
-11	+2,89%	−0,86%	509 kr	40,82 SEK	2,78%	+13,43%	
-Hoist Finance
-6	0,00%	−2,18%	511 kr	81,71 SEK	—	+4,27%	
-Wallenstam B
-9	−1,64%	−0,70%	512 kr	56,33 SEK	0,87%	+1,01%	
-Electrolux B
-5	+3,06%	+2,09%	513 kr	99,50 SEK	—	+3,02%	
-Logistea B
-29	+1,38%	+0,45%	513 kr	17,59 SEK	—	+0,53%	
-Nivika Fastigheter B
-12	+0,71%	−0,23%	514 kr	43,00 SEK	—	−0,47%	
-SWECO B
-3	−0,29%	+0,06%	514 kr	168,00 SEK	1,72%	+1,96%	
-Fortinova Fastigheter ser. B
-17	+0,33%	+0,33%	515 kr	30,88 SEK	—	−1,89%	
-Moment Group
-45	+12,20%	+4,07%	518 kr	11,22 SEK	—	+2,48%	
-Jetpak Top Holding
-5	−2,80%	0,00%	520 kr	107,20 SEK	—	−2,99%	
-Creades A
-7	−1,12%	+1,22%	524 kr	78,14 SEK	2,16%	−4,21%	
-Securitas B
-4	+2,34%	+0,58%	524 kr	100,04 SEK	2,92%	+31,05%	
-Berner Industrier B
-14	−1,32%	+0,54%	525 kr	37,07 SEK	2,41%	+1,16%	
-Clas Ohlson B
-3	+7,49%	+0,57%	525 kr	158,00 SEK	2,44%	+10,76%	
-HEBA B
-15	−1,69%	−0,43%	525 kr	34,20 SEK	1,48%	+2,34%	
-NP3 Fastigheter
-2	−0,94%	+0,77%	525 kr	266,00 SEK	0,58%	−1,32%	
-Hufvudstaden A
-4	−2,59%	−0,83%	526 kr	137,50 SEK	2,03%	−4,29%	
-Hennes & Mauritz B
-3	+3,17%	−0,62%	527 kr	168,00 SEK	3,68%	+4,58%	
-Flerie
-12	+4,76%	+1,88%	528 kr	42,08 SEK	—	+4,55%	
-Netel Holding
-24	+7,06%	+0,46%	528 kr	21,00 SEK	—	+4,76%	
-Railcare Group
-17	−2,20%	+0,32%	529 kr	30,88 SEK	2,26%	+0,70%	
-Norva24 Group
-17	+3,83%	+1,63%	530 kr	29,88 SEK	—	+4,24%	
-Scandic Hotels Group
-7	+5,65%	−0,26%	530 kr	67,00 SEK	—	+12,99%	
-Lundin Gold
-2	+9,05%	+3,92%	530 kr	206,33 SEK	2,08%	+28,43%	
-Attendo
-11	+2,66%	+0,31%	530 kr	48,64 SEK	2,08%	−0,90%	
-Acast
-33	+4,89%	+3,87%	531 kr	15,33 SEK	—	+5,00%	
-Arla Plast
-11	0,00%	−0,82%	531 kr	50,00 SEK	2,57%	−3,40%	
-Cloetta B
-21	+0,24%	−0,63%	532 kr	24,24 SEK	3,92%	+4,46%	
-Björn Borg
-9	+1,22%	+3,79%	532 kr	60,67 SEK	—	−2,58%	
-Bahnhof B
-10	+0,57%	+0,95%	532 kr	54,10 SEK	3,80%	−1,66%	
-BeammWave B
-80	+25,47%	−0,75%	532 kr	6,11 SEK	—	+8,79%	
-AQ Group
-4	+11,80%	+5,52%	532 kr	120,25 SEK	1,06%	+10,64%	
-Brinova Fastigheter B
-21	+1,60%	−1,55%	533 kr	24,86 SEK	—	+2,18%	
-Bonäsudden Holding
-3	+1,14%	0,00%	534 kr	175,33 SEK	—	+1,52%	
-Ericsson B
-6	+14,92%	+1,74%	534 kr	75,71 SEK	3,09%	+17,57%	
-AcadeMedia
-8	+1,67%	+0,75%	536 kr	67,38 SEK	2,63%	−0,56%	
-Lindab International
-2	−0,52%	−0,81%	536 kr	268,00 SEK	2,00%	+0,07%	
-AFRY
-3	+0,90%	−0,44%	537 kr	183,00 SEK	3,06%	−2,19%	
-MedCap
-1	+13,03%	+3,66%	538 kr	508,00 SEK	—	+5,91%	
-Probi
-2	−0,74%	−1,82%	538 kr	262,50 SEK	0,47%	+2,48%	
-Mildef Group
-6	−0,44%	−0,55%	538 kr	83,83 SEK	0,55%	+7,00%	
-Storytel B
-9	−1,48%	−0,08%	539 kr	53,80 SEK	—	+11,25%	
-Fastpartner A
-7	−7,00%	−5,41%	539 kr	75,86 SEK	1,23%	+1,51%	
-John Mattson Fastighetsföret.
-8	−0,88%	+0,90%	539 kr	62,88 SEK	—	+7,20%	
-Byggmästare A J Ahlström H
-2	0,00%	0,00%	540 kr	259,50 SEK	0,48%	+4,05%	
-K-Fast Holding B
-22	+2,29%	+0,41%	540 kr	23,41 SEK	—	+4,87%	
-Sagax B
-2	−1,02%	−0,95%	542 kr	274,00 SEK	1,13%	−1,09%	
-Truecaller B
-12	+14,14%	+0,27%	542 kr	39,50 SEK	0,89%	+14,43%	
-Cibus Nordic Real Estate
-3	+1,03%	+0,92%	543 kr	123,03 SEK	5,69%	+47,08%	
-Humana
-15	+6,31%	+0,42%	543 kr	33,60 SEK	—	+7,74%	
-Billerud
-5	−5,40%	−0,91%	544 kr	105,40 SEK	1,82%	+3,13%	
-engcon B
-5	+3,62%	−0,18%	544 kr	113,60 SEK	0,86%	−4,23%	
-Zinzino B
-6	−1,41%	−1,52%	545 kr	84,50 SEK	3,25%	+7,46%	
-Catena
-1	−2,15%	−0,91%	546 kr	560,00 SEK	1,54%	−2,50%	
-Lundin Mining Corporation
-5	+0,27%	+1,30%	547 kr	109,20 SEK	2,63%	+0,18%	
-Inwido
-3	+0,66%	−0,76%	547 kr	184,00 SEK	3,54%	−0,87%	
-Net Insight B
-72	+2,84%	+3,68%	548 kr	7,00 SEK	—	+8,71%	
-Ambea
-6	+5,36%	−0,71%	548 kr	90,33 SEK	1,63%	+1,18%	
-Rusta
-7	−6,10%	+0,19%	550 kr	75,29 SEK	1,47%	+4,27%	
-Green Landscaping Group
-7	+1,15%	+1,41%	552 kr	77,57 SEK	—	+1,71%	
-Karnov Group
-7	+1,41%	+0,64%	553 kr	77,71 SEK	—	+1,65%	
-Lundbergföretagen B
-1	−1,07%	−0,18%	553 kr	561,00 SEK	0,78%	−1,43%	
-Dynavox Group
-9	−0,65%	+1,82%	554 kr	54,20 SEK	—	+13,47%	
-Biotage
-3	+3,07%	+1,48%	554 kr	193,67 SEK	0,88%	−4,63%	
-ITAB Shop Concept
-20	−3,79%	−0,36%	558 kr	25,75 SEK	2,68%	+8,35%	
-KlaraBo Sverige B
-25	−2,40%	−0,45%	559 kr	20,36 SEK	—	+9,77%	
-Castellum
-4	−1,85%	−0,85%	562 kr	144,25 SEK	—	−2,60%	
-Eastnine
-12	−0,31%	−1,54%	562 kr	43,50 SEK	2,44%	+7,71%	
-CellaVision
-2	−3,59%	+1,99%	564 kr	285,00 SEK	0,81%	−1,05%	
-SinterCast
-5	+2,26%	+1,35%	565 kr	113,80 SEK	4,93%	−0,70%	
-Enea
-6	+10,61%	+2,59%	569 kr	86,17 SEK	—	+10,14%	
-Medicover B
-3	+3,94%	+1,71%	569 kr	194,67 SEK	0,72%	−2,50%	
-MEKO
-4	+3,04%	+0,85%	570 kr	132,50 SEK	2,62%	+7,47%	
-Lagercrantz Group B
-3	+3,99%	+0,42%	571 kr	181,25 SEK	1,00%	+4,99%	
-Ependion
-5	−2,71%	−1,03%	574 kr	120,00 SEK	0,86%	−4,33%	
-Millicom Int. Cellular SDB
-2	+4,51%	+0,42%	575 kr	276,50 SEK	—	+4,01%	
-Rejlers B
-4	−2,03%	−0,55%	579 kr	148,75 SEK	3,09%	−2,66%	
-OEM International B
-5	+4,32%	−0,51%	580 kr	118,80 SEK	1,50%	−2,36%	
-Proact IT Group
-4	−1,89%	+0,14%	581 kr	151,00 SEK	1,38%	−3,84%	
-EQL Pharma
-9	+9,49%	+0,62%	581 kr	53,90 SEK	—	+19,85%	
-JM
-3	−0,15%	−0,36%	584 kr	191,33 SEK	1,54%	+1,71%	
-SECTRA B
-2	+4,26%	+0,34%	585 kr	265,00 SEK	—	+10,34%	
-Paradox Interactive
-3	+7,66%	+2,13%	590 kr	183,33 SEK	1,56%	+7,29%	
-Fastighetsbolaget Emilshus B
-12	+1,65%	−0,20%	592 kr	43,92 SEK	—	+12,26%	
-Alimak Group
-5	+2,57%	−0,99%	598 kr	105,20 SEK	2,07%	+13,69%	
-Traction B
-2	+3,81%	+2,04%	600 kr	298,50 SEK	3,55%	+0,50%	
-Indutrade
-2	+0,87%	−0,40%	602 kr	306,50 SEK	0,94%	−1,86%	
-ABB Ltd
-1	+0,77%	−1,44%	603 kr	440,36 SEK	1,71%	+36,89%	
-Addtech B
-2	+4,35%	+0,27%	605 kr	309,00 SEK	0,93%	−2,14%	
-Latour B
-2	+0,90%	−0,26%	607 kr	280,88 SEK	1,35%	+8,06%	
-Xspray Pharma
-10	+24,72%	+8,57%	608 kr	54,00 SEK	—	+12,59%	
-Alligo B
-4	+4,36%	+3,79%	613 kr	134,41 SEK	2,37%	+13,98%	
-Investor B
-2	+1,71%	+0,47%	620 kr	238,39 SEK	1,56%	+30,02%	
-Essity B
-2	+0,74%	+0,03%	627 kr	323,50 SEK	2,47%	−3,09%	
-Pandox B
-3	+1,70%	+0,72%	627 kr	197,67 SEK	1,93%	+5,73%	
-Link Prop Investment
-4	−0,63%	0,00%	628 kr	164,50 SEK	5,10%	−4,56%	
-EQT
-2	+0,74%	−2,20%	650 kr	331,50 SEK	1,08%	−1,96%	
-Camurus
-1	+0,23%	+1,09%	652 kr	650,00 SEK	—	+0,23%	
-Atrium Ljungberg B
-3	−6,02%	−0,46%	656 kr	219,33 SEK	1,59%	−0,38%	
-Skanska B
-3	+0,27%	−0,41%	661 kr	221,00 SEK	2,49%	−0,32%	
-Lifco B
-2	+2,60%	+0,30%	663 kr	328,50 SEK	0,64%	+0,88%	
-Boliden
-2	−0,39%	+1,81%	664 kr	327,50 SEK	2,30%	+1,37%	
-AAK
-2	+0,30%	−0,47%	674 kr	330,50 SEK	1,09%	+2,03%	
-BONESUPPORT HOLDING
-2	+5,90%	−0,12%	674 kr	296,00 SEK	—	+13,92%	
-ASSA ABLOY B
-2	+1,80%	−0,12%	680 kr	326,50 SEK	1,59%	+4,13%	
-Nordnet
-3	+5,29%	+2,16%	680 kr	162,40 SEK	3,24%	+39,66%	
-TRATON
-2	+4,85%	+3,90%	692 kr	335,00 SEK	5,04%	+3,28%	
-Hemnet Group
-2	−1,46%	−0,65%	731 kr	379,00 SEK	0,33%	−3,54%	
-Industrivärden C
-2	+0,63%	+1,16%	732 kr	319,59 SEK	2,14%	+14,55%	
-Mycronic
-2	+2,63%	+0,90%	764 kr	370,50 SEK	1,19%	+3,05%	
-INVISIO
-3	+11,26%	+6,20%	771 kr	234,67 SEK	0,54%	+9,52%	
-Holmen B
-2	−2,05%	+1,04%	859 kr	429,00 SEK	2,00%	+0,09%	
+ Land	Namn 	 Antal	 1 vecka	 1 dag %	 Värde	 Inköpskurs	 Direktavkastn.	 Sedan köp %	Verktyg
 Alfa Laval
-2	−0,86%	−1,37%	950 kr	442,50 SEK	1,56%	+7,37%	
+2	−2,39%	−0,23%	948 kr	442,50 SEK	1,58%	+7,12%	
 Sampo Oyj SDB
-2	+3,56%	+1,16%	960 kr	471,50 SEK	3,80%	+1,80%	
-AstraZeneca
-1	+2,60%	−0,30%	1 638 kr	1 648,00 SEK	1,91%	−0,61%	
-Totalt värde		+1,31%	+0,31%	94 396 kr		2,32%	+3,02%	
+1	+1,07%	−1,67%	472 kr	471,50 SEK	3,76%	+0,11%	
+Holmen B
+2	−4,78%	−1,63%	845 kr	429,00 SEK	1,98%	−1,54%	
+Bure Equity
+1	+1,10%	−0,98%	386 kr	366,92 SEK	0,64%	+5,14%	
+Mycronic
+2	+2,13%	+0,47%	767 kr	370,50 SEK	1,18%	+3,54%	
+Hemnet Group
+2	−3,35%	−0,71%	726 kr	379,00 SEK	0,33%	−4,22%	
+Industrivärden C
+2	−1,12%	−1,12%	724 kr	319,59 SEK	2,12%	+13,27%	
+TRATON
+2	+2,36%	+0,14%	693 kr	335,00 SEK	4,85%	+3,43%	
+BONESUPPORT HOLDING
+2	+2,76%	+1,66%	686 kr	296,00 SEK	—	+15,81%	
+ASSA ABLOY B
+2	+0,99%	−0,59%	676 kr	326,50 SEK	1,59%	+3,52%	
+Boliden
+2	−1,38%	+0,99%	671 kr	327,50 SEK	2,26%	+2,38%	
+AAK
+2	−0,95%	−0,71%	670 kr	330,50 SEK	1,10%	+1,30%	
+Lifco B
+2	+0,80%	−0,54%	659 kr	328,50 SEK	0,63%	+0,33%	
+EQT
+2	−2,21%	−0,77%	645 kr	331,50 SEK	1,11%	−2,71%	
+Essity B
+2	−0,22%	−0,80%	622 kr	323,50 SEK	2,47%	−3,86%	
+Investor B
+2	−1,12%	−0,50%	617 kr	238,39 SEK	1,55%	+29,37%	
+Traction B
+2	+4,11%	+1,33%	608 kr	298,50 SEK	3,48%	+1,84%	
+Indutrade
+2	−0,79%	+0,07%	602 kr	306,50 SEK	0,95%	−1,79%	
+Latour B
+2	−1,38%	−1,25%	599 kr	280,88 SEK	1,35%	+6,70%	
+Addtech B
+2	−0,80%	−1,92%	593 kr	309,00 SEK	0,93%	−4,01%	
+SECTRA B
+2	+4,16%	+1,09%	591 kr	265,00 SEK	—	+11,55%	
+Millicom Int. Cellular SDB
+2	+4,42%	+0,21%	576 kr	276,50 SEK	—	+4,23%	
+CellaVision
+2	−3,29%	−1,06%	558 kr	285,00 SEK	0,80%	−2,11%	
+Byggmästare A J Ahlström H
+2	+1,85%	+1,85%	550 kr	259,50 SEK	0,48%	+5,97%	
+Probi
+2	−1,11%	−0,74%	534 kr	262,50 SEK	0,48%	+1,71%	
+Sagax B
+2	−5,69%	−2,14%	530 kr	274,00 SEK	1,14%	−3,21%	
+Lindab International
+2	−3,15%	−1,57%	528 kr	268,00 SEK	2,01%	−1,49%	
+NP3 Fastigheter
+2	−3,31%	+0,19%	526 kr	266,00 SEK	0,57%	−1,13%	
+INVISIO
+2	+8,79%	+1,17%	520 kr	234,67 SEK	0,51%	+10,80%	
+Nederman Holding
+2	+7,11%	+2,20%	512 kr	220,33 SEK	1,58%	+16,19%	
+Yubico
+2	−4,50%	+1,39%	509 kr	227,67 SEK	—	+11,79%	
+Idun Industrier B
+2	+1,21%	0,00%	502 kr	248,50 SEK	0,36%	+1,01%	
+Nordnet
+3	+1,90%	−0,88%	674 kr	162,40 SEK	3,17%	+38,42%	
+Skanska B
+3	−1,63%	−1,50%	651 kr	221,00 SEK	2,50%	−1,81%	
+Atrium Ljungberg B
+3	−9,03%	−3,20%	635 kr	219,33 SEK	1,60%	−3,57%	
+Pandox B
+3	−2,86%	−2,63%	611 kr	197,67 SEK	1,91%	+2,95%	
+Paradox Interactive
+3	+7,14%	−0,81%	585 kr	183,33 SEK	1,53%	+6,42%	
+JM
+3	−1,43%	−0,77%	579 kr	191,33 SEK	1,54%	+0,92%	
+Lagercrantz Group B
+3	+2,68%	+0,53%	574 kr	181,25 SEK	1,00%	+5,54%	
+Epiroc B
+3	−1,38%	−2,47%	556 kr	188,70 SEK	2,00%	−1,80%	
+Medicover B
+3	+0,33%	−2,85%	553 kr	194,67 SEK	0,71%	−5,27%	
+Biotage
+3	−1,53%	−2,44%	541 kr	193,67 SEK	0,87%	−6,95%	
+AFRY
+3	−0,78%	−0,56%	534 kr	183,00 SEK	3,07%	−2,73%	
+Cibus Nordic Real Estate
+3	−2,92%	−1,63%	534 kr	123,03 SEK	5,64%	+44,69%	
+Inwido
+3	−2,90%	−2,58%	533 kr	184,00 SEK	3,56%	−3,42%	
+Bonäsudden Holding
+3	0,00%	−0,56%	531 kr	175,33 SEK	—	+0,95%	
+Hennes & Mauritz B
+3	+1,80%	−0,48%	525 kr	168,00 SEK	3,70%	+4,08%	
+Clas Ohlson B
+3	+5,27%	−0,69%	521 kr	158,00 SEK	2,43%	+10,00%	
+SWECO B
+3	−1,57%	−1,11%	508 kr	168,00 SEK	1,72%	+0,83%	
+NCC B
+3	−2,54%	−1,08%	496 kr	158,75 SEK	4,79%	+4,06%	
+Atlas Copco B
+3	−5,37%	−0,70%	487 kr	149,63 SEK	1,71%	+8,44%	
+Nordic Waterproofing Holding
+3	−6,35%	−1,34%	487 kr	166,50 SEK	3,04%	−2,58%	
+RaySearch Laboratories B
+3	+1,66%	−2,81%	478 kr	157,50 SEK	0,43%	+1,08%	
+SkiStar B
+3	−0,32%	−1,62%	474 kr	158,25 SEK	1,74%	−0,22%	
+Link Prop Investment
+4	−2,50%	−0,64%	624 kr	164,50 SEK	5,10%	−5,17%	
+SEB A
+3	+1,68%	−0,58%	462 kr	153,38 SEK	5,48%	+0,47%	
+Alligo B
+4	+1,09%	−3,00%	594 kr	134,41 SEK	2,28%	+10,56%	
+Rejlers B
+4	−3,36%	−0,55%	576 kr	148,75 SEK	3,11%	−3,19%	
+Proact IT Group
+4	−4,13%	−0,96%	575 kr	151,00 SEK	1,38%	−4,77%	
+MEKO
+4	−0,28%	−1,54%	561 kr	132,50 SEK	2,60%	+5,81%	
+Castellum
+4	−5,78%	−2,46%	548 kr	144,25 SEK	—	−4,99%	
+AQ Group
+4	+9,27%	+0,60%	535 kr	120,25 SEK	1,00%	+11,30%	
+Securitas B
+4	+2,02%	−0,04%	524 kr	100,04 SEK	2,90%	+31,00%	
+Hufvudstaden A
+4	−6,41%	−2,43%	514 kr	137,50 SEK	2,05%	−6,62%	
+Betsson B
+4	−4,54%	−0,79%	505 kr	126,00 SEK	—	+0,16%	
+Nordea Bank Abp
+4	+6,20%	−1,26%	500 kr	126,00 SEK	8,25%	−0,75%	
+Alimak Group
+5	−0,85%	−2,01%	586 kr	105,20 SEK	2,09%	+11,41%	
+OEM International B
+5	+3,38%	+0,17%	581 kr	118,80 SEK	1,51%	−2,19%	
+Nyfosa
+4	−5,49%	−1,62%	461 kr	113,50 SEK	—	+1,59%	
+Öresund
+4	−4,49%	−1,54%	459 kr	121,75 SEK	6,00%	−5,71%	
+Ependion
+5	−7,97%	−1,39%	566 kr	120,00 SEK	0,87%	−5,67%	
+SinterCast
+5	−0,44%	0,00%	565 kr	113,80 SEK	4,87%	−0,70%	
+Tele2 B
+4	−1,67%	−1,59%	446 kr	99,60 SEK	6,09%	+11,99%	
+engcon B
+5	+0,37%	−0,55%	541 kr	113,60 SEK	0,86%	−4,75%	
+Billerud
+5	−7,53%	−0,64%	540 kr	105,40 SEK	1,84%	+2,47%	
+Lundin Mining Corporation
+5	−2,53%	−1,55%	539 kr	109,20 SEK	2,59%	−1,37%	
+Jetpak Top Holding
+5	−0,95%	0,00%	520 kr	107,20 SEK	—	−2,99%	
+Electrolux B
+5	+0,28%	−2,71%	499 kr	99,50 SEK	—	+0,22%	
+Platzer Fastigheter Holding B
+5	−11,80%	−2,77%	475 kr	101,40 SEK	2,05%	−6,41%	
+Enea
+6	+7,17%	−0,74%	565 kr	86,17 SEK	—	+9,32%	
+Ambea
+6	+4,89%	+0,98%	554 kr	90,33 SEK	1,64%	+2,18%	
+Zinzino B
+6	−1,71%	+1,21%	551 kr	84,50 SEK	3,30%	+8,76%	
+Ericsson B
+6	+15,00%	+0,27%	536 kr	75,71 SEK	3,03%	+17,89%	
+Fabege
+5	−8,45%	−3,74%	444 kr	95,67 SEK	1,95%	−7,18%	
+Mildef Group
+6	−4,22%	−1,23%	532 kr	83,83 SEK	0,56%	+5,69%	
+Green Landscaping Group
+7	+5,49%	+4,69%	578 kr	77,57 SEK	—	+6,48%	
+Systemair
+6	−2,38%	−1,08%	493 kr	85,33 SEK	1,44%	−3,67%	
+Linc
+6	−1,09%	−0,12%	491 kr	87,33 SEK	—	−6,22%	
+Fast. Balder B
+6	−5,10%	−2,64%	487 kr	84,67 SEK	—	−4,19%	
+Rusta
+7	−5,46%	−1,78%	540 kr	75,29 SEK	1,46%	+2,41%	
+Karnov Group
+7	−2,54%	−2,91%	537 kr	77,71 SEK	—	−1,31%	
+Fastpartner A
+7	−10,59%	−1,30%	532 kr	75,86 SEK	1,30%	+0,19%	
+Scandic Hotels Group
+7	+1,76%	−0,92%	525 kr	67,00 SEK	—	+11,94%	
+Creades A
+7	−3,33%	−1,00%	519 kr	78,14 SEK	2,14%	−5,17%	
+Peab B
+6	−5,81%	−2,67%	438 kr	62,45 SEK	2,00%	+16,82%	
+EQL Pharma
+9	+9,15%	+3,41%	601 kr	53,90 SEK	—	+23,93%	
+John Mattson Fastighetsföret.
+8	−3,23%	−2,08%	528 kr	62,88 SEK	—	+4,97%	
+AcadeMedia
+8	−1,22%	−3,43%	518 kr	67,38 SEK	2,61%	−3,97%	
+Xspray Pharma
+9	+24,50%	+1,97%	558 kr	54,00 SEK	—	+14,81%	
+Dynavox Group
+9	−3,36%	−1,79%	544 kr	54,20 SEK	—	+11,44%	
+Storytel B
+9	−2,31%	−1,09%	533 kr	53,80 SEK	—	+10,04%	
+Björn Borg
+9	−0,75%	−1,39%	525 kr	60,67 SEK	—	−3,93%	
+Wallenstam B
+9	−6,43%	−2,81%	498 kr	56,33 SEK	0,88%	−1,83%	
+Bahnhof B
+10	+1,32%	+0,94%	537 kr	54,10 SEK	3,76%	−0,74%	
+Genova Property Group
+10	+0,20%	+0,81%	500 kr	50,10 SEK	—	−0,20%	
+I-Tech
+10	+2,48%	−0,80%	496 kr	48,90 SEK	1,50%	+1,43%	
+Bokusgruppen
+10	−0,60%	−1,00%	494 kr	50,00 SEK	6,61%	−1,20%	
+Fastighetsbolaget Emilshus B
+12	−0,20%	−1,22%	584 kr	43,92 SEK	—	+10,89%	
+Attendo
+11	+2,43%	+0,52%	533 kr	48,64 SEK	2,07%	−0,38%	
+Arla Plast
+11	−1,84%	−0,62%	528 kr	50,00 SEK	2,59%	−4,00%	
+Sleep Cycle
+11	+3,79%	+0,65%	513 kr	40,82 SEK	2,81%	+14,16%	
+Truecaller B
+12	+3,56%	+1,68%	552 kr	39,50 SEK	0,88%	+16,35%	
+Eastnine
+12	−5,94%	−2,04%	551 kr	43,50 SEK	2,48%	+5,52%	
+Flerie
+12	+6,29%	+1,78%	537 kr	42,08 SEK	—	+6,42%	
+Karnell Group B
+11	+0,45%	−0,33%	492 kr	44,85 SEK	—	−0,33%	
+Concejo B
+11	−2,71%	−0,23%	473 kr	45,73 SEK	—	−5,96%	
+Viva Wine Group
+11	−3,84%	−2,52%	469 kr	43,70 SEK	3,55%	−2,52%	
+Nivika Fastigheter B
+12	−2,08%	−0,93%	509 kr	43,00 SEK	—	−1,40%	
+Sveafastigheter
+13	—	−1,70%	505 kr	39,50 SEK	—	−1,70%	
+Byggmax Group
+13	−2,47%	−0,51%	504 kr	40,92 SEK	1,28%	−5,33%	
+Berner Industrier B
+14	−3,96%	−2,93%	510 kr	37,07 SEK	2,40%	−1,81%	
+Promimic
+14	+5,26%	+1,41%	504 kr	35,50 SEK	—	+1,41%	
+Oneflow
+13	−8,88%	−2,45%	467 kr	38,38 SEK	—	−6,47%	
+Humana
+15	+3,19%	−1,80%	533 kr	33,60 SEK	—	+5,80%	
+HEBA B
+15	−6,06%	−2,57%	512 kr	34,20 SEK	1,49%	−0,29%	
+Telia Company
+15	−0,78%	−0,72%	479 kr	33,87 SEK	6,22%	−5,78%	
+Tingsvalvet Fastighets B
+16	−2,52%	+1,31%	496 kr	32,16 SEK	—	−3,60%	
+Railcare Group
+17	−0,65%	−0,96%	524 kr	30,88 SEK	2,25%	−0,27%	
+Norva24 Group
+17	+0,50%	−3,37%	512 kr	29,88 SEK	—	+0,73%	
+Fortinova Fastigheter ser. B
+17	−1,66%	−1,98%	505 kr	30,88 SEK	—	−3,83%	
+Qliro
+18	+3,86%	+6,47%	533 kr	24,00 SEK	—	+23,33%	
+Embracer Group B
+17	−2,24%	−2,71%	482 kr	25,70 SEK	—	+10,35%	
+ITAB Shop Concept
+20	−6,69%	0,00%	558 kr	25,75 SEK	2,69%	+8,35%	
+Besqab
+18	−4,38%	−2,60%	472 kr	27,94 SEK	—	−6,24%	
+Cheffelo
+19	+3,56%	+3,15%	498 kr	26,58 SEK	7,01%	−1,43%	
+Intellego Technologies
+19	−2,06%	−2,61%	496 kr	27,16 SEK	—	−3,90%	
+Cloetta B
+21	−0,24%	−0,55%	529 kr	24,24 SEK	3,95%	+3,89%	
+Brinova Fastigheter B
+21	−0,40%	−1,57%	525 kr	24,86 SEK	—	+0,57%	
+K-Fast Holding B
+22	−1,66%	−3,26%	523 kr	23,41 SEK	—	+1,46%	
+Softronic B
+22	+5,05%	−0,43%	504 kr	23,36 SEK	5,87%	−1,98%	
+KlaraBo Sverige B
+25	−7,48%	−3,13%	541 kr	20,36 SEK	—	+6,34%	
+Netel Holding
+24	+1,44%	−3,64%	509 kr	21,00 SEK	—	+0,95%	
+Annehem Fastigheter B
+26	−1,84%	−1,06%	485 kr	19,69 SEK	—	−5,29%	
+Cavotec
+27	−0,28%	−0,56%	482 kr	19,00 SEK	—	−6,05%	
+ByggPartner Gruppen
+28	−3,30%	+0,57%	493 kr	17,82 SEK	—	−1,24%	
+Logistea B
+29	−3,64%	−4,19%	491 kr	17,59 SEK	—	−3,67%	
+Acast
+33	+3,00%	−4,04%	510 kr	15,33 SEK	—	+0,76%	
+Flat Capital B
+33	+5,15%	−4,55%	485 kr	14,88 SEK	—	−1,20%	
+CodeMill
+34	−2,84%	−2,84%	466 kr	14,41 SEK	—	−4,94%	
+Unlimited Travel Group
+37	+0,39%	−2,63%	479 kr	13,30 SEK	2,63%	−2,63%	
+Stenhus Fastigheter i Norden
+37	−6,51%	−2,52%	457 kr	13,54 SEK	—	−8,72%	
+Arion Banki SDB
+43	−0,83%	+0,85%	512 kr	11,77 SEK	5,86%	+1,13%	
+Projektengagemang Sweden B
+43	+2,24%	+0,44%	490 kr	11,53 SEK	—	−1,17%	
+Advenica AB
+43	−0,88%	−2,60%	484 kr	11,67 SEK	—	−3,64%	
+Moment Group
+45	+1,90%	−6,52%	484 kr	11,22 SEK	—	−4,21%	
+Polygiene Group
+47	+0,47%	+2,38%	505 kr	10,87 SEK	—	−1,13%	
+Acrinova B
+52	−3,48%	−0,84%	490 kr	9,81 SEK	3,16%	−3,95%	
+Vestum
+51	−1,60%	−1,18%	472 kr	9,92 SEK	—	−6,77%	
+Flexion Mobile
+57	−3,63%	−0,70%	485 kr	8,84 SEK	—	−3,87%	
+NanoCap Group B
+64	−2,74%	+0,26%	499 kr	7,78 SEK	—	+0,26%	
+Net Insight B
+72	+2,05%	−1,84%	538 kr	7,00 SEK	—	+6,71%	
+Eltel
+70	+1,40%	+0,28%	508 kr	7,21 SEK	—	+0,63%	
+BeammWave B
+80	+27,10%	+2,26%	544 kr	6,11 SEK	—	+11,25%	
+Seafire
+80	+1,97%	+2,31%	496 kr	6,25 SEK	—	−0,80%	
+Samhällsbyggnadsbo. i Norden B
+64	−15,81%	−2,11%	389 kr	6,60 SEK	—	−7,92%	
+Actic Group
+80	+4,48%	0,00%	485 kr	6,21 SEK	—	−2,45%	
+Totalt värde		−0,70%	−0,88%	89 343 kr		2,36%	+1,95%	
 Fördelning
 
 Aktier
-96,26%
+91,91%
 
 Pengar
-3,74%
+8,09%
 Utdelning
 Totalt
-2 939 kr
-Kommande 216 kr
+2 941 kr
+Kommande 217 kr
 Utbetalda 2 724 kr
 Avancerade nyckeltal
 
 Sharpekvot 12 mån
-1,31
+1,32
 
 Standardavvikelse 12 mån
-11,64%
+11,69%
 
 Årsavkastning (CAGR)
-−7,96%
+−7,90%
 Om att investera i värdepapper
 
 Tänk på att det kan svänga! Att spara i fonder, aktier och andra värdepapper har över tid varit ett bra sätt att få pengar att växa, men hur det går i framtiden vet ju ingen. Det kan gå både upp och ner så det är alltså inte säkert att du får tillbaka pengarna du satte in från början.

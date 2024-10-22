@@ -11,12 +11,12 @@ using System.Windows.Forms;
 
 namespace StocksMonitor
 {
-    public partial class StockFilterForm : Form
+    public partial class SimulationsForm : Form
     {
         private string[] columns = { "Name", "Interested", "Hidden", "Price", "MA200"};
         public Stock stock;
 
-        public StockFilterForm(Stock stock)
+        public SimulationsForm(Stock stock)
         {
             this.stock = stock;
             InitializeComponent();
