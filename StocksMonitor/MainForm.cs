@@ -33,9 +33,17 @@ namespace StocksMonitor
         {
             InitializeComponent();
             BuildMainMenu();
+
+            Ma200limit.Text = "-2";
+            Ma200Highlimit.Text = "35";
+            overProfit_textbox.Text = "20";
+            refillTextbox.Text = "10";
+
+
+
 #if DEBUG
             this.Text = "StockMonitor debug";
-            dataContainer = new StockDataContainer(dataGrid, store);
+            dataContainer = new DataContainer(dataGrid, store);
             dataContainer.init();
 
             // TODO, react for changes
@@ -65,11 +73,6 @@ namespace StocksMonitor
 
 #endif
 
-            Ma200limit.Text = "-2";
-            Ma200Highlimit.Text = "35";
-            overProfit_textbox.Text = "20";
-            refillTextbox.Text = "10";
-            
             StockMonitorLogger.SetOutput(consoleOutput);
             timer1000.Enabled = true;
 
