@@ -182,6 +182,7 @@ namespace StocksMonitor.src
             overProfitWarning = 0;
             refillWarning = 0;
 
+
             foreach (var stock in store.stocks)
             {
                 // Check filters, skip if
