@@ -57,6 +57,7 @@ namespace StocksMonitor
             this.Text = "StockMonitor simulations";
             WarningsGroupBox.Visible = false;
             StockFiltersGroupBox.Visible = false;
+            dataContainer = new DataContainer(dataGrid, store);
 
 #else
             this.Text = "StockMonitor " + "RELEASE ";
@@ -175,7 +176,9 @@ namespace StocksMonitor
             {
                 startup = false;
                 // Read Data from database at startup 
-                await store.ReadFromDB();
+                
+               //TODO, temporärt borta, eftersom jag inte har db
+               // await store.ReadFromDB();
             }
 
             timeLabel.Text = $"Time: {StockMonitorLogger.GetTimeString()}";
@@ -190,13 +193,18 @@ namespace StocksMonitor
         {
             StockMonitorLogger.WriteMsg("Refreshing data grid");
 
+#if SIMULATIONS
+            dataContainer.UpdateData();
+#else
             dataContainer.UpdateData(
                 showWarnings_checkbox.Checked, 
                 hiddenCheckBox.Checked,
                 wantedCheckbox.Checked,
                 intrestedCheckBox.Checked,
                 ownedCheckBox.Checked);
-          
+
+#endif
+            // TODO; möjlighet att välja prcentuell utveckling i graph. bra för jämförelser när listor har så olika priser, också gällande t.ex. index jämf
             UpdateInfotexts();
             StockMonitorLogger.WriteMsg("Refreshing data grid DONE");
         }
