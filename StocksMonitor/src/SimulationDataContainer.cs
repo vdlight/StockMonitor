@@ -40,6 +40,12 @@ namespace StocksMonitor.src
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
+                Name = "1 day %",
+                HeaderText = "1 day %",
+                ValueType = typeof(decimal)
+            });
+            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
+            {
                 Name = "1 week %",
                 HeaderText = "1 week %",
                 ValueType = typeof(decimal)
@@ -58,14 +64,26 @@ namespace StocksMonitor.src
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "Value ",
-                HeaderText = "Value ",
+                Name = "Investment",
+                HeaderText = "Investment ",
                 ValueType = typeof(decimal)
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "Development %",
-                HeaderText = "Development %",
+                Name = "Value",
+                HeaderText = "Value",
+                ValueType = typeof(decimal)
+            });
+            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Wallet",
+                HeaderText = "Wallet",
+                ValueType = typeof(decimal)
+            });
+            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Tot development %",
+                HeaderText = "Tot development %",
                 ValueType = typeof(decimal)
             });
 
@@ -91,109 +109,214 @@ namespace StocksMonitor.src
         public void UpdateData()
         {
             dataGrid.Rows.Clear(); // Clear existing rows
-            // TODO, backup av simulerings / test DB, kan jag lägga upp på git, för att få ut på andra datorer. MAster bara från hemma
-            // TODOD, i ett fall så kan det vara att man ska analysera eget, dvs följa owned och räkna ut avkastning
-            // men i normala fall, så sker simuleringarna bara mot aktiedata, och egan actions
-            // tmp
-            store.stocks.Clear();
+            
 
-            store.stocks.Add(new Stock()
-            {
-                Name = "Saab",
-                Price = 200,
-                PurPrice = 180,
-                List = "Large Cap Stockholm",
-            });
-            store.stocks[0].History.Add(new()
-            {
-                Date = DateTime.Now.Date.AddDays(-2).Date,
-                MA200 = 0.6m,
-                Price = 180,
-            });
-            store.stocks[0].History.Add(new()
-            {
-                Date = DateTime.Now.Date,
-                MA200 = 5m,
-                Price = 200,
-            });
+            var simu1 = new Simulation(store.stocks, new Strat_BuyAndHold_NoMA());
+            simu1.Run();
+            AddSimulationToDataGrid(simu1);
 
-            var simu1 = new Simulation();
-            simu1.Run(store.stocks);
-            simu1.CalculateSimulation();
+            var sim2 = new Simulation(store.stocks, new Strat_BuyWithinMA15_AndAdjust());
+            sim2.Run();
+            AddSimulationToDataGrid(simu1);
+
+
+        }
+        public void AddSimulationToDataGrid(Simulation sim)
+        {
+            DataGridViewRow row = new DataGridViewRow();
+            row.CreateCells(dataGrid,
+                sim.name,
+                sim.oneDay,
+                sim.oneWeek,
+                sim.oneMonth,
+                sim.oneYear,
+                sim.Investment,
+                sim.Value,
+                sim.Wallet,
+                sim.TotDevelopment
+                );
+
+            dataGrid.Rows.Add(row);
+        }
+    }
+    public class Portfolio
+    {
+        decimal wallet;
+        public decimal value;
+        public decimal investment;
+        public DateTime timestamp;
+
+
+        public Portfolio(DateTime date, decimal wallet, decimal investment, decimal value)
+        {
+            this.timestamp = date;
+            this.wallet = wallet;
+            this.investment = investment;
+            this.value = value;
         }
     }
 
     public class Simulation
     {
-        const decimal originalInvestment = 250m;
+        const decimal originalInvestment = 100000;
+        const decimal investmentTarget = 500;
+
         List<Stock> simulatorStocks = [];
-        decimal wallet = originalInvestment;
-
-        private class Portfolio
+        public string name { get; private set; }
+        public decimal oneDay { get; private set; } = 0;
+        public decimal oneWeek { get; private set; } = 0;
+        public decimal oneMonth { get; private set; } = 0;
+        public decimal oneYear { get; private set; } = 0;
+        public decimal Investment { get; private set; } = 0;
+        public decimal Value { get; private set; } = 0;
+        public decimal Wallet { get; private set; } = 0;
+        public decimal TotDevelopment { get; private set; } = 0;
+    
+        private void AddToWallet(decimal value)
         {
-            decimal wallet;
-            decimal value;
-            DateTime timestamp;
-
-            public Portfolio (DateTime date)
-            {
-                timestamp = date;
-            }
-        }
-        List<Portfolio> portfolioHistory = [];
-
-        // strategies
-        public void Run(List<Stock> stocks)
+            Wallet += value;
+            Investment += value;
+        } 
+        public Simulation(List<Stock> stocks, Strategy strategy)
         {
             simulatorStocks.AddRange(stocks);
-            // TODO, find out history stamps
-            // skriva owned cnt i stocklistan, per historik, för att få koll på utvekcling, väldigt lik vanliga procentuella uträkningen också
-            var oldestTimestamp = DateTime.Now.AddDays(-2).Date;
+            name = "TEST";
+            AddToWallet(originalInvestment);
+            this.strategy = strategy;
+        }
 
-            // latest hisory is the same as current, dont duplicate
+        public Strategy strategy;
+        public List<Portfolio> portfolioHistory = [];
 
-            while (oldestTimestamp != DateTime.Now.AddDays(1).Date)
+        private void ClearOldData()
+        {
+            foreach (var stock in simulatorStocks)
             {
-                portfolioHistory.Add(new(oldestTimestamp));
-
-                foreach (var stock in stocks)
+                stock.OwnedCnt = 0;
+                foreach (var history in stock.History)
                 {
-                    // kan skapa upp unika histrik objekt
-                    // sedan lägga upp plånbok och investeringar där per historik
-                    // kanske iterera från bak
-
-                    // TODOD, få till ett val där man kan välja om man har db eller inte. För att kunna läsa upp sparade aktiedata från csv istället, där inte tillgång till db finns
-
-                    var h = stock.History.FirstOrDefault(h => h.Date == oldestTimestamp);
-
-                    if (h != null)
-                    {
-                        if(h.Price < wallet)
-                        {
-                            wallet-= h.Price; 
-                            h.OwnedCnt++;
-                        }
-                    }
-
-                }            
-                oldestTimestamp = DateTime.Now.AddDays(+1).Date;
-            }
-            // copy latest history to current status
-            foreach(var stock in simulatorStocks)
-            {
-                stock.OwnedCnt = stock.History.First().OwnedCnt;
+                    history.OwnedCnt = 0;
+                }
             }
         }
 
-        public decimal CalculateSimulation()
+        // strategies
+        public void Run()
         {
-            decimal value = wallet;
-            foreach(var stock in simulatorStocks)
+            // TODO skriva owned cnt i stocklistan, per historik, för att få koll på utvekcling, väldigt lik vanliga procentuella uträkningen också
+
+            // latest hisory is the same as current, dont duplicate
+            var oldestTimeStamp = simulatorStocks.SelectMany(s => s.History).OrderBy(h => h.Date).FirstOrDefault();
+            ClearOldData();
+
+            if (oldestTimeStamp == null)
             {
-                value += (stock.OwnedCnt * stock.Price);
+                StockMonitorLogger.WriteMsg("ABORT, Could not find oldest timestamp, ABORT");
+                return;
+            }
+            // History när läst från db går från äldsta i 0 --> 27/9, till nyaste sist 14 --> 22/10
+            var simulationDay = oldestTimeStamp.Date;
+
+            while (simulationDay != DateTime.Now.AddDays(1).Date)
+            {
+                foreach (var stock in simulatorStocks)
+                {
+                    var h = stock.History.FirstOrDefault(h => h.Date == simulationDay);
+                    // TODO, datagrid och graf, kan yllas anting med simulator data eller utevklingsdata. Utvecklingsdata kan komma från simulering eller inte.
+                    
+                    if (h != null)
+                    {
+                        // copy latest status, to have as base for decision
+                        h.OwnedCnt = stock.OwnedCnt;
+
+                        // calculate actions
+                        var datapointResult = strategy.DetermineAction(dataPoint: h, wallet: Wallet);
+                        switch (datapointResult.action)
+                        {
+                            case StratAction.BUY: 
+                                Wallet -= datapointResult.value;
+                                h.OwnedCnt += datapointResult.adjustmentCount;
+                                break;
+                            case StratAction.SELL:
+                                // fall-through
+                            case StratAction.ADJ_DOWN:
+                                
+                                break;
+                            case StratAction.NONE:
+                                break;
+                        }
+
+                        // update stock status, from possible actions
+                        stock.OwnedCnt = h.OwnedCnt; 
+                    }
+                }
+                var allStocksHistoryDay = simulatorStocks.SelectMany(s=> s.History).Where(h=> h.Date == simulationDay);
+
+                if (allStocksHistoryDay == null)
+                {
+                    StockMonitorLogger.WriteMsg("WARNING, could not find any history data for date " + simulationDay);
+                } 
+                else
+                {
+                    portfolioHistory.Add(
+                        new Portfolio(
+                            date: simulationDay,
+                            wallet: Wallet,
+                            value: allStocksHistoryDay.Sum(h => h.OwnedCnt * h.Price),
+                            investment: Investment
+                        )); 
+                }
+                simulationDay = simulationDay.AddDays(+1);
+            }
+            
+            
+            Value = portfolioHistory.First().value;
+            CalculateSimulationResult();
+        }
+
+        private decimal SumPortfolioDay(Portfolio day)
+        {
+            var ownedStock = simulatorStocks.Where(s => s.OwnedCnt > 0);
+            var historyDays = ownedStock.SelectMany(s => s.History).Where(h => h.Date == day.timestamp);
+
+            if (historyDays == null)
+            {
+                StockMonitorLogger.WriteMsg("warning, could not find history day when sum of day is calculated");
+                return 0;
             }
 
-            return value;
+            // TODO should wallet be in here
+            return historyDays.Sum(h => h.OwnedCnt * h.Price) + Wallet;
+        }
+
+        public void CalculateSimulationResult()
+        {
+            portfolioHistory.Reverse();
+
+            var firstDay = portfolioHistory.First();
+
+            foreach(var history in portfolioHistory)
+            {
+                var timespan = history.timestamp - firstDay.timestamp;
+
+                if (oneDay == 0 && timespan.Days >= 1)
+                {
+                    oneDay = (SumPortfolioDay(history) / history.investment) * 100;
+                }
+                else if (oneWeek == 0 && timespan.Days >= 7)
+                {
+                    oneWeek = (SumPortfolioDay(history) / history.investment) * 100;
+                }
+                else if (oneMonth == 0 && timespan.Days > 31)
+                {
+                    oneMonth = (SumPortfolioDay(history) / history.investment) * 100;
+                }
+                else if (oneYear == 0 && timespan.Days >= 365)
+                {
+                    oneYear = (SumPortfolioDay(history) / history.investment) * 100;
+                }
+            }
+            TotDevelopment = ((Wallet + Value) / Investment) * 100;
         }
     }
 }

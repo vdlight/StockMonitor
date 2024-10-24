@@ -39,8 +39,6 @@ namespace StocksMonitor
             overProfit_textbox.Text = "20";
             refillTextbox.Text = "10";
 
-
-
 #if DEBUG
             this.Text = "StockMonitor debug";
             dataContainer = new DataContainer(dataGrid, store);
@@ -58,7 +56,7 @@ namespace StocksMonitor
             WarningsGroupBox.Visible = false;
             StockFiltersGroupBox.Visible = false;
             dataContainer = new DataContainer(dataGrid, store);
-
+            dataContainer.init();
 #else
             this.Text = "StockMonitor " + "RELEASE ";
             dataContainer = new DataContainer(dataGrid, store);
@@ -119,12 +117,15 @@ namespace StocksMonitor
 #if !DEBUG
             testMenu.Enabled = false;
 #endif
+
+#if SIMULATIONS 
+            parseData.Enabled = false;
+#endif
         }
 
         private void ParseData_Click(object? sender, EventArgs e)
         {
             if (sender == null)
-
             {
                 return;
             }
@@ -177,8 +178,8 @@ namespace StocksMonitor
                 startup = false;
                 // Read Data from database at startup 
                 
-               //TODO, temporärt borta, eftersom jag inte har db
-               // await store.ReadFromDB();
+               
+                await store.ReadFromDB();
             }
 
             timeLabel.Text = $"Time: {StockMonitorLogger.GetTimeString()}";

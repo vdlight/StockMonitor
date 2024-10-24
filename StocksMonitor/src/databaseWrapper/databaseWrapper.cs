@@ -20,7 +20,7 @@ namespace StocksMonitor.src.databaseWrapper
 #if DEBUG
         private string connString = "Server=JENSA;Database=Test;Integrated Security=True;TrustServerCertificate=True;";
 #elif SIMULATIONS
-        private string connString = "Server=JENSA;Database=Simulations;Integrated Security=True;TrustServerCertificate=True;";
+        private string connString = "Server=NEX-5CD350FDG5;Database=Simulations;Integrated Security=True;TrustServerCertificate=True;";
 #else
         private string connString = "Server=JENSA;Database=master;Integrated Security=True;TrustServerCertificate=True;";
 #endif
