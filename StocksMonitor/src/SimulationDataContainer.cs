@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+﻿using GrapeCity.DataVisualization.Chart;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using StocksMonitor.src.databaseWrapper;
 using StocksMonitor.src.dataStore;
 using System;
@@ -40,50 +42,58 @@ namespace StocksMonitor.src
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "1 day %",
-                HeaderText = "1 day %",
+                Name = "d %",
+                HeaderText = "d %",
+                ToolTipText = "1 day",
                 ValueType = typeof(decimal)
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "1 week %",
-                HeaderText = "1 week %",
+                Name = "w %",
+                HeaderText = "w %",
+                ToolTipText = "1 week",
                 ValueType = typeof(decimal)
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "1 month %",
-                HeaderText = "1 Month %",
+                Name = "m %",
+                HeaderText = "m %",
+                ToolTipText = "1 month",
                 ValueType = typeof(decimal)
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "1 Year %",
-                HeaderText = "1 year",
+                Name = "y %",
+                HeaderText = " y %",
+                ToolTipText = "1 year",
                 ValueType = typeof(decimal)
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "Investment",
-                HeaderText = "Investment ",
+                Name = "Inv",
+                HeaderText = "Inv",
+                ToolTipText = "Investment",
                 ValueType = typeof(decimal)
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "Value",
-                HeaderText = "Value",
+                Name = "Val",
+                HeaderText = "Val",
+                ToolTipText = "Value",
                 ValueType = typeof(decimal)
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "Wallet",
-                HeaderText = "Wallet",
+                Name = "Wall",
+                HeaderText = "Wall",
+                ToolTipText = "Wallet",
                 ValueType = typeof(decimal)
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "Tot development %",
-                HeaderText = "Tot development %",
+                Name = "Tot %",
+                HeaderText = "Tot %",
+                ToolTipText = "Total development",
                 ValueType = typeof(decimal)
             });
 
@@ -93,6 +103,7 @@ namespace StocksMonitor.src
 
             for (int i = 0; i < dataGrid.Columns.Count; i++)
             {
+                dataGrid.Columns[i].DefaultCellStyle.Format = "N2";  // Max two decimals
                 if (i == 0)
                 {
                     // name shall be leftaligned, rest, center
@@ -101,6 +112,7 @@ namespace StocksMonitor.src
                 }
                 dataGrid.Columns[i].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             }
+            dataGrid.Columns[0].MinimumWidth = 250;
         }
 
         public void UpdateData(bool warnings, bool hidden, bool wanted, bool intrested, bool owned)
@@ -109,21 +121,75 @@ namespace StocksMonitor.src
         public void UpdateData()
         {
             dataGrid.Rows.Clear(); // Clear existing rows
-            
 
-            var simu1 = new Simulation(store.stocks, new Strat_BuyAndHold_NoMA());
-            simu1.Run();
-            AddSimulationToDataGrid(simu1);
+            Stack<string> markets = new ();
+            markets.Push("Large Cap Stockholm");
+            markets.Push("Mid Cap Stockholm");
+            markets.Push("Small Cap Stockholm");
+            markets.Push("First North Stockholm");
 
-            var sim2 = new Simulation(store.stocks, new Strat_BuyWithinMA15_AndAdjust());
-            sim2.Run();
-            AddSimulationToDataGrid(simu1);
+            List<Simulation> simulations =
+            [
+                new Simulation(store.stocks.Where(s => s.List != "First North Stockholm").ToList(), new StockDevelopmentSimulation(investmentTarget, 20, "Stockholm stock market"), noWallet: true),
+                new Simulation(store.stocks, new StockDevelopmentSimulation(investmentTarget, 20, "Stockholm including First north"), noWallet: true),
+                new Simulation(store.stocks.Where(s => s.List == markets.Peek()).ToList(), new StockDevelopmentSimulation(investmentTarget, 20, markets.Pop()), noWallet: true),
+                new Simulation(store.stocks.Where(s => s.List == markets.Peek()).ToList(), new StockDevelopmentSimulation(investmentTarget, 20, markets.Pop()),noWallet: true),
+                new Simulation(store.stocks.Where(s => s.List == markets.Peek()).ToList(), new StockDevelopmentSimulation(investmentTarget, 20, markets.Pop()), noWallet: true),
+                new Simulation(store.stocks.Where(s => s.List == markets.Peek()).ToList(), new StockDevelopmentSimulation(investmentTarget, 20, markets.Pop()), noWallet: true),
 
+
+                
+                new Simulation(store.stocks, new Strat_BuyAndHold_NoMA(investmentTarget, 20)),
+                new Simulation(store.stocks, new Strat_BuyWithinMA0And15_AndHold(investmentTarget, 20))
+            ];
+
+
+            foreach(var sim in simulations)
+            {
+                sim.Run();
+                AddSimulationToDataGrid(sim);
+            }
+
+
+            var stocks = store.stocks.Where(s => s.List == "Large Cap Stockholm")
+                .Where(h => h != null);
+
+            var FN_base = stocks.Select(s => s.History.First()).Sum(s => s.Price);
+            var FN_End = stocks.Select(s => s.History.Last()).Sum(s => s.Price);
+
+            var diff = FN_End - FN_base;
+
+            StockMonitorLogger.WriteMsg("Large cap, base: " + FN_base);
+            StockMonitorLogger.WriteMsg("Large cap, base / cnt: " + FN_base / stocks.Count());
+            StockMonitorLogger.WriteMsg("Large cap, End : " + FN_End);
+            StockMonitorLogger.WriteMsg("Large cap, diff: " + diff);
+            StockMonitorLogger.WriteMsg("Large cap, diff %: " + diff/ FN_base *100);
+
+            var Stock_base = stocks.FirstOrDefault()?.History.FirstOrDefault()?.Price;
+            var Stock_end = stocks.FirstOrDefault()?.History.LastOrDefault()?.Price;
+
+
+            var stock_diff = Stock_end - Stock_base;
+
+            StockMonitorLogger.WriteMsg("First stock first " + stocks.FirstOrDefault()?.Name + " " + Stock_base);
+            StockMonitorLogger.WriteMsg("First stock last " + stocks.FirstOrDefault()?.Name + " " + + Stock_end);
+            StockMonitorLogger.WriteMsg("First stock, diff: " + stock_diff);
+            StockMonitorLogger.WriteMsg("First stock, diff %: " + stock_diff / Stock_base * 100);
+
+
+            // Print the results
+            StockMonitorLogger.WriteMsg("Base date: " + store.stocks[0].History.FirstOrDefault()?.Date);
+            StockMonitorLogger.WriteMsg("End date: " + store.stocks[0].History.LastOrDefault()?.Date);
 
         }
+
+
         public void AddSimulationToDataGrid(Simulation sim)
         {
             DataGridViewRow row = new DataGridViewRow();
+            
+            //var stockDevelopement = sim.strategy.GetType() == typeof(StockDevelopmentSimulation);
+
             row.CreateCells(dataGrid,
                 sim.name,
                 sim.oneDay,
@@ -158,7 +224,7 @@ namespace StocksMonitor.src
 
     public class Simulation
     {
-        const decimal originalInvestment = 100000;
+        readonly decimal originalInvestment = 100000;
         const decimal investmentTarget = 500;
 
         List<Stock> simulatorStocks = [];
@@ -177,12 +243,14 @@ namespace StocksMonitor.src
             Wallet += value;
             Investment += value;
         } 
-        public Simulation(List<Stock> stocks, Strategy strategy)
+        public Simulation(List<Stock> stocks, Strategy strategy, bool noWallet = false)
         {
             simulatorStocks.AddRange(stocks);
-            name = "TEST";
-            AddToWallet(originalInvestment);
+            if (!noWallet) {
+                AddToWallet(originalInvestment);
+            }
             this.strategy = strategy;
+            this.name = strategy.Name;
         }
 
         public Strategy strategy;
@@ -207,17 +275,18 @@ namespace StocksMonitor.src
 
             // latest hisory is the same as current, dont duplicate
             var oldestTimeStamp = simulatorStocks.SelectMany(s => s.History).OrderBy(h => h.Date).FirstOrDefault();
+            var newestTimeStamp = simulatorStocks.SelectMany(s => s.History).OrderBy(h => h.Date).LastOrDefault();
             ClearOldData();
 
-            if (oldestTimeStamp == null)
+            if (oldestTimeStamp == null || newestTimeStamp == null)
             {
-                StockMonitorLogger.WriteMsg("ABORT, Could not find oldest timestamp, ABORT");
+                StockMonitorLogger.WriteMsg("ABORT, Could not find timestamps, ABORT");
                 return;
             }
             // History när läst från db går från äldsta i 0 --> 27/9, till nyaste sist 14 --> 22/10
             var simulationDay = oldestTimeStamp.Date;
-
-            while (simulationDay != DateTime.Now.AddDays(1).Date)
+            
+            while (simulationDay != newestTimeStamp.Date.AddDays(1).Date)
             {
                 foreach (var stock in simulatorStocks)
                 {
@@ -240,7 +309,8 @@ namespace StocksMonitor.src
                             case StratAction.SELL:
                                 // fall-through
                             case StratAction.ADJ_DOWN:
-                                
+                                Wallet += datapointResult.value;
+                                h.OwnedCnt -= datapointResult.adjustmentCount;
                                 break;
                             case StratAction.NONE:
                                 break;
@@ -279,44 +349,53 @@ namespace StocksMonitor.src
             var ownedStock = simulatorStocks.Where(s => s.OwnedCnt > 0);
             var historyDays = ownedStock.SelectMany(s => s.History).Where(h => h.Date == day.timestamp);
 
-            if (historyDays == null)
+            if (! historyDays.Any())
             {
                 StockMonitorLogger.WriteMsg("warning, could not find history day when sum of day is calculated");
                 return 0;
             }
+            // TODO, be able to select start and stop date, not only have the endpoints 
 
             // TODO should wallet be in here
             return historyDays.Sum(h => h.OwnedCnt * h.Price) + Wallet;
         }
 
+        private decimal CalculateDevelopmentPercentage(Portfolio startPoint, decimal endValue)
+        {
+            var startValue = SumPortfolioDay(startPoint);
+            var diff = endValue - startValue;
+
+            return diff / startValue * 100;
+        }
         public void CalculateSimulationResult()
         {
             portfolioHistory.Reverse();
 
-            var firstDay = portfolioHistory.First();
+            var currentDay = portfolioHistory.First();
+            var currentValue = SumPortfolioDay(currentDay);
+            TotDevelopment = CalculateDevelopmentPercentage(portfolioHistory.LastOrDefault(), currentValue);
 
-            foreach(var history in portfolioHistory)
+            foreach (var history in portfolioHistory)
             {
-                var timespan = history.timestamp - firstDay.timestamp;
+                var timespan = currentDay.timestamp - history.timestamp;
 
-                if (oneDay == 0 && timespan.Days >= 1)
+                if (oneDay == 0 && timespan.TotalDays >= 1)
                 {
-                    oneDay = (SumPortfolioDay(history) / history.investment) * 100;
+                    oneDay = CalculateDevelopmentPercentage(history, currentValue);
                 }
-                else if (oneWeek == 0 && timespan.Days >= 7)
+                else if (oneWeek == 0 && timespan.TotalDays >= 7)
                 {
-                    oneWeek = (SumPortfolioDay(history) / history.investment) * 100;
+                    oneWeek = CalculateDevelopmentPercentage(history, currentValue);
                 }
-                else if (oneMonth == 0 && timespan.Days > 31)
+                else if (oneMonth == 0 && timespan.TotalDays > 31)
                 {
-                    oneMonth = (SumPortfolioDay(history) / history.investment) * 100;
+                    oneMonth = CalculateDevelopmentPercentage(history, currentValue);
                 }
-                else if (oneYear == 0 && timespan.Days >= 365)
+                else if (oneYear == 0 && timespan.TotalDays >= 365)
                 {
-                    oneYear = (SumPortfolioDay(history) / history.investment) * 100;
+                    oneYear = CalculateDevelopmentPercentage(history, currentValue);
                 }
             }
-            TotDevelopment = ((Wallet + Value) / Investment) * 100;
         }
     }
 }

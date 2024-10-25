@@ -363,7 +363,7 @@ namespace StocksMonitor
                 }
                 catch (Exception exception)
                 {
-                    StockMonitorLogger.WriteMsg("ERROR: " + exception.Message);
+                    StockMonitorLogger.WriteMsg("ERROR: datagrid_SelectionCHanged " + exception.Message);
                 }
             }
         }

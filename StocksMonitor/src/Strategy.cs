@@ -11,8 +11,8 @@ namespace StocksMonitor.src
 {
     public enum StratAction
     {
-        SELL, 
-        ADJ_DOWN, 
+        SELL,
+        ADJ_DOWN,
         BUY,
         NONE
     }
@@ -23,7 +23,7 @@ namespace StocksMonitor.src
         public int adjustmentCount;
         public decimal value;
 
-        public ActionData(StratAction action) 
+        public ActionData(StratAction action)
         {
             this.action = action;
         }
@@ -32,11 +32,13 @@ namespace StocksMonitor.src
     {
         readonly protected decimal investmentTarget;
         readonly decimal adjPercent;
+        public string Name;
 
-        public Strategy(decimal investmentTarget, decimal adjPercent)
+        public Strategy(decimal investmentTarget, decimal adjPercent, string name)
         {
             this.investmentTarget = investmentTarget;
             this.adjPercent = adjPercent;
+            this.Name = name;
         }
 
         public abstract ActionData DetermineAction(History dataPoint, decimal wallet);
@@ -44,21 +46,19 @@ namespace StocksMonitor.src
         {
             int buyCount = (int)((investmentTarget - (dataPoint.OwnedCnt * dataPoint.Price)) / dataPoint.Price);
             decimal cost = (dataPoint.Price * buyCount);
-            
+
             var walletAllows = cost > 0 && wallet >= cost;
 
-            return walletAllows? (buyCount, cost) : (0, 0);
+            return walletAllows ? (buyCount, cost) : (0, 0);
         }
     }
 
     public class Strat_BuyAndHold_NoMA : Strategy
     {
-        public const string Name = "Buy and hold no MA";
-
-        public Strat_BuyAndHold_NoMA(decimal investmentTarget, decimal adjPercentage)
-            : base(investmentTarget, adjPercentage)
+        public Strat_BuyAndHold_NoMA(decimal investmentTarget, decimal adjPercentage, string name = "Buy and hold no MA")
+            : base(investmentTarget, adjPercentage, name)
         {
-     
+
         }
 
         public override ActionData DetermineAction(History dataPoint, decimal wallet)
@@ -78,15 +78,14 @@ namespace StocksMonitor.src
                 }
             }
             return new ActionData(StratAction.NONE);
-        }    
+        }
     }
     public class Strat_BuyWithinMA0And15_AndHold : Strategy
     {
-        public const string Name = "Buy within MA200 0-15 and hold";
         private const decimal MA200_min = 0;
         private const decimal MA200_max = 15;
-        public Strat_BuyWithinMA0And15_AndHold(decimal investmentTarget, decimal adjPercentage)
-            : base(investmentTarget, adjPercentage)
+        public Strat_BuyWithinMA0And15_AndHold(decimal investmentTarget, decimal adjPercentage, string name = "Buy within MA200 0-15 and hold")
+            : base(investmentTarget, adjPercentage, name)
         {
 
         }
@@ -113,9 +112,40 @@ namespace StocksMonitor.src
     }
     public class Strat_BuyWithinMA0And15_AdjustDownToTarget : Strategy
     {
-        public const string Name = "Buy within MA200 0-15 and sell off to target";
-        public Strat_BuyWithinMA0And15_AdjustDownToTarget(decimal investmentTarget, decimal adjPercentage)
-          : base(investmentTarget, adjPercentage)
+        public Strat_BuyWithinMA0And15_AdjustDownToTarget(decimal investmentTarget, decimal adjPercentage, string name = "Buy within MA200 0-15 and sell off to target")
+          : base(investmentTarget, adjPercentage, name)
+        {
+            
+
+        }
+        public override ActionData DetermineAction(History dataPoint, decimal wallet)
+        {
+            /*    if (dataPoint.OwnedCnt == 0)
+                {
+                    var roomToBuy = investmentTarget >= dataPoint.Price;
+                    var walletAllows = wallet >= dataPoint.Price;
+                    var MA_Allows = dataPoint.MA200 >= 0 && dataPoint.MA200 <= 15;
+
+                    if (roomToBuy && walletAllows && MA_Allows)
+                    {
+                    }
+
+                    var currentValue = dataPoint.Price * dataPoint.OwnedCnt;
+                    var adjustmentValue = adjPercentage / 100 * investmentTarget;
+                    var roomToAdjust = investmentTarget - currentValue >=  dataPoint.Price;
+
+
+                    return
+            */
+
+            return new ActionData(StratAction.NONE);
+        }
+    }
+
+    public class StockDevelopmentSimulation : Strategy
+    {
+        public StockDevelopmentSimulation(decimal investmentTarget, decimal adjPercentage, string name = "All stocks comparison")
+        : base(investmentTarget, adjPercentage, name)
         {
 
         }
@@ -123,24 +153,14 @@ namespace StocksMonitor.src
         {
             if (dataPoint.OwnedCnt == 0)
             {
-                var roomToBuy = investmentTarget >= dataPoint.Price;
-                var walletAllows = wallet >= dataPoint.Price;
-                var MA_Allows = dataPoint.MA200 >= 0 && dataPoint.MA200 <= 15;
-                
-                if (roomToBuy && walletAllows && MA_Allows)
+                return new ActionData(StratAction.BUY)
                 {
-                    return StratAction.BUY;
-                }
-
-                var currentValue = dataPoint.Price * dataPoint.OwnedCnt;
-                var adjustmentValue = adjPercentage / 100 * investmentTarget;
-                var roomToAdjust = investmentTarget - currentValue >=  dataPoint.Price;
-
-
-                if ( 
-                    )
+                    adjustmentCount = 1,
+                    value = 0   
+                };
             }
-            return StratAction.NONE;
-        }
 
+            return new ActionData(StratAction.NONE);
+        }
     }
+}
