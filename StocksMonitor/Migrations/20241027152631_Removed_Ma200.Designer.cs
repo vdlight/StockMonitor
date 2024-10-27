@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StocksMonitor.src.databaseWrapper;
 
@@ -11,9 +12,11 @@ using StocksMonitor.src.databaseWrapper;
 namespace StocksMonitor.Migrations
 {
     [DbContext(typeof(StockDataContext))]
-    partial class StockDataContextModelSnapshot : ModelSnapshot
+    [Migration("20241027152631_Removed_Ma200")]
+    partial class Removed_Ma200
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,9 +35,6 @@ namespace StocksMonitor.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
-
-                    b.Property<decimal>("MA200")
-                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("OwnedCnt")
                         .HasColumnType("int");
@@ -67,9 +67,6 @@ namespace StocksMonitor.Migrations
                         .IsRequired()
                         .HasMaxLength(130)
                         .HasColumnType("nvarchar(130)");
-
-                    b.Property<decimal>("MA200")
-                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -26,20 +26,23 @@ namespace StocksMonitor.src.dataStore
             "Own",
         };
 
-        public async Task FetchDataFromAvanza()
+        public async Task FetchDataFromAvanza(DateTime date)
         {
             StockMonitorLogger.WriteMsg("Parse data from Avanza");
-            var parsedData = avanza.Run();
-
+            
+            // TODO: enable
+            
+            //var parsedData = avanza.Run();
+            /*
             // TODO, add more feasability checks
             if (parsedData != null && parsedData.Count > 10)
             {
-                await UpdateStoreWithNewStocks(parsedData);
+                await UpdateStoreWithNewStocks(parsedData, date);
             }
             else
             {
                 StockMonitorLogger.WriteMsg("TOOD ERROR");
-            }
+            }*/
         }
 
         private async Task CalculateHistorySums()
@@ -73,23 +76,23 @@ namespace StocksMonitor.src.dataStore
         {
             stocks = await storage.ReadData();
         }
-        private async Task UpdateStoreWithNewStocks(List<Stock> data)
+        public async Task UpdateStoreWithNewStocks(List<Stock> data, DateTime date)
         {
             StockMonitorLogger.WriteMsg("Udate store stocks");
             foreach (var entry in data)
             {
-                UpdateStock(entry);
+                UpdateStock(entry, date);
             }
-            await storage.WriteData(stocks);
+            await storage.WriteData(stocks, date);
         }
-        private void UpdateStock(Stock stock)
+        private void UpdateStock(Stock stock, DateTime date)
         {
             if(!stocks.Any(s => s.Name == stock.Name))
             {
                 // new stock
                 stock.History.Add(new ()
                 {
-                    Date = DateTime.Now.Date,
+                    Date = date,
                     MA200 = stock.MA200,
                     OwnedCnt = stock.OwnedCnt,
                     Price = stock.Price,    
@@ -107,9 +110,9 @@ namespace StocksMonitor.src.dataStore
                 existingStock.OwnedCnt = stock.OwnedCnt;
                 existingStock.List = stock.List;
                 
-                if(existingStock.History.Any(h => h.Date == DateTime.Now.Date))
+                if(existingStock.History.Any(h => h.Date == date))
                 {
-                    var existingHistory = existingStock.History.First(h => h.Date == DateTime.Now.Date);
+                    var existingHistory = existingStock.History.First(h => h.Date == date);
                     existingHistory.MA200 = stock.MA200;
                     existingHistory.OwnedCnt = stock.OwnedCnt;  
                     existingHistory.Price = stock.Price;
@@ -121,7 +124,7 @@ namespace StocksMonitor.src.dataStore
                         MA200 = stock.MA200,
                         OwnedCnt = stock.OwnedCnt,
                         Price = stock.Price,
-                        Date = DateTime.Now.Date
+                        Date = date
                     });
                 }
             }
@@ -156,7 +159,7 @@ namespace StocksMonitor.src.dataStore
                 new() {Name="SBB", MA200=5.2m, Price=99m, PurPrice=43, OwnedCnt=22},
             };
 
-            await UpdateStoreWithNewStocks(testInputStocks);
+         //   await UpdateStoreWithNewStocks(testInputStocks);
             await compareInputAndOutputData(testInputStocks);
 
             int daysOffset = -5;
@@ -181,7 +184,7 @@ namespace StocksMonitor.src.dataStore
             await storage.UpdateHistoryDateFromTo(today.ToString(), pushDay.ToString());
             daysOffset++;
 
-            await UpdateStoreWithNewStocks(testInputStocks);
+      //      await UpdateStoreWithNewStocks(testInputStocks);
             await compareInputAndOutputData(testInputStocks);
 
             pushDay = today.AddDays(daysOffset++);
@@ -214,7 +217,7 @@ namespace StocksMonitor.src.dataStore
                 OwnedCnt = 2
             });
 
-            await UpdateStoreWithNewStocks(testInputStocks);
+           // await //UpdateStoreWithNewStocks(testInputStocks);
 
             await compareInputAndOutputData(testInputStocks);
 

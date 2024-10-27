@@ -1,4 +1,5 @@
-﻿using StocksMonitor.Migrations;
+﻿using Microsoft.Identity.Client;
+using StocksMonitor.Migrations;
 using StocksMonitor.src.databaseWrapper;
 using System;
 using System.Collections.Generic;
@@ -91,25 +92,51 @@ namespace StocksMonitor.src
         }
         public override ActionData DetermineAction(History dataPoint, decimal wallet)
         {
-            if (dataPoint.OwnedCnt == 0)
-            {
-                if (dataPoint.MA200 >= MA200_min && dataPoint.MA200 <= MA200_max)
-                {
-                    var (count, price) = CalculateCost(dataPoint, wallet);
-
-                    if (count > 0)
-                    {
-                        return new ActionData(StratAction.BUY)
-                        {
-                            adjustmentCount = count,
-                            value = price
-                        };
-                    }
-                }
-            }
+            
             return new ActionData(StratAction.NONE);
         }
     }
+
+    public class sim
+    {
+
+
+
+
+    }
+
+    public enum TMarket
+    {
+        All,
+        AllExceptFirstNorth,
+        LargeCap,
+        MidCap,
+        SmallCap,
+        FirstNorth,
+    }
+
+    public enum TRule
+    {
+        BelowMa,
+        AboveMa,
+        DividentAbove,
+        PeAbove,
+        Index,
+        None,
+        Never
+    }
+    public class Rule
+    {
+        public readonly TRule rule;
+        public readonly decimal value;
+
+        public Rule( TRule rule, decimal value = 0) {  this.rule = rule; this.value = value; }  
+
+    }
+
+
+
+
     public class Strat_BuyWithinMA0And15_AdjustDownToTarget : Strategy
     {
         public Strat_BuyWithinMA0And15_AdjustDownToTarget(decimal investmentTarget, decimal adjPercentage, string name = "Buy within MA200 0-15 and sell off to target")

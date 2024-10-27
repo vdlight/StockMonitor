@@ -14,6 +14,11 @@ using StocksMonitor.src;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Windows.Forms.DataVisualization.Charting;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using Borsdata.Api.Dal.Model;
+using StocksMonitor.src.Borsdata;
+using GrapeCity.DataVisualization.Chart;
+using System.Net.WebSockets;
+using StocksMonitor.src.avanzaParser;
 
 namespace StocksMonitor
 {
@@ -123,33 +128,123 @@ namespace StocksMonitor
 #endif
         }
 
+        // TODO, spara data bara när det är efter kl 8 UTC, (7 swe) för då ska senaste information finnas från API
         private void ParseData_Click(object? sender, EventArgs e)
         {
             if (sender == null)
             {
                 return;
             }
+            
+            var bd = new BorsData();
 
-            var result = MessageBox.Show("Do you want to fetch avanza data and write to DB", "Prod DB overwrite", MessageBoxButtons.OKCancel);
+            bd.Run();
 
+            store.stocks = new List<Stock>();
+
+            bool setDate = true;
+            DateTime date = default(DateTime);
+
+            foreach (var inst in bd._instRespV1.Instruments)
+            {
+                // TODO, tittar på 0 här, för känns som den skickar vidare default värden, vilken  den inte ska
+                if (inst != null && inst.InsId.HasValue && inst.InsId != 0)
+                {
+                    var id = inst.InsId.Value;
+
+                    if (!bd._instrumentPrices.ContainsKey(id))
+                    {
+                        // im not fetching all prices, for instruments not intresting, so just skip if not coiintains
+                        continue;
+                    }
+
+                    // want current price, so last
+                    // and also the whole list has to be reversed, so i can sum up for MA calculation
+                    var latestPriceFirst = bd._instrumentPrices[id];
+                    latestPriceFirst.Reverse();
+
+                    var latestValue = latestPriceFirst.First();
+
+                    if (latestValue != null)
+                    {
+                        decimal ma200Percent = 0;
+                        const int selectedMa = 200;
+                        // D är datum i listan av priser                        
+                        if (bd._instrumentPrices[id].Count > selectedMa)
+                        {
+                            var sum = bd._instrumentPrices[id].Take(selectedMa).Sum(s => s.C);
+                            var ma200 = sum / selectedMa;
+                            ma200Percent = Math.Round(
+                                (decimal)(latestValue.C - ma200) / 
+                                (decimal)(ma200 * 100), 
+                                2);
+
+                            if (setDate)
+                            {
+                                setDate = false;
+                                date = DateTime.Parse(latestValue.D);
+
+                            }
+
+                            // TODO, list needs to be fixed below
+
+                            store.stocks.Add(
+                                new Stock()
+                                {
+                                    Name = inst.Name,
+                                    Price = (decimal)latestValue.C,
+                                    MA200 = ma200Percent,
+                                    List = "bd._marketsId[inst.MarketId]."
+                                }
+                            );
+                        }
+                    }
+                }
+            }
+
+            Task.Run(async () => await store.UpdateStoreWithNewStocks(store.stocks, date));
+
+
+            /*
+            DialogResult result;
+            var updatedDate = DateTime.Now.Date.Date;
+
+            if (updatedDate.DayOfWeek == DayOfWeek.Sunday || updatedDate.DayOfWeek == DayOfWeek.Saturday)
+            {
+                result = MessageBox.Show("It is weekend! Adjusting date to friday and overwrite if you continue", "Weekend alert", MessageBoxButtons.OKCancel);
+                if (result == DialogResult.Cancel) {
+                    StockMonitorLogger.WriteMsg("Skipping parsing data and writing to DB, due to weekend");
+                    return;
+                }
+                
+                while(updatedDate.DayOfWeek > DayOfWeek.Friday)
+                {
+                    updatedDate = updatedDate.AddDays(-1);
+                }
+            }
+
+            result = MessageBox.Show("Do you want to fetch avanza data and write to DB", "Prod DB overwrite", MessageBoxButtons.OKCancel);
             if (result == DialogResult.Cancel)
             {
                 StockMonitorLogger.WriteMsg("Skipping parsing data and writing to DB");
                 return;
             }
 
+
+
+
+
+
             // this task is async, but dont bother wait here in gui thread, since not dependent on all data
             Task.Run(async () => await
-                    store.FetchDataFromAvanza()
-            );
+                    store.FetchDataFromAvanza(updatedDate)
+            );*/
 
         }
         private void SimulationRun_Click(object? sender, EventArgs e)
         {
-            store.ReadFromDB();
-
-
-
+  
+            //store.ReadFromDB();
 
 
         }
@@ -177,13 +272,15 @@ namespace StocksMonitor
             {
                 startup = false;
                 // Read Data from database at startup 
-                
-               
-                await store.ReadFromDB();
+
+       //         await store.ReadFromDB();
             }
 
             timeLabel.Text = $"Time: {StockMonitorLogger.GetTimeString()}";
         }
+
+
+
 
         //   TODO, kan jag högerklicka i listan och sätta en, filtrera, och dölj attribut som jag sparar tillsammans med aktien, så att jag lätt kan filtrera vad jag vill navigera emellan i grafen
 
@@ -300,11 +397,34 @@ namespace StocksMonitor
         
         private void clearHiddenButton_Click(object sender, EventArgs e)
         {
+            // TEmpoär debug knapp
+
+            AvanzaParser avanzaParser = new AvanzaParser();
+
+            avanzaParser.Run(store.stocks);
+            foreach (var stock in avanzaParser.stocks)
+            {
+                var match = store.stocks.Find(s => s.Name == stock.Name);
+
+                if (match != null)
+                {
+                    match.OwnedCnt = stock.OwnedCnt;
+                }
+                else
+                {
+                    StockMonitorLogger.WriteMsg("Missmatch, searching for " + stock.Name);
+                }
+            }
+
+
+
+
+            /* TODO fixa
             foreach (Stock stock in store.stocks)
             {
                 stock.filters.hidden = false;
             }
-            updateStockFilterInformation();
+            updateStockFilterInformation();*/
         }
         private void clearInterested_Click(object sender, EventArgs e)
         {

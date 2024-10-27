@@ -66,6 +66,16 @@ namespace StocksMonitor.src.databaseWrapper
                 .HasMaxLength(130)
                 .IsRequired();
 
+            modelBuilder.Entity<Stock>()
+                .Property(s => s.Divident)
+                .HasColumnType("decimal(10,2)")
+                .IsRequired();
+
+            modelBuilder.Entity<Stock>()
+                .Property(s => s.PeValue)
+                .HasColumnType("decimal(10,2)")
+                .IsRequired();
+
             // HISTORY
             modelBuilder.Entity<History>()
                 .HasKey(h => h.ID); // Set ID as primary key
@@ -131,6 +141,8 @@ namespace StocksMonitor.src.databaseWrapper
         public int OwnedCnt { get; set; }       // Number of stocks i own, 0 --> Not owned at all
         public decimal PurPrice { get; set; }   // My purchase price per stock at investment
         public string List { get; set; }       // List stock belongs to
+        public decimal Divident { get; set; }
+        public decimal PeValue { get; set; }
         public ICollection<History> History { get; set; } = []; // One-to-Many relationship
         public StockMisc? Misc { get; set; } = new(); // One-to-One relationship
 
@@ -143,6 +155,8 @@ namespace StocksMonitor.src.databaseWrapper
             this.Price = rhs.Price;
             this.OwnedCnt = rhs.OwnedCnt;
             this.PurPrice = rhs.PurPrice;
+            this.Divident = rhs.Divident;
+            this.PeValue = rhs.PeValue;
             this.List = rhs.List;
         }
 
@@ -190,7 +204,7 @@ namespace StocksMonitor.src.databaseWrapper
 
     public class Storage
     {
-        public async Task WriteData(List<Stock> data)
+        public async Task WriteData(List<Stock> data, DateTime date)
         {
             StockMonitorLogger.WriteMsg("Write data to TB");
             await using (var db = new StockDataContext())
@@ -213,8 +227,7 @@ namespace StocksMonitor.src.databaseWrapper
                     await db.SaveChangesAsync();
 
                     // Update History,  Check if existing date or new 
-
-                    var existingHistory = db.history.FirstOrDefault(history => history.Date.Date == DateTime.Now.Date
+                    var existingHistory = db.history.FirstOrDefault(history => history.Date.Date == date
                                                                 && history.StockId == existingStock.ID);
 
                     if (existingHistory != null)
@@ -228,7 +241,7 @@ namespace StocksMonitor.src.databaseWrapper
                             MA200 = newStock.MA200,
                             Price = newStock.Price,
                             OwnedCnt = newStock.OwnedCnt,
-                            Date = DateTime.Now.Date,
+                            Date = date,
                             StockId = existingStock.ID
                         });
                     }
