@@ -11,7 +11,6 @@ namespace StocksMonitor.src.Borsdata
     {
         public InstrumentRespV1 _instRespV1;
         ApiClient _api;
-        private string _apiKey = "f2f9bceb531d44d2b71f20a3b17475f6";
         public Dictionary<long, List<StockPriceV1>> _instrumentPrices;
         public Dictionary<string, long> _marketsId;
 
