@@ -61,7 +61,7 @@ namespace StocksMonitor.src.Borsdata
             prices.Reverse(); // newest first
             double latestValue = (double)prices.First().C;
 
-            var res = CalculateMa200Percentage(prices, latestValue);
+            var res = CalculateMa200Percentage(prices);
 
             var expectedSum = Enumerable.Range(120, 200).Sum();
             var MA200 = expectedSum / 200.0;

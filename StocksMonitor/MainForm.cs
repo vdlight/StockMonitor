@@ -134,7 +134,7 @@ namespace StocksMonitor
 #endif
         }
 
-        private void GetOwnedData(object? sender, EventArgs e)
+        private void GetOwnedData_Click(object? sender, EventArgs e)
         {
             if (sender == null)
             {
