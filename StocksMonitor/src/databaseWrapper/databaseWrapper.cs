@@ -143,7 +143,7 @@ namespace StocksMonitor.src.databaseWrapper
         public string List { get; set; }       // List stock belongs to
         public decimal Divident { get; set; }
         public decimal PeValue { get; set; }
-        public ICollection<History> History { get; set; } = []; // One-to-Many relationship
+        public List<History> History { get; set; } = []; // One-to-Many relationship
         public StockMisc? Misc { get; set; } = new(); // One-to-One relationship
 
         public FilterSelections filters = new();
@@ -204,7 +204,7 @@ namespace StocksMonitor.src.databaseWrapper
 
     public class Storage
     {
-        public async Task WriteData(List<Stock> data, DateTime date)
+        public async Task WriteData(List<Stock> data)
         {
             StockMonitorLogger.WriteMsg("Write data to TB");
             await using (var db = new StockDataContext())
@@ -226,24 +226,27 @@ namespace StocksMonitor.src.databaseWrapper
 
                     await db.SaveChangesAsync();
 
-                    // Update History,  Check if existing date or new 
-                    var existingHistory = db.history.FirstOrDefault(history => history.Date.Date == date
-                                                                && history.StockId == existingStock.ID);
+                    foreach (var history in newStock.History)
+                    {
+                        // Update History,  Check if existing date or new 
+                        var existingHistory = db.history.FirstOrDefault(h => h.Date.Date == history.Date
+                                                                    && history.StockId == existingStock.ID);
 
-                    if (existingHistory != null)
-                    {
-                        existingHistory.CopyDataFromNewStock(newStock);
-                    }
-                    else
-                    {
-                        db.history.Add(new()
+                        if (existingHistory != null)
                         {
-                            MA200 = newStock.MA200,
-                            Price = newStock.Price,
-                            OwnedCnt = newStock.OwnedCnt,
-                            Date = date,
-                            StockId = existingStock.ID
-                        });
+                            existingHistory.CopyDataFromNewStock(newStock);
+                        }
+                        else
+                        {
+                            db.history.Add(new()
+                            {
+                                MA200 = newStock.MA200,
+                                Price = newStock.Price,
+                                OwnedCnt = newStock.OwnedCnt,
+                                Date = history.Date,
+                                StockId = existingStock.ID
+                            });
+                        }
                     }
                 }
                 await db.SaveChangesAsync();

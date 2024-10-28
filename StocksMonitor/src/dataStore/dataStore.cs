@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 using StocksMonitor.src.avanzaParser;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Identity.Client;
+using StocksMonitor.src.Borsdata;
+using Borsdata.Api.Dal.Model;
+using System.Net.Http.Headers;
 
 namespace StocksMonitor.src.dataStore
 {
@@ -16,7 +19,7 @@ namespace StocksMonitor.src.dataStore
         public List<Stock> stocks = new List<Stock>();
         private AvanzaParser avanza = new AvanzaParser();
         private Storage storage = new Storage();
-
+        private BorsData bd = new BorsData();
         private string[] Markets = 
         {
             "First North Stockholm",
@@ -25,6 +28,75 @@ namespace StocksMonitor.src.dataStore
             "Large Cap Stockholm",
             "Own",
         };
+
+
+        public async void Startup()
+        {
+            stocks = await storage.ReadData();
+        }
+
+     
+        public void GetOwnedData()
+        {
+
+        }
+
+        private void UpdateStockHistory(History history, List<StockPriceV1> prices)
+        {
+            history.Price = (decimal)prices[0].C;
+            history.MA200 = bd.CalculateMa200Percentage(prices);
+            history.Date = DateTime.Parse(prices[0].D);
+        }
+
+        private void UpdateStock(Stock stock, List<StockPriceV1> prices)
+        {
+            stock.Price = (decimal) prices[0].C;
+            stock.MA200 = bd.CalculateMa200Percentage(prices);
+
+            while (prices.Any())
+            {
+                var priceDate = DateTime.Parse(prices[0].D);
+                
+                if (stock.History.Any(h => h.Date == priceDate))
+                { 
+                    UpdateStockHistory(
+                        stock.History.Find(h => h.Date == priceDate), 
+                        prices);
+                }
+                else
+                {
+                    var newHistory = new History();
+                    UpdateStockHistory(newHistory, prices);
+                    stock.History.Add(newHistory);
+                }
+                
+                prices.RemoveAt(0);
+            }
+        }
+
+        public async Task UpdateStockDataBD()
+        {
+            bd.Run();
+
+            foreach (var instrument in bd.InstrumentPrices)
+            {
+                if (stocks.Any(s => s.Name == instrument.Key))
+                {
+                    UpdateStock(
+                        stocks.First(s => s.Name == instrument.Key),
+                        instrument.Value
+                    );
+                }
+                else
+                {
+                    var newStock = new Stock();
+                    UpdateStock(newStock, instrument.Value);
+                    stocks.Add(newStock);
+                }
+            }
+            await storage.WriteData(stocks);
+        }
+
 
         public async Task FetchDataFromAvanza(DateTime date)
         {
@@ -72,19 +144,7 @@ namespace StocksMonitor.src.dataStore
         }
         // TODO, När man markerar något i listan, så ska det visas procentutveckling i grafen, från hur det varit senaste, 1, 1w 1m 1y
 
-        public async Task ReadFromDB()
-        {
-            stocks = await storage.ReadData();
-        }
-        public async Task UpdateStoreWithNewStocks(List<Stock> data, DateTime date)
-        {
-            StockMonitorLogger.WriteMsg("Udate store stocks");
-            foreach (var entry in data)
-            {
-                UpdateStock(entry, date);
-            }
-            await storage.WriteData(stocks, date);
-        }
+
         private void UpdateStock(Stock stock, DateTime date)
         {
             if(!stocks.Any(s => s.Name == stock.Name))

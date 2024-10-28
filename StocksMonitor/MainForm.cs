@@ -19,6 +19,7 @@ using StocksMonitor.src.Borsdata;
 using GrapeCity.DataVisualization.Chart;
 using System.Net.WebSockets;
 using StocksMonitor.src.avanzaParser;
+using System.Linq;
 
 namespace StocksMonitor
 {
@@ -99,8 +100,12 @@ namespace StocksMonitor
             menuStrip1.Items.Add(testMenu);
 
             // sub level menus
-            var parseData = new ToolStripMenuItem("Parse");
-            fileMenu.DropDownItems.Add(parseData);
+            var getStockData = new ToolStripMenuItem("Get stock data");
+            fileMenu.DropDownItems.Add(getStockData);
+
+            // sub level menus
+            var getOwnedData = new ToolStripMenuItem("Get owned data");
+            fileMenu.DropDownItems.Add(getOwnedData);
 
             var testRun = new ToolStripMenuItem("Test run");
             testMenu.DropDownItems.Add(testRun);
@@ -110,7 +115,8 @@ namespace StocksMonitor
 
             
             // event handlers
-            parseData.Click += new EventHandler(ParseData_Click);
+            getStockData.Click += new EventHandler(GetStockData_Click);
+            getOwnedData.Click += new EventHandler(GetOwnedData_Click);
             testRun.Click += new EventHandler(TestRun_Click);
             simulationRun.Click += new EventHandler(SimulationRun_Click);
             
@@ -128,82 +134,26 @@ namespace StocksMonitor
 #endif
         }
 
-        // TODO, spara data bara när det är efter kl 8 UTC, (7 swe) för då ska senaste information finnas från API
-        private void ParseData_Click(object? sender, EventArgs e)
+        private void GetOwnedData(object? sender, EventArgs e)
         {
             if (sender == null)
             {
                 return;
             }
-            
-            var bd = new BorsData();
 
-            bd.Run();
+            store.GetOwnedData();
+        }
 
-            store.stocks = new List<Stock>();
 
-            bool setDate = true;
-            DateTime date = default(DateTime);
-
-            foreach (var inst in bd._instRespV1.Instruments)
+        // TODO, spara data bara när det är efter kl 8 UTC, (7 swe) för då ska senaste information finnas från API
+        private void GetStockData_Click(object? sender, EventArgs e)
+        {
+            if (sender == null)
             {
-                // TODO, tittar på 0 här, för känns som den skickar vidare default värden, vilken  den inte ska
-                if (inst != null && inst.InsId.HasValue && inst.InsId != 0)
-                {
-                    var id = inst.InsId.Value;
-
-                    if (!bd._instrumentPrices.ContainsKey(id))
-                    {
-                        // im not fetching all prices, for instruments not intresting, so just skip if not coiintains
-                        continue;
-                    }
-
-                    // want current price, so last
-                    // and also the whole list has to be reversed, so i can sum up for MA calculation
-                    var latestPriceFirst = bd._instrumentPrices[id];
-                    latestPriceFirst.Reverse();
-
-                    var latestValue = latestPriceFirst.First();
-
-                    if (latestValue != null)
-                    {
-                        decimal ma200Percent = 0;
-                        const int selectedMa = 200;
-                        // D är datum i listan av priser                        
-                        if (bd._instrumentPrices[id].Count > selectedMa)
-                        {
-                            var sum = bd._instrumentPrices[id].Take(selectedMa).Sum(s => s.C);
-                            var ma200 = sum / selectedMa;
-                            ma200Percent = Math.Round(
-                                (decimal)(latestValue.C - ma200) / 
-                                (decimal)(ma200 * 100), 
-                                2);
-
-                            if (setDate)
-                            {
-                                setDate = false;
-                                date = DateTime.Parse(latestValue.D);
-
-                            }
-
-                            // TODO, list needs to be fixed below
-
-                            store.stocks.Add(
-                                new Stock()
-                                {
-                                    Name = inst.Name,
-                                    Price = (decimal)latestValue.C,
-                                    MA200 = ma200Percent,
-                                    List = "bd._marketsId[inst.MarketId]."
-                                }
-                            );
-                        }
-                    }
-                }
+                return;
             }
 
-            Task.Run(async () => await store.UpdateStoreWithNewStocks(store.stocks, date));
-
+            store.UpdateStockDataBD();
 
             /*
             DialogResult result;
@@ -273,7 +223,7 @@ namespace StocksMonitor
                 startup = false;
                 // Read Data from database at startup 
 
-       //         await store.ReadFromDB();
+                store.Startup();
             }
 
             timeLabel.Text = $"Time: {StockMonitorLogger.GetTimeString()}";
