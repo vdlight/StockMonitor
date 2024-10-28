@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StocksMonitor", "StocksMonitor\StocksMonitor.csproj", "{E7F22888-83AC-466F-A77C-1B8A1E80C7AD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockMonitor.Tests", "StockMonitor.Tests\StockMonitor.Tests.csproj", "{8FAB0A58-0EF9-48EA-A63C-834138BF6469}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,6 +20,12 @@ Global
 		{E7F22888-83AC-466F-A77C-1B8A1E80C7AD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E7F22888-83AC-466F-A77C-1B8A1E80C7AD}.Simulations|Any CPU.ActiveCfg = Simulations|Any CPU
 		{E7F22888-83AC-466F-A77C-1B8A1E80C7AD}.Simulations|Any CPU.Build.0 = Simulations|Any CPU
+		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Simulations|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Simulations|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
