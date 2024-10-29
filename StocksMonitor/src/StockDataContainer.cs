@@ -1,5 +1,5 @@
 ﻿using StocksMonitor.src.databaseWrapper;
-using StocksMonitor.src.dataStore;
+using StocksMonitor.src.dataStoreNS;
 using System;
 using System.Collections.Generic;
 using System.Linq;

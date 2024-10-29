@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using StocksMonitor.src;
 using StocksMonitor.src.databaseWrapper;
-using StocksMonitor.src.dataStore;
+using StocksMonitor.src.dataStoreNS;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Client.Extensions.Msal;
 using StocksMonitor.src.databaseWrapper;
-using StocksMonitor.src.dataStore;
+using StocksMonitor.src.dataStoreNS;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;

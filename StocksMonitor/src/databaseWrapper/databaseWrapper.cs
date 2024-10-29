@@ -16,19 +16,19 @@ namespace StocksMonitor.src.databaseWrapper
         public DbSet<History> history { get; set; }
         public DbSet<StockMisc> miscs { get; set; }
 
+        public const string defConnString = "Server=NEX-5CD350FDG5;Database=Simulations;Integrated Security=True;TrustServerCertificate=True;";
+        private string connStr = defConnString;
 
-#if DEBUG
-        private string connString = "Server=JENSA;Database=Test;Integrated Security=True;TrustServerCertificate=True;";
-#elif SIMULATIONS
-        //private string connString = "Server=NEX-5CD350FDG5;Database=Simulations;Integrated Security=True;TrustServerCertificate=True;";
-        private string connString = "Server=JENSA;Database=Simulations;Integrated Security=True;TrustServerCertificate=True;";
-#else
-        private string connString = "Server=JENSA;Database=master;Integrated Security=True;TrustServerCertificate=True;";
-#endif
+
+        public StockDataContext(string connString)
+        {
+            this.connStr = connStr;
+        }
+        
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options
-            .UseSqlServer(connString)
+            .UseSqlServer(connStr)
             .LogTo(StockMonitorLogger.WriteMsg, LogLevel.Error);
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -204,10 +204,10 @@ namespace StocksMonitor.src.databaseWrapper
 
     public class Storage
     {
-        public async Task WriteData(List<Stock> data)
+        public async Task WriteData(List<Stock> data, string connStr = StockDataContext.defConnString)
         {
             StockMonitorLogger.WriteMsg("Write data to TB");
-            await using (var db = new StockDataContext())
+            await using (var db = new StockDataContext(connStr))
             {
                 foreach (var newStock in data)
                 {
@@ -255,11 +255,11 @@ namespace StocksMonitor.src.databaseWrapper
             }
         }
 
-        public async Task<List<Stock>> ReadData()
+        public async Task<List<Stock>> ReadData(string connStr = StockDataContext.defConnString)
         {
             StockMonitorLogger.WriteMsg("Read data from DB");
 
-            using (var db = new StockDataContext())
+            using (var db = new StockDataContext(connStr))
             {
                 var stocksWithHistory = await db.stockData
                     .Include(S => S.History.OrderBy(h => h.Date))
@@ -270,36 +270,5 @@ namespace StocksMonitor.src.databaseWrapper
 
             }
         }
-
-#if DEBUG
-        public async Task UpdateHistoryDateFromTo(string fromDate, string toDate)
-        {
-            StockMonitorLogger.WriteMsg("Changed dates in history table");
-            await using (var db = new StockDataContext())
-            {
-                var query =
-                    "UPDATE history " +
-                    "SET Date = '" + toDate +
-                    "' WHERE Date = '" + fromDate + "'";
-
-                await db.Database.ExecuteSqlRawAsync(query);
-            }
-        }
-
-
-        public async Task ClearDatabaseTables()
-        {
-            StockMonitorLogger.WriteMsg("Delete all in history, stockData and miscs table");
-            await using (var db = new StockDataContext())
-            {
-                var query =
-                    "DELETE FROM history" + "\n" +
-                    "DELETE FROM stockData" + "\n" +
-                    "DELETE FROM miscs";
-
-                await db.Database.ExecuteSqlRawAsync(query);
-            }
-        }
-#endif
     }
 }

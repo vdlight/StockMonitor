@@ -1,5 +1,6 @@
 ﻿using Borsdata.Api.Dal.Model;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace StocksMonitor.src.Borsdata
 {
     public class BorsData
     {
-        private InstrumentRespV1 _instruments;
+        private List<InstrumentV1> _instruments;
         private BD_API _api;
         private Dictionary<string, long> _marketsId;
 
@@ -18,13 +19,36 @@ namespace StocksMonitor.src.Borsdata
         const string smallCap = "Small Cap";
         const string firstNorth = "First North";
 
-        public Dictionary<string, List<StockPriceV1>> InstrumentPrices { get; private set; }
+        public Dictionary<string, List<StockPriceV1>> InstrumentPrices { get; set; }
 
         public BorsData() 
         {
             InstrumentPrices = new Dictionary<string, List<StockPriceV1>>();
             _marketsId = new Dictionary<string, long>();    
            
+        }
+
+        public string GetMarketName(string instrumentName)
+        {
+# if DEBUG 
+            return "Large Cap";
+
+#endif
+
+            var instrument = _instruments.Find(i => i.Name == instrumentName);
+            
+            if (instrument != null) {
+                var match = _marketsId.Where(n => n.Value == instrument.MarketId).Select(n => n.Key).ToList();
+                if (match.Count > 0)
+                {
+                    return match[0];
+                }
+            }
+
+            StockMonitorLogger.WriteMsg("ERROR could not get market name, for stock with name " + instrumentName);
+
+            return "";
+
         }
 
         public decimal CalculateMa200Percentage(IEnumerable<StockPriceV1> values)
@@ -38,48 +62,10 @@ namespace StocksMonitor.src.Borsdata
             var latestValue = values.First().C;
             var sum = values.Take(selectedMa).Sum(s => s.C);
 
-            for (var i = 0; i < selectedMa; i++)
-            {
-                StockMonitorLogger.WriteMsg(values.ElementAt(i).C.ToString());
-            }
-            StockMonitorLogger.WriteMsg(sum.ToString());
             var ma200 = sum / selectedMa;
             var ma200Percent = (decimal)((latestValue - ma200) / (ma200 * 100));
 
             return ma200Percent;
-        }
-
-        private void Test_CalculateMa200Percentage()
-        {
-            List<StockPriceV1> prices = new List<StockPriceV1>();
-            for (var i = 0; i < 220; i++)
-            {
-                prices.Add(new StockPriceV1() { C = i + 100 });
-            }
-
-
-            prices.Reverse(); // newest first
-            double latestValue = (double)prices.First().C;
-
-            var res = CalculateMa200Percentage(prices);
-
-            var expectedSum = Enumerable.Range(120, 200).Sum();
-            var MA200 = expectedSum / 200.0;
-
-            if (MA200 != 219.5)
-            {
-                // error
-                StockMonitorLogger.WriteMsg("ERROR " + expectedSum + "/ 200 " + MA200);
-            }
-
-            var priceComparedToMa = (decimal)((latestValue - MA200) / (MA200 * 100));
-
-            if (res != priceComparedToMa)
-            {
-                // error
-                StockMonitorLogger.WriteMsg("ERROR" + res + " " + priceComparedToMa);
-            }
-
         }
 
 
@@ -126,14 +112,14 @@ namespace StocksMonitor.src.Borsdata
         private void GetAllInstruments()
         {
             StockMonitorLogger.WriteMsg("Get all instruments from BD");
-            _instruments = _api.GetInstruments();
+            _instruments = _api.GetInstruments().Instruments;
         }
 
         private void FillStockPrices()
         {
             StockMonitorLogger.WriteMsg("Fill stock prices from BD");
 
-            FillInstrumentsFromMarket(_instruments.Instruments.Where(i => i.MarketId == 
+            FillInstrumentsFromMarket(_instruments.Where(i => i.MarketId == 
                 _marketsId[largeCap]).ToList());
 
         /*  TODO, rest of markets  
@@ -161,8 +147,15 @@ namespace StocksMonitor.src.Borsdata
                 //StockPricesRespV1 sp = _api.GetStockPrices(i.InsId.Value);
                 if (sp != null)
                 {
-                    var instrumentName = _instruments.Instruments[(int)i.InsId.Value].Name;
-                    InstrumentPrices[instrumentName] = sp.StockPricesList;
+                    try
+                    {
+                        var instrumentName = _instruments[(int)i.InsId.Value].Name;
+                        InstrumentPrices[instrumentName] = sp.StockPricesList;
+                    }
+                    catch (Exception ex)
+                    {
+                        StockMonitorLogger.WriteMsg("ERROR, could not set instrument prices for stock with id " + (int)i.InsId.Value);
+                    }
                 }
             }
         }
