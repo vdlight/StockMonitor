@@ -92,23 +92,13 @@ namespace StocksMonitor.src.avanzaParser
                 lines.RemoveAt(0); // remove blank rows
             }
 
-            foreach (var stock in stocks)
+            stocks.Add(new Stock()
             {
-                // TODO, checking here for name, but also for latest price, for feasability check betwen bd och avanza
-                if (stock.Name == name)
-                {
-                    if (latestPrice == stock.Price)
-                    {
-                        stock.OwnedCnt = count;
-                        stock.PurPrice = purPrice;
-                    }
-                    else
-                    {
-                        StockMonitorLogger.WriteMsg("ERRror, prices does not match for " + stock.Name + " " + latestPrice
-                            + " " + stock.Price);
-                    }
-                }
-            }
+                Name = name,
+                OwnedCnt = count,
+                Price = latestPrice,
+                PurPrice = purPrice,
+            });
         }
 
         private bool CorrectPageParsed()
@@ -149,13 +139,13 @@ namespace StocksMonitor.src.avanzaParser
         }
 
 
-        public bool Parse()
+        public List<Stock> Parse()
         {
             StockMonitorLogger.WriteMsg("Parsing owned Avanza stocks");
             readLines();
             if (!CorrectPageParsed())
             {
-                return false;
+                return new List<Stock>();
             }
 
             removeTopMostInfoText();
@@ -163,7 +153,7 @@ namespace StocksMonitor.src.avanzaParser
 
             populateStocks();
 
-            return true;
+            return stocks;
         }
     }
 }

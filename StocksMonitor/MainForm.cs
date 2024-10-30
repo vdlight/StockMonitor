@@ -130,7 +130,8 @@ namespace StocksMonitor
 #endif
 
 #if SIMULATIONS 
-            parseData.Enabled = false;
+
+            //parseData.Enabled = false;
 #endif
         }
 
@@ -347,34 +348,11 @@ namespace StocksMonitor
         
         private void clearHiddenButton_Click(object sender, EventArgs e)
         {
-            // TEmpoär debug knapp
-
-            AvanzaParser avanzaParser = new AvanzaParser();
-
-            avanzaParser.Run(store.stocks);
-            foreach (var stock in avanzaParser.stocks)
-            {
-                var match = store.stocks.Find(s => s.Name == stock.Name);
-
-                if (match != null)
-                {
-                    match.OwnedCnt = stock.OwnedCnt;
-                }
-                else
-                {
-                    StockMonitorLogger.WriteMsg("Missmatch, searching for " + stock.Name);
-                }
-            }
-
-
-
-
-            /* TODO fixa
             foreach (Stock stock in store.stocks)
             {
                 stock.filters.hidden = false;
             }
-            updateStockFilterInformation();*/
+            updateStockFilterInformation();
         }
         private void clearInterested_Click(object sender, EventArgs e)
         {

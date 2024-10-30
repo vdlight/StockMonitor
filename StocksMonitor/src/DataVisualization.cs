@@ -40,6 +40,7 @@ namespace StocksMonitor.src
             chart.ChartAreas["ChartArea1"].AxisY.LabelStyle.ForeColor = Color.White;
             chart.ChartAreas["ChartArea1"].AxisX.TitleForeColor = Color.White;
             chart.ChartAreas["ChartArea1"].AxisY.TitleForeColor = Color.White;
+
         }
 
         private Color GetColor(string name)
@@ -98,7 +99,7 @@ namespace StocksMonitor.src
                     chart.Series[price].ChartType = SeriesChartType.Line;
                     chart.Series[price].BorderWidth = 3;
                     chart.Series[price].MarkerStyle = MarkerStyle.Circle;
-                    chart.Series[price].MarkerSize = 8;
+                    chart.Series[price].MarkerSize = 5;
                     chart.Series[price].ToolTip = "Date: #VALX, Price: #VALY{N2}";
 
                     var MA = $"MA {names[i]}";
@@ -110,32 +111,16 @@ namespace StocksMonitor.src
                     chart.Series[MA].ChartType = SeriesChartType.Line;
                     chart.Series[MA].BorderWidth = 2;
                     chart.Series[MA].MarkerStyle = MarkerStyle.Circle;
-                    chart.Series[MA].MarkerSize = 8;
+                    chart.Series[MA].MarkerSize = 5;
                     chart.Series[MA].ToolTip = "Date: #VALX, MA200: #VALY{N2}";
 
-                    var buyOrSellPoints = $"buy/sell point {names[i]}";
-                    chart.Series.Add(buyOrSellPoints);
-                    chart.Series[buyOrSellPoints].Color = Color.Green;
-                    chart.Series[buyOrSellPoints].Legend = "Legend1";
-                    chart.Series[buyOrSellPoints].ChartArea = "ChartArea1";
-                    chart.Series[buyOrSellPoints].ChartType = SeriesChartType.Point;
-                    chart.Series[buyOrSellPoints].MarkerStyle = MarkerStyle.Star5;
-                    chart.Series[buyOrSellPoints].MarkerSize = 16;
-                    chart.Series[buyOrSellPoints].ToolTip = "Action point";
-
-                    bool oldOwned = false;
-                    foreach (var history in stock.History.Where(h => h.Date > range))
+                    var cnt = 0;
+                
+                    foreach (var history in stock.History.Take(31))
                     {
-
-                        if((history.OwnedCnt >= 0) != oldOwned)
-                        {
-                            chart.Series[buyOrSellPoints].Points.AddXY(history.Date, history.Price);
-                        }
-                        oldOwned = history.OwnedCnt > 0;
-
-
-                        chart.Series[price].Points.AddXY(history.Date, history.Price);
-                        chart.Series[MA].Points.AddXY(history.Date, CalculateMAFromPriceAndMAPercentage(history.Price, history.MA200));
+                        chart.Series[price].Points.AddXY(cnt, history.Price);
+                        chart.Series[MA].Points.AddXY(cnt, CalculateMAFromPriceAndMAPercentage(history.Price, history.MA200));
+                        cnt--;
                     }
                 }
                 else

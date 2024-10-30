@@ -13,6 +13,7 @@ using System.Diagnostics.Metrics;
 
 namespace Borsdata.Api.Dal.Model
 {
+#if !UNITTESTS
     internal class BD_API
     {
         HttpClient _client;                 // Important to NOT create new obj for each call. (Read docs about HttpClient) 
@@ -20,14 +21,20 @@ namespace Borsdata.Api.Dal.Model
         Stopwatch _timer;                   // Check time from last API call to check rate limit
         string _urlRoot;
 
-        public BD_API(string apiKey) { 
-            _client = new HttpClient();
-            _client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+        public BD_API() {
+            var lines = File.ReadAllLines("..\\..\\..\\..\\..\\BDKey.txt");
 
-            _querystring = "?authKey=" + apiKey;
-            _timer = Stopwatch.StartNew();
-            _urlRoot = "https://apiservice.borsdata.se";
-            //_urlRoot = "https://bd-apimanager-dev.azure-api.net";
+            if (lines.Any())
+            {
+                var key = lines[0];
+                _client = new HttpClient();
+                _client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+                _querystring = "?authKey=" + key;
+                _timer = Stopwatch.StartNew();
+                _urlRoot = "https://apiservice.borsdata.se";
+                //_urlRoot = "https://bd-apimanager-dev.azure-api.net";
+            }
         }
 
         /// <summary> Return end day stock price for one instrument</summary>
@@ -79,7 +86,7 @@ namespace Borsdata.Api.Dal.Model
         /// </summary>
         static void StockPricesForOneInstruments(long InsId, string _apiKey)
         {
-            BD_API api = new BD_API(_apiKey);
+            BD_API api = new BD_API();
             StockPricesRespV1 spList = api.GetStockPrices(InsId);
 
             foreach (var sp in spList.StockPricesList)
@@ -103,6 +110,24 @@ namespace Borsdata.Api.Dal.Model
             else
             {
                 Console.WriteLine("GetMarkets {0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+            }
+
+            return null;
+        }
+        public CountriesRespV1 GetCountries()
+        {
+            string url = $"{_urlRoot}/v1/countries";
+            HttpResponseMessage response = WebbCall(url, _querystring);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = response.Content.ReadAsStringAsync().Result;
+                CountriesRespV1 res = JsonConvert.DeserializeObject<CountriesRespV1>(json);
+                return res;
+            }
+            else
+            {
+                Console.WriteLine("GetCountries {0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
             }
 
             return null;
@@ -168,3 +193,118 @@ namespace Borsdata.Api.Dal.Model
     }
 }
 
+#else
+    // UNIT TEST SIMULATIONS
+    internal class BD_API
+    {
+        HttpClient _client;                 // Important to NOT create new obj for each call. (Read docs about HttpClient) 
+        string _querystring;                // Query string authKey
+        Stopwatch _timer;                   // Check time from last API call to check rate limit
+        string _urlRoot;
+
+        List<StockPricesRespV1> _stockPricesRespV1 = new List<StockPricesRespV1>
+        {
+            new StockPricesRespV1
+            {
+                Instrument = 1,
+                StockPricesList = new List<StockPriceV1> {
+                new StockPriceV1 {
+                    C = 100,
+                    D = "2024-09-03"
+                },
+                new StockPriceV1 {
+                    C = 90,
+                    D = "2024-10-02"
+                }
+            }
+            },
+            new StockPricesRespV1
+            {
+                Instrument = 2,
+                StockPricesList = new List<StockPriceV1> {
+                new StockPriceV1 {
+                    C = 80,
+                    D = "2024-09-03"
+                },
+                new StockPriceV1 {
+                    C = 120,
+                    D = "2024-10-02"
+                }
+            }
+        }};
+
+        InstrumentRespV1 instrumentRespV1 = new InstrumentRespV1
+        {
+            Instruments = new List<InstrumentV1>
+            {
+                new InstrumentV1
+                {
+                    MarketId = 1,
+                    InsId = 1,
+                    Instrument = Borsdata.Api.Dal.Infrastructure.Instrument.Stocks,
+                    Name = "SAAB"
+                },
+                new InstrumentV1
+                {
+                    MarketId = 2,
+                    InsId = 2,
+                    Instrument = Borsdata.Api.Dal.Infrastructure.Instrument.Stocks,
+                    Name = "ABB"
+                },
+            }
+        };
+
+        MarketsRespV1 marketsRespV1 = new MarketsRespV1
+        {
+            Markets = new List<MarketV1>
+            {
+                new MarketV1
+                {
+                    Id = 1,
+                    Name = "Large Cap"
+                },
+                new MarketV1
+                {
+                    Id = 2,
+                    Name = "Mid Cap"
+                },
+                new MarketV1
+                {
+                    Id = 2,
+                    Name = "Small Cap"
+                },
+            },
+        };
+
+        public void setKey(string key)
+        {
+
+        }
+
+        
+
+        /// <summary> Return end day stock price for one instrument</summary>
+        public StockPricesRespV1 GetStockPrices(long instrumentId, DateTime from, DateTime to)
+        {
+            // TODO; skickar allt just nu, 
+            return _stockPricesRespV1.Find(p => (long)p.Instrument == instrumentId);
+        }
+
+        public MarketsRespV1 GetMarkets()
+        {
+            return marketsRespV1;
+        }
+
+
+
+        /// <summary> Return list of all instruments</summary>
+        public InstrumentRespV1 GetInstruments()
+        {
+            return instrumentRespV1;
+        }
+    }
+}
+
+
+
+#endif

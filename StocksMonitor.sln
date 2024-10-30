@@ -12,6 +12,7 @@ Global
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 		Simulations|Any CPU = Simulations|Any CPU
+		UnitTests|Any CPU = UnitTests|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{E7F22888-83AC-466F-A77C-1B8A1E80C7AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -20,12 +21,16 @@ Global
 		{E7F22888-83AC-466F-A77C-1B8A1E80C7AD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E7F22888-83AC-466F-A77C-1B8A1E80C7AD}.Simulations|Any CPU.ActiveCfg = Simulations|Any CPU
 		{E7F22888-83AC-466F-A77C-1B8A1E80C7AD}.Simulations|Any CPU.Build.0 = Simulations|Any CPU
+		{E7F22888-83AC-466F-A77C-1B8A1E80C7AD}.UnitTests|Any CPU.ActiveCfg = UnitTests|Any CPU
+		{E7F22888-83AC-466F-A77C-1B8A1E80C7AD}.UnitTests|Any CPU.Build.0 = UnitTests|Any CPU
 		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Simulations|Any CPU.ActiveCfg = Debug|Any CPU
 		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.Simulations|Any CPU.Build.0 = Debug|Any CPU
+		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.UnitTests|Any CPU.ActiveCfg = UnitTests|Any CPU
+		{8FAB0A58-0EF9-48EA-A63C-834138BF6469}.UnitTests|Any CPU.Build.0 = UnitTests|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

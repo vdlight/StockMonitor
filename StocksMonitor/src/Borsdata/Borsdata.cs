@@ -13,27 +13,29 @@ namespace StocksMonitor.src.Borsdata
         private List<InstrumentV1> _instruments;
         private BD_API _api;
         private Dictionary<string, long> _marketsId;
+        private Dictionary<string, long> _CountriesId;
 
         const string largeCap = "Large Cap";
         const string midCap = "Mid Cap";
         const string smallCap = "Small Cap";
         const string firstNorth = "First North";
 
+        const string countrySE = "Sverige";
+        
         public Dictionary<string, List<StockPriceV1>> InstrumentPrices { get; set; }
 
         public BorsData() 
         {
             InstrumentPrices = new Dictionary<string, List<StockPriceV1>>();
-            _marketsId = new Dictionary<string, long>();    
-           
+            _marketsId = new Dictionary<string, long>();
+            _CountriesId = new Dictionary<string, long>();
+            _api = new BD_API();
+
+
         }
 
         public string GetMarketName(string instrumentName)
         {
-# if DEBUG 
-            return "Large Cap";
-
-#endif
 
             var instrument = _instruments.Find(i => i.Name == instrumentName);
             
@@ -59,11 +61,13 @@ namespace StocksMonitor.src.Borsdata
             }
 
             const int selectedMa = 200;
-            var latestValue = values.First().C;
+
+            var newestValue = values.First().C;
+            // to take the latest 200, need to reverse list, since data is from old --> new. newest is last
             var sum = values.Take(selectedMa).Sum(s => s.C);
 
             var ma200 = sum / selectedMa;
-            var ma200Percent = (decimal)((latestValue - ma200) / (ma200 * 100));
+            var ma200Percent = (decimal)((newestValue - ma200) / ma200 * 100);
 
             return ma200Percent;
         }
@@ -71,24 +75,13 @@ namespace StocksMonitor.src.Borsdata
 
         public void Run()
         {
-            var lines = File.ReadAllLines("..\\..\\..\\..\\..\\BDKey.txt");
-
-            if (lines.Any())
-            {
-                _api = new BD_API(lines[0]);
-                GetAllMarkets();
-            
-
-                GetAllInstruments();
-                FillStockPrices();
-            }
-            else
-            {
-                StockMonitorLogger.WriteMsg("ERROR, could not fetch key");
-            }
+            GetAllCountries();
+            GetAllMarkets();
+            GetAllInstruments();
+            FillStockPrices();
 
         }
-        private void GetAllMarkets()
+        public void GetAllMarkets()
         {
             StockMonitorLogger.WriteMsg("Get all markets from BD");
 
@@ -109,7 +102,31 @@ namespace StocksMonitor.src.Borsdata
             }
         }
 
-        private void GetAllInstruments()
+        public void GetAllCountries()
+        {
+            StockMonitorLogger.WriteMsg("Get all countries from BD");
+
+            var _countries = _api.GetCountries();
+            if (_countries != null)
+            {
+                foreach (var country in _countries.Countries)
+                {
+                    if (country.Id.HasValue)
+                    {
+                        if (!_CountriesId.ContainsKey(country.Name))
+                        {
+                            _CountriesId.Add(country.Name, country.Id.GetValueOrDefault());
+                        }
+                    }
+                    else
+                    {
+                        StockMonitorLogger.WriteMsg("WARNING, could not read market id of " + country.Name);
+                    }
+                }
+            }
+        }
+
+        public void GetAllInstruments()
         {
             StockMonitorLogger.WriteMsg("Get all instruments from BD");
             _instruments = _api.GetInstruments().Instruments;
@@ -119,42 +136,44 @@ namespace StocksMonitor.src.Borsdata
         {
             StockMonitorLogger.WriteMsg("Fill stock prices from BD");
 
-            FillInstrumentsFromMarket(_instruments.Where(i => i.MarketId == 
-                _marketsId[largeCap]).ToList());
+            // Only SE List
+            _instruments.RemoveAll(i => i.CountryId != _CountriesId[countrySE]);
 
-        /*  TODO, rest of markets  
-        
-            FillInstrumentsFromMarket(_instRespV1.Instruments.Where(i => i.MarketId == 
-                _marketsId[midCap]).ToList());
-            FillInstrumentsFromMarket(_instRespV1.Instruments.Where(i => i.MarketId ==
-                _marketsId[smallCap]).ToList());
-            FillInstrumentsFromMarket(_instRespV1.Instruments.Where(i => i.MarketId ==
-                _marketsId[firstNorth]).ToList());*/
+            GatherDataFromInstruments(_instruments.Where(i => i.MarketId ==
+                      _marketsId[largeCap]).ToList());
+            GatherDataFromInstruments(_instruments.Where(i => i.MarketId ==
+                      _marketsId[midCap]).ToList());
+            GatherDataFromInstruments(_instruments.Where(i => i.MarketId ==
+                      _marketsId[smallCap]).ToList());
+            GatherDataFromInstruments(_instruments.Where(i => i.MarketId ==
+                      _marketsId[firstNorth]).ToList());
 
         }
 
-        private void FillInstrumentsFromMarket(List<InstrumentV1> instruments)
+        private void GatherDataFromInstruments(List<InstrumentV1> instruments)
         {
             // Get all stock prices for each instrument
-            foreach (var i in instruments)
+            foreach (var instrument in instruments)
             {
                 //--Get for a time range
                 // TODO, läser just nu data för senaste året
 
                 // TODO, kör första är äldstsa datum när jag läst in till histoiken
-                StockPricesRespV1 sp = _api.GetStockPrices(i.InsId.Value, DateTime.Today.AddYears(-1), DateTime.Today);
+                StockPricesRespV1 sp = _api.GetStockPrices(instrument.InsId.Value, DateTime.Today.AddYears(-2), DateTime.Today);
 
                 //StockPricesRespV1 sp = _api.GetStockPrices(i.InsId.Value);
                 if (sp != null)
                 {
-                    try
+                    var matchedInstrument = _instruments.Find(i => i.InsId == instrument.InsId);
+
+                    if (matchedInstrument != null)
                     {
-                        var instrumentName = _instruments[(int)i.InsId.Value].Name;
+                        var instrumentName = matchedInstrument.Name;
                         InstrumentPrices[instrumentName] = sp.StockPricesList;
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        StockMonitorLogger.WriteMsg("ERROR, could not set instrument prices for stock with id " + (int)i.InsId.Value);
+                        StockMonitorLogger.WriteMsg("ERROR: Could not set instrument prices for stock with ID " + instrument.InsId);
                     }
                 }
             }

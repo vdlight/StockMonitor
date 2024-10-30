@@ -10,25 +10,13 @@ namespace StocksMonitor.src.avanzaParser
 {
     public class AvanzaParser
     {
-        public List<Stock> stocks = [];
-
-        public List<Stock> Run(List<Stock> s)
+        public List<Stock> Run()
         {
-            stocks = s;
-
             StockMonitorLogger.WriteMsg("Parsing avanza stocks");
-            var allOK = new OwnedListParser(stocks).Parse();
+            
+            var stocks = new OwnedListParser().Parse();
 
-            foreach (var item in stocks)
-            {
-                // adjust decimals before writing to DB
-                int decimals = 2;
-                item.PurPrice = Math.Round(item.PurPrice, decimals);
-                item.Price = Math.Round(item.Price, decimals);
-                item.MA200 = Math.Round(item.MA200, decimals);
-            }
-
-            if (!allOK)
+            if (stocks.Count == 0)
             {
                 StockMonitorLogger.WriteMsg($"ERROR Parsing avanza stocks failed, ABORT");
             }

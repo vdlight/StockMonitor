@@ -34,7 +34,11 @@ namespace StockMonitor.Test.DataStoreNS.FillStoreNS
             { "AAPL", new List<StockPriceV1> { new StockPriceV1 { C = 150, D = "2024-01-01" } } }
             };
 
-            store.FillStore();
+
+            bd.GetAllMarkets();
+            bd.GetAllInstruments();
+
+            store.FillStoreFromBD();
 
             // Stock created
             Assert.That(store.stocks.Count, Is.EqualTo(1));
@@ -79,8 +83,9 @@ namespace StockMonitor.Test.DataStoreNS.FillStoreNS
             { store.stocks[1].Name, new List<StockPriceV1> { new StockPriceV1 { C = (double)store.stocks[0].Price, D = "2024-02-27" } } },
             };
 
-
-            store.FillStore();
+            bd.GetAllMarkets();
+            bd.GetAllInstruments();
+            store.FillStoreFromBD();
 
             // Stocks created
             Assert.That(store.stocks.Count, Is.EqualTo(2));
@@ -133,8 +138,10 @@ namespace StockMonitor.Test.DataStoreNS.FillStoreNS
             { store.stocks[1].Name, new List<StockPriceV1> { new StockPriceV1 { C = (double)store.stocks[0].Price, D = "2024-02-27" } } },
             };
 
+            bd.GetAllMarkets();
+            bd.GetAllInstruments();
 
-            store.FillStore();
+            store.FillStoreFromBD();
 
             // Stocks created
             Assert.That(store.stocks.Count, Is.EqualTo(2));
@@ -153,28 +160,33 @@ namespace StockMonitor.Test.DataStoreNS.FillStoreNS
             bd.InstrumentPrices = new Dictionary<string, List<StockPriceV1>>
             {
             { "SAAB", new List<StockPriceV1> {
-                new StockPriceV1 { C = 210, D = "2024-02-22" },
-                new StockPriceV1 {C = 200, D = "2024-01-02" } } },
+                new StockPriceV1 { C = 200, D = "2024-01-02"},
+                new StockPriceV1 { C = 210, D = "2024-02-22"}
+            }},
 
             { "ABB", new List<StockPriceV1> {
-                new StockPriceV1 { C = 400, D = "2024-02-27" },
-                new StockPriceV1 { C = 421, D = "2024-01-27" } } }
+                new StockPriceV1 { C = 421, D = "2024-01-27" },
+                new StockPriceV1 { C = 400, D = "2024-02-27" }
+            }}
             };
 
-            store.FillStore();
+            bd.GetAllMarkets();
+            bd.GetAllInstruments();
+
+            store.FillStoreFromBD();
 
             Assert.That(store.stocks.Count, Is.EqualTo(2));
             Assert.That(store.stocks[0].Name, Is.EqualTo("SAAB"));
             Assert.That(store.stocks[0].Price, Is.EqualTo(210));
             Assert.That(store.stocks[0].History.Count, Is.EqualTo(2));
-            Assert.That(store.stocks[0].History[0].Date, Is.EqualTo(DateTime.Parse("2024-02-22")));
-            Assert.That(store.stocks[0].History[1].Date, Is.EqualTo(DateTime.Parse("2024-01-02")));
+            Assert.That(store.stocks[0].History[0].Date, Is.EqualTo(DateTime.Parse("2024-01-02")));
+            Assert.That(store.stocks[0].History[1].Date, Is.EqualTo(DateTime.Parse("2024-02-22")));
 
             Assert.That(store.stocks[1].Name, Is.EqualTo("ABB"));
             Assert.That(store.stocks[1].Price, Is.EqualTo(400));
             Assert.That(store.stocks[1].History.Count, Is.EqualTo(2));
-            Assert.That(store.stocks[1].History[0].Date, Is.EqualTo(DateTime.Parse("2024-02-27")));
-            Assert.That(store.stocks[1].History[1].Date, Is.EqualTo(DateTime.Parse("2024-01-27")));
+            Assert.That(store.stocks[1].History[0].Date, Is.EqualTo(DateTime.Parse("2024-01-27")));
+            Assert.That(store.stocks[1].History[1].Date, Is.EqualTo(DateTime.Parse("2024-02-27")));
         }
     }
 }

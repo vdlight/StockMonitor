@@ -22,11 +22,11 @@ namespace StocksMonitor.src
         public static readonly Dictionary<TMarket, string> markets = new Dictionary<TMarket, string>   
         {
         { TMarket.All, "All Sthlm" },
-        { TMarket.AllExceptFirstNorth, "All Sthlm exc. First North" },
-        { TMarket.LargeCap, "Large Cap Stockholm" },
-        { TMarket.MidCap, "Mid Cap Stockholm" },
-        { TMarket.SmallCap, "Small Cap Stockholm" },
-        { TMarket.FirstNorth, "First North Stockholm" }
+        { TMarket.AllExceptFirstNorth, "All except First North" },
+        { TMarket.LargeCap, "Large Cap" },
+        { TMarket.MidCap, "Mid Cap" },
+        { TMarket.SmallCap, "Small Cap" },
+        { TMarket.FirstNorth, "First North" }
         };
     
 
@@ -119,7 +119,7 @@ namespace StocksMonitor.src
                 case TMarket.MidCap:
                 case TMarket.SmallCap:
                 case TMarket.FirstNorth:
-                    filtred = stocks.Where(s => s.List != markets[stockMarket]);
+                    filtred = stocks.Where(s => s.List == markets[stockMarket]);
                     break;
 
                 case TMarket.All:
@@ -173,9 +173,16 @@ namespace StocksMonitor.src
                 StockMonitorLogger.WriteMsg("ERROR, could not find dates to calculate portfolio development, Skipping");
                 return 0;
             }
-            var currentVal = currentPortfolio.value + currentPortfolio.wallet;
-            var oldVal = oldPortfolio.value + oldPortfolio.wallet;
 
+            var currentVal = currentPortfolio.value;
+            var oldVal = oldPortfolio.value;
+
+            if (!indexCalculation)
+            {
+                currentVal += currentPortfolio.wallet;
+                oldVal = oldPortfolio.wallet;
+            }
+            
             var diff = currentVal - oldVal;
             return diff / oldVal * 100;
         }
@@ -346,6 +353,12 @@ namespace StocksMonitor.src
 
                 if (allStocksHistoryDay.Any())
                 {
+                    if(portfolioHistory.Count > 260 || 
+                        allStocksHistoryDay.Count() < 50)
+                    {
+                        StockMonitorLogger.WriteMsg("Something weird");
+                    }
+
                     portfolioHistory.Add(
                         new Portfolio(
                             date: simulationDay,
@@ -357,6 +370,15 @@ namespace StocksMonitor.src
                 simulationDay = simulationDay.AddDays(+1);
             }
             // TODOD, grafen när det gäller simuleringarna, visar bara portfölhistory, i procentutveckling steg för steg
+         
+            foreach(var item in portfolioHistory)
+            {
+                StockMonitorLogger.WriteMsg("Date: " + item.timestamp +
+                    "value " + item.value);
+                
+            }
+            StockMonitorLogger.WriteMsg("Portfolio cnt " + portfolioHistory.Count());
+
             CalculateSimulationResult();
         }
 
@@ -476,12 +498,13 @@ namespace StocksMonitor.src
             {
                     new Simulation()
                     {
-                        name = "All Market, Buy 0 < MA > 15, and keep stock",
                         stockMarket = TMarket.All,
+                        indexCalculation = true,
+                        dividentRequired = false,
+                        profitRequired = false,
                         buyRules =
                         {
-                            new Rule (TRule.AboveMa, 0),
-                            new Rule (TRule.BelowMa, 15)
+                            new Rule (TRule.Index),
                         },
                         sellRules =
                         {
@@ -498,8 +521,8 @@ namespace StocksMonitor.src
                  * div = true, profit true
                  * div = false, profit false,
                  * div = false, profit true
-                 */
-
+          
+                */
                 for(var i = 0; i < 4; i++)
                 {
                     returnSims.Add(
@@ -521,7 +544,7 @@ namespace StocksMonitor.src
                     });
                 }
             }
-
+        
             return returnSims;
 
             // TODO, kan generera namn, från TOString() eller så, för objekten, så de genereras. När datacolum skivs

@@ -16,7 +16,8 @@ namespace StocksMonitor.src.databaseWrapper
         public DbSet<History> history { get; set; }
         public DbSet<StockMisc> miscs { get; set; }
 
-        public const string defConnString = "Server=NEX-5CD350FDG5;Database=Simulations;Integrated Security=True;TrustServerCertificate=True;";
+        public const string defConnString = "Server=JENSA;Database=master;Integrated Security=True;TrustServerCertificate=True;";
+        //public const string defConnString = "Server=NEX-5CD350FDG5;Database=Simulations;Integrated Security=True;TrustServerCertificate=True;";
         private string connStr = defConnString;
 
 
@@ -158,6 +159,7 @@ namespace StocksMonitor.src.databaseWrapper
             this.Divident = rhs.Divident;
             this.PeValue = rhs.PeValue;
             this.List = rhs.List;
+            this.History = rhs.History;
         }
 
         public class FilterSelections
@@ -204,9 +206,9 @@ namespace StocksMonitor.src.databaseWrapper
 
     public class Storage
     {
-        public async Task WriteData(List<Stock> data, string connStr = StockDataContext.defConnString)
+        public async Task WriteData(IReadOnlyList<Stock> data, string connStr = StockDataContext.defConnString)
         {
-            StockMonitorLogger.WriteMsg("Write data to TB");
+            StockMonitorLogger.WriteMsg("Write data to DB");
             await using (var db = new StockDataContext(connStr))
             {
                 foreach (var newStock in data)
@@ -223,34 +225,8 @@ namespace StocksMonitor.src.databaseWrapper
                         db.stockData.Add(newStock);
                         existingStock = newStock;
                     }
-
                     await db.SaveChangesAsync();
-
-                    foreach (var history in newStock.History)
-                    {
-                        // Update History,  Check if existing date or new 
-                        var existingHistory = db.history.FirstOrDefault(h => h.Date.Date == history.Date
-                                                                    && history.StockId == existingStock.ID);
-
-                        if (existingHistory != null)
-                        {
-                            existingHistory.CopyDataFromNewStock(newStock);
-                        }
-                        else
-                        {
-                            db.history.Add(new()
-                            {
-                                MA200 = newStock.MA200,
-                                Price = newStock.Price,
-                                OwnedCnt = newStock.OwnedCnt,
-                                Date = history.Date,
-                                StockId = existingStock.ID
-                            });
-                        }
-                    }
                 }
-                await db.SaveChangesAsync();
-
                 StockMonitorLogger.WriteMsg($"Wrote {data.Count} stocks To DB");
             }
         }

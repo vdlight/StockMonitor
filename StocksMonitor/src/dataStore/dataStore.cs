@@ -11,6 +11,7 @@ using Microsoft.Identity.Client;
 using StocksMonitor.src.Borsdata;
 using Borsdata.Api.Dal.Model;
 using System.Net.Http.Headers;
+using GrapeCity.DataVisualization.TypeScript;
 
 namespace StocksMonitor.src.dataStoreNS
 {
@@ -50,17 +51,39 @@ namespace StocksMonitor.src.dataStoreNS
         {
             stocks = await storage.ReadData();
         }
-
      
-        public void GetOwnedData()
+        public async void GetOwnedData()
         {
+            var ownedStocks = avanza.Run();
 
+            stocks.ForEach(s =>
+            {
+                s.OwnedCnt = 0;
+                s.PurPrice = 0;
+            });
+
+            foreach (var stock in ownedStocks)
+            {
+                var match = stocks.Find(s => s.Name == stock.Name && s.Price == stock.Price);
+
+                if (match != null)
+                {
+                    match.OwnedCnt = stock.OwnedCnt;
+                    match.PurPrice = stock.PurPrice;
+                }
+            }
+
+            var stocksNotMatched = ownedStocks.FindAll(o => !stocks.Any(s => o.Name == s.Name && o.Price == s.Price));
+
+            foreach (var stock in stocksNotMatched)
+            {
+                StockMonitorLogger.WriteMsg("ERROR: Could not connect owned stock with name " + stock.Name
+                    + " and price " + stock.PurPrice);
+            }
+
+            WriteToDb();
         }
 
-        public void FillOwnedData()
-        {
-
-        }
         private void UpdateStockHistory(History history, List<StockPriceV1> prices)
         {
             history.Price = (decimal)prices[0].C;
@@ -69,22 +92,26 @@ namespace StocksMonitor.src.dataStoreNS
 
         private void UpdateStock(Stock stock, List<StockPriceV1> prices)
         {
-            stock.Price = (decimal) prices[0].C;
-            stock.MA200 = bd.CalculateMa200Percentage(prices);
 
-            while (prices.Any())
+            var newestValueFirstList = prices.ToList();
+            newestValueFirstList.Reverse();
+
+            stock.Price = (decimal)newestValueFirstList[0].C;
+            stock.MA200 = bd.CalculateMa200Percentage(newestValueFirstList);
+
+            while (newestValueFirstList.Any())
             {
-                var priceDate = DateTime.Parse(prices[0].D);
+                var priceDate = DateTime.Parse(newestValueFirstList[0].D);
                 
                 if (! stock.History.Any(h => h.Date == priceDate))
                 { 
                     var newHistory = new History();
-                    newHistory.Date = DateTime.Parse(prices[0].D);
-                    UpdateStockHistory(newHistory, prices);
+                    newHistory.Date = DateTime.Parse(newestValueFirstList[0].D);
+                    UpdateStockHistory(newHistory, newestValueFirstList);
                     stock.History.Add(newHistory);
                 }
-                
-                prices.RemoveAt(0);
+
+                newestValueFirstList.RemoveAt(0);
             }
         }
 
@@ -92,11 +119,11 @@ namespace StocksMonitor.src.dataStoreNS
         {
             bd.Run();
             
-            FillStore();
+            FillStoreFromBD();
             WriteToDb();
 
         }
-        public void FillStore()
+        public void FillStoreFromBD()
         {
             foreach (var instrument in bd.InstrumentPrices)
             {
@@ -127,24 +154,6 @@ namespace StocksMonitor.src.dataStoreNS
             await storage.WriteData(stocks);
         }
 
-        public async Task FetchDataFromAvanza(DateTime date)
-        {
-            StockMonitorLogger.WriteMsg("Parse data from Avanza");
-            
-            // TODO: enable
-            
-            //var parsedData = avanza.Run();
-            /*
-            // TODO, add more feasability checks
-            if (parsedData != null && parsedData.Count > 10)
-            {
-                await UpdateStoreWithNewStocks(parsedData, date);
-            }
-            else
-            {
-                StockMonitorLogger.WriteMsg("TOOD ERROR");
-            }*/
-        }
 
         private async Task CalculateHistorySums()
         {
