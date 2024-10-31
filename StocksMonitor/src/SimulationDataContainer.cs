@@ -73,12 +73,12 @@ namespace StocksMonitor.src
                 var rule = buyRules.Find(r => r.rule == TRule.AboveMa);
                 if (rule != null)
                 {
-                    name += ": MA > " + rule.value;
+                    name += ": MA > " + rule.RuleValue;
                 }
                 buyRules.Find(r => r.rule == TRule.BelowMa);
                 if (rule != null)
                 {
-                    name += ": & < " + rule.value;
+                    name += ": & < " + rule.RuleValue;
                 }
 
                 sellRules.Find(r => r.rule == TRule.Never);
@@ -164,7 +164,6 @@ namespace StocksMonitor.src
 
         }
 
-        public Strategy strategy;
         public List<Portfolio> portfolioHistory = [];
 
         private void ClearOldData()
@@ -192,7 +191,7 @@ namespace StocksMonitor.src
 
             while(currentPortfolio == null && searchLimit < 15)
             {
-                currentDate.AddDays(-1); // if not find on current day, adjust to previous day, 
+                currentDate = currentDate.AddDays(-1); // if not find on current day, adjust to previous day, 
                 currentPortfolio = portfolioHistory.Find(p => p.timestamp == currentDate.Date);
                 searchLimit++;
             }
@@ -209,7 +208,7 @@ namespace StocksMonitor.src
             searchLimit = 0;
             while (oldPortfolio == null && searchLimit < 15)
             {
-                currentDate.AddDays(-1); // if not find on current day, adjust to previous day, 
+                oldDate = oldDate.AddDays(-1); // if not find on current day, adjust to previous day, 
                 oldPortfolio = portfolioHistory.Find(p => p.timestamp == oldDate.Date);
                 searchLimit++;
             }
@@ -220,9 +219,6 @@ namespace StocksMonitor.src
                 StockMonitorLogger.WriteMsg("AFTER ");
                 StockMonitorLogger.WriteMsg("Old day: " + oldDate.ToString());
             }
-
-
-
 
             if (currentPortfolio == null || oldPortfolio == null)
             {
@@ -237,6 +233,11 @@ namespace StocksMonitor.src
             {
                 currentVal += currentPortfolio.wallet;
                 oldVal = oldPortfolio.wallet;
+            }
+
+            if(oldVal == 0)
+            {
+                return 0;
             }
             
             var diff = currentVal - oldVal;
@@ -295,18 +296,19 @@ namespace StocksMonitor.src
                 return false;
             }
 
+            // breaking any rules
             foreach (var rule in rules)
             {
                 switch (rule.rule)
                 {
                     case TRule.AboveMa:
-                        if (datapoint.Price < (datapoint.MA200 + Value))
+                        if (datapoint.MA200 < rule.RuleValue)
                         {
                             return false;
                         }
                         break;
                     case TRule.BelowMa:
-                        if (datapoint.Price > (datapoint.MA200 + Value))
+                        if (datapoint.MA200 > rule.RuleValue)
                         {
                             return false;
                         }
@@ -332,30 +334,15 @@ namespace StocksMonitor.src
                 }
             }
             else
-            {
-
+            {// SELL
+                if (ComplyToRules(sellRules, datapoint))
+                {
+                    var (count, price) = CalculateCost(datapoint, Wallet);
+                    Wallet += datapoint.OwnedCnt * price;
+                    datapoint.OwnedCnt = 0;
+                }
             }
 
-/*
-            
-            // calculate actions
-            var datapointResult = strategy.DetermineAction(dataPoint: datapoint, wallet: Wallet);
-            switch (datapointResult.action)
-            {
-                case StratAction.BUY:
-                    Wallet -= datapointResult.value;
-                    datapoint.OwnedCnt += datapointResult.adjustmentCount;
-                    break;
-                case StratAction.SELL:
-                // fall-through
-                case StratAction.ADJ_DOWN:
-                    Wallet += datapointResult.value;
-                    datapoint.OwnedCnt -= datapointResult.adjustmentCount;
-                    break;
-                case StratAction.NONE:
-                    break;
-            }
-*/
             // update stock status, from possible actions
             stock.OwnedCnt = datapoint.OwnedCnt;
             //stock.Price = h.Price;
@@ -380,6 +367,8 @@ namespace StocksMonitor.src
 
             while (simulationDay != newestTimeStamp.Date.AddDays(1).Date)
             {
+                // TODO, behöver jag titta på om en aktie har ägts, men finns inte med längre, (bytt lista eller avnoterats) Som t.ex SAS, om jag hade ägt det, och de avnoterades. vad händer?
+
                 foreach (var stock in simulatorStocks)
                 {
                     var h = stock.History.FirstOrDefault(h => h.Date == simulationDay);
@@ -408,9 +397,7 @@ namespace StocksMonitor.src
          
             CalculateSimulationResult();
         }
-
     }
-
 
     public class DataContainer
     {
@@ -513,10 +500,6 @@ namespace StocksMonitor.src
             dataGrid.Columns[0].MinimumWidth = 250;
         }
 
-        public void UpdateData(bool warnings, bool hidden, bool wanted, bool intrested, bool owned)
-        {
-        }
-
         private List<Simulation> AddIndexes()
         {
             return new List<Simulation> { 
@@ -605,42 +588,37 @@ namespace StocksMonitor.src
         {
             List<Simulation> returnSims = AddIndexes();
 
-            
-        
-            /*
-                     foreach (var market in Simulation.markets)
-                     {
-                         /*
-                          * div = true, profit false
-                          * div = true, profit true
-                          * div = false, profit false,
-                          * div = false, profit true
+            returnSims.Add(new Simulation()
+            {
+                dividentRequired = false,
+                profitRequired = false,
+                stockMarket = TMarket.AllExceptFirstNorth,
+                buyRules =
+                {
+                    new Rule(TRule.AboveMa, 0),
+                    new Rule(TRule.BelowMa, 15),
+                },
+                sellRules =
+                {
+                    new Rule(TRule.BelowMa, -5)
+                }
+            });
+            returnSims.Add(new Simulation()
+            {
+                stockMarket = TMarket.All,
+                dividentRequired = false,
+                profitRequired = false,
+                buyRules =
+                {
+                    new Rule(TRule.AboveMa, 0),
+                    new Rule(TRule.BelowMa, 15),
+                },
+                sellRules =
+                {
+                    new Rule(TRule.BelowMa, -5)
+                }
+            });
 
-                         */
-                        /*
-                        for (var i = 0; i < 4; i++)
-                            {
-                                returnSims.Add(
-                                new Simulation()
-                                {
-                                    stockMarket = market.Key,
-                                    indexCalculation = true,
-                                    dividentRequired = i < 2,
-                                    profitRequired = i % 2 != 0,
-
-                                    buyRules =
-                                    {
-                                        new Rule (TRule.Index)
-                                    },
-                                    sellRules =
-                                    {
-                                        new Rule(TRule.Never)
-                                    }
-                                });
-                            }
-                        }
-                    */
-        
             return returnSims;
 
             // TODO, kan generera namn, från TOString() eller så, för objekten, så de genereras. När datacolum skivs

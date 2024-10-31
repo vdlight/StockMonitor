@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("StockMonitor.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dc1139e1550f250ff0beb259bc9fd87b60cbb013")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6a54c6a55c4040dbe3eabfb948350f25ab88f22e")]
 [assembly: System.Reflection.AssemblyProductAttribute("StockMonitor.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("StockMonitor.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
