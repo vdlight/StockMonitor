@@ -1,4 +1,5 @@
-﻿using Borsdata.Api.Dal.Model;
+﻿using Borsdata.Api.Dal.Infrastructure;
+using Borsdata.Api.Dal.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,7 +22,16 @@ namespace StocksMonitor.src.Borsdata
         const string firstNorth = "First North";
 
         const string countrySE = "Sverige";
-        
+
+
+         public readonly List<string> indexes = new List<String> {
+            "First North All",
+            "OMX Small Cap",
+            "OMX Mid Cap",
+            "OMX Large Cap",
+            "OMX Stockholm GI"
+        };
+
         public Dictionary<string, List<StockPriceV1>> InstrumentPrices { get; set; }
 
         public BorsData() 
@@ -130,6 +140,7 @@ namespace StocksMonitor.src.Borsdata
         {
             StockMonitorLogger.WriteMsg("Get all instruments from BD");
             _instruments = _api.GetInstruments().Instruments;
+
         }
 
         private void FillStockPrices()
@@ -147,7 +158,13 @@ namespace StocksMonitor.src.Borsdata
                       _marketsId[smallCap]).ToList());
             GatherDataFromInstruments(_instruments.Where(i => i.MarketId ==
                       _marketsId[firstNorth]).ToList());
-
+     
+            foreach(var index in indexes)
+            {
+                GatherDataFromInstruments(
+                    _instruments.Where(i => i.Name == index).ToList()
+                );
+            }
         }
 
         private void GatherDataFromInstruments(List<InstrumentV1> instruments)

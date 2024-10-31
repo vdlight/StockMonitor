@@ -18,17 +18,20 @@ using System.Windows.Forms.DataVisualization.Charting;
 namespace StocksMonitor.src
 {
     public class Simulation {
-
         public static readonly Dictionary<TMarket, string> markets = new Dictionary<TMarket, string>   
         {
-        { TMarket.All, "All Sthlm" },
-        { TMarket.AllExceptFirstNorth, "All except First North" },
-        { TMarket.LargeCap, "Large Cap" },
-        { TMarket.MidCap, "Mid Cap" },
-        { TMarket.SmallCap, "Small Cap" },
-        { TMarket.FirstNorth, "First North" }
+            { TMarket.All, "All Sthlm" },
+            { TMarket.AllExceptFirstNorth, "All except First North" },
+            { TMarket.LargeCap, "Large Cap" },
+            { TMarket.MidCap, "Mid Cap" },
+            { TMarket.SmallCap, "Small Cap" },
+            { TMarket.FirstNorth, "First North" },
+            { TMarket.IndexFirstNorthAll, "First North All" },
+            { TMarket.IndexOMXSmallCap, "OMX Small Cap" },
+            { TMarket.IndexOMXMidCap, "OMX Mid Cap" },
+            { TMarket.IndexOMXLargeCap, "OMX Large Cap" },
+            { TMarket.IndexOMXSGI, "OMX Stockholm GI" }
         };
-    
 
         public List<Rule> buyRules;
         public List<Rule> sellRules;
@@ -42,9 +45,9 @@ namespace StocksMonitor.src
 
         List<Stock> simulatorStocks = [];
         public string name { get; set; }
-        public decimal oneDay { get; private set; } = 0;
         public decimal oneWeek { get; private set; } = 0;
         public decimal oneMonth { get; private set; } = 0;
+        public decimal sixMonths { get; private set; } = 0;
         public decimal oneYear { get; private set; } = 0;
         public decimal Investment { get; private set; } = 0;
         public decimal Value { get; private set; } = 0;
@@ -108,9 +111,25 @@ namespace StocksMonitor.src
         public void Init(List<Stock> stocks, bool indexCalculation = false)
         {
             IEnumerable<Stock> filtred = stocks;
-
+            // TODO, add warnings if filters stop working?
             switch (stockMarket)
             {
+                case TMarket.IndexFirstNorthAll:
+                    filtred = stocks.Where(s => s.Name == "First North All");
+                    break;
+                case TMarket.IndexOMXSmallCap:
+                        filtred = stocks.Where(s => s.Name == "OMX Small Cap");
+                    break;
+                case TMarket.IndexOMXMidCap:
+                    filtred = stocks.Where(s => s.Name == "OMX Mid Cap");
+                    break;
+                case TMarket.IndexOMXLargeCap:
+                    filtred = stocks.Where(s => s.Name == "OMX Large Cap");
+                    break;
+                case TMarket.IndexOMXSGI:
+                    filtred = stocks.Where(s => s.Name == "OMX Stockholm GI");
+                    break;
+
                 case TMarket.AllExceptFirstNorth:
                     filtred = stocks.Where(s => s.List != markets[TMarket.FirstNorth]);
                     break;
@@ -124,7 +143,7 @@ namespace StocksMonitor.src
 
                 case TMarket.All:
                 default:
-                    filtred = stocks;
+                    filtred = stocks.Where(s=> s.List != "Index");
                     break;
             }
 
@@ -165,8 +184,45 @@ namespace StocksMonitor.src
         // TODO, kanske ska simuleringarna att köra, men att jag kan ställa saker i någon "konfig" investeringssumma, adj rate, marknadsval, ma justeringar / nivåer
         private decimal CalculateDevelopmentBetweenDates(DateTime oldDate, DateTime currentDate)
         {
+            var currentDay = currentDate;
+            var oldDay = oldDate;
+
             var currentPortfolio = portfolioHistory.Find(p => p.timestamp == currentDate.Date);
+            var searchLimit = 0;
+
+            while(currentPortfolio == null && searchLimit < 15)
+            {
+                currentDate.AddDays(-1); // if not find on current day, adjust to previous day, 
+                currentPortfolio = portfolioHistory.Find(p => p.timestamp == currentDate.Date);
+                searchLimit++;
+            }
+
+            if (searchLimit > 0)
+            {
+                StockMonitorLogger.WriteMsg("Current day: " + currentDay.ToString());
+                StockMonitorLogger.WriteMsg("AFTER");
+                StockMonitorLogger.WriteMsg("Current day: " + currentDate.ToString());
+            }
+            
+
             var oldPortfolio = portfolioHistory.Find(p => p.timestamp == oldDate.Date);
+            searchLimit = 0;
+            while (oldPortfolio == null && searchLimit < 15)
+            {
+                currentDate.AddDays(-1); // if not find on current day, adjust to previous day, 
+                oldPortfolio = portfolioHistory.Find(p => p.timestamp == oldDate.Date);
+                searchLimit++;
+            }
+
+            if (searchLimit > 0)
+            {
+                StockMonitorLogger.WriteMsg("Old day: " + oldDay.ToString());
+                StockMonitorLogger.WriteMsg("AFTER ");
+                StockMonitorLogger.WriteMsg("Old day: " + oldDate.ToString());
+            }
+
+
+
 
             if (currentPortfolio == null || oldPortfolio == null)
             {
@@ -184,7 +240,7 @@ namespace StocksMonitor.src
             }
             
             var diff = currentVal - oldVal;
-            return diff / oldVal * 100;
+            return (diff / oldVal) * 100;
         }
         // TODO, flytta strategier till simulering, så jag kan hantera smidigare i helhet. 
         // t.,exa att titta på historik, för att hitta MA brytpunkter, eller att sortera datan, på .tex. närmast MA för att köpa först där, isf det som ligger högst upp på intervall.
@@ -205,27 +261,12 @@ namespace StocksMonitor.src
 
             Value = currentDay.value;
 
-            foreach (var history in portfolioHistory)
-            {
-                var timespan = currentDay.timestamp - history.timestamp;
-
-                if (oneDay == 0 && timespan.TotalDays >= 1)
-                {
-                    oneDay = CalculateDevelopmentBetweenDates(history.timestamp, currentDay.timestamp);
-                }
-                else if (oneWeek == 0 && timespan.TotalDays >= 7)
-                {
-                    oneWeek = CalculateDevelopmentBetweenDates(history.timestamp, currentDay.timestamp);
-                }
-                else if (oneMonth == 0 && timespan.TotalDays > 31)
-                {
-                    oneMonth = CalculateDevelopmentBetweenDates(history.timestamp, currentDay.timestamp);
-                }
-                else if (oneYear == 0 && timespan.TotalDays >= 365)
-                {
-                    oneYear = CalculateDevelopmentBetweenDates(history.timestamp, currentDay.timestamp);
-                }
-            }
+            
+            oneWeek = CalculateDevelopmentBetweenDates(currentDay.timestamp.AddDays(-7), currentDay.timestamp);
+            oneMonth = CalculateDevelopmentBetweenDates(currentDay.timestamp.AddMonths(-1), currentDay.timestamp);
+            sixMonths = CalculateDevelopmentBetweenDates(currentDay.timestamp.AddMonths(-6), currentDay.timestamp);
+            oneYear = CalculateDevelopmentBetweenDates(currentDay.timestamp.AddYears(-1), currentDay.timestamp);
+                       
         }
 
         protected (int, decimal) CalculateCost(History dataPoint, decimal wallet)
@@ -353,12 +394,6 @@ namespace StocksMonitor.src
 
                 if (allStocksHistoryDay.Any())
                 {
-                    if(portfolioHistory.Count > 260 || 
-                        allStocksHistoryDay.Count() < 50)
-                    {
-                        StockMonitorLogger.WriteMsg("Something weird");
-                    }
-
                     portfolioHistory.Add(
                         new Portfolio(
                             date: simulationDay,
@@ -371,14 +406,6 @@ namespace StocksMonitor.src
             }
             // TODOD, grafen när det gäller simuleringarna, visar bara portfölhistory, i procentutveckling steg för steg
          
-            foreach(var item in portfolioHistory)
-            {
-                StockMonitorLogger.WriteMsg("Date: " + item.timestamp +
-                    "value " + item.value);
-                
-            }
-            StockMonitorLogger.WriteMsg("Portfolio cnt " + portfolioHistory.Count());
-
             CalculateSimulationResult();
         }
 
@@ -413,13 +440,6 @@ namespace StocksMonitor.src
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "d %",
-                HeaderText = "d %",
-                ToolTipText = "1 day",
-                ValueType = typeof(decimal)
-            });
-            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
-            {
                 Name = "w %",
                 HeaderText = "w %",
                 ToolTipText = "1 week",
@@ -430,6 +450,13 @@ namespace StocksMonitor.src
                 Name = "m %",
                 HeaderText = "m %",
                 ToolTipText = "1 month",
+                ValueType = typeof(decimal)
+            });
+            dataGrid.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "6m %",
+                HeaderText = "6m %",
+                ToolTipText = "6 months",
                 ValueType = typeof(decimal)
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
@@ -489,61 +516,130 @@ namespace StocksMonitor.src
         public void UpdateData(bool warnings, bool hidden, bool wanted, bool intrested, bool owned)
         {
         }
-        private List<Simulation> generateSimulations()
+
+        private List<Simulation> AddIndexes()
         {
-            List<Simulation> returnSims = new List<Simulation>();
-
-            returnSims.AddRange(
-            new List<Simulation>
-            {
-                    new Simulation()
-                    {
-                        stockMarket = TMarket.All,
-                        indexCalculation = true,
-                        dividentRequired = false,
-                        profitRequired = false,
-                        buyRules =
-                        {
-                            new Rule (TRule.Index),
-                        },
-                        sellRules =
-                        {
-                            new Rule(TRule.Never)
-                        }
-                    }
-
-            });
-
-            foreach (var market in Simulation.markets)
-            {
-                /*
-                 * div = true, profit false
-                 * div = true, profit true
-                 * div = false, profit false,
-                 * div = false, profit true
-          
-                */
-                for(var i = 0; i < 4; i++)
+            return new List<Simulation> { 
+                new Simulation()
                 {
-                    returnSims.Add(
-                    new Simulation()
-                    {
-                        stockMarket = market.Key,
-                        indexCalculation = true,
-                        dividentRequired = i < 2,
-                        profitRequired = i % 2 != 0,
-
-                        buyRules =
+                    stockMarket = TMarket.IndexFirstNorthAll,
+                    indexCalculation = true,
+                    dividentRequired = false,
+                    profitRequired = false,
+                    buyRules =
                         {
                             new Rule (TRule.Index)
                         },
-                        sellRules =
+                    sellRules =
                         {
                             new Rule(TRule.Never)
                         }
-                    });
-                }
-            }
+                },
+                new Simulation()
+                {
+                    stockMarket = TMarket.IndexOMXSmallCap,
+                    indexCalculation = true,
+                    dividentRequired = false,
+                    profitRequired = false,
+                    buyRules =
+                        {
+                            new Rule (TRule.Index)
+                        },
+                    sellRules =
+                        {
+                            new Rule(TRule.Never)
+                        }
+                },
+                new Simulation()
+                {
+                    stockMarket = TMarket.IndexOMXMidCap,
+                    indexCalculation = true,
+                    dividentRequired = false,
+                    profitRequired = false,
+                    buyRules =
+                        {
+                            new Rule (TRule.Index)
+                        },
+                    sellRules =
+                        {
+                            new Rule(TRule.Never)
+                        }
+                },
+                new Simulation()
+                {
+                    stockMarket = TMarket.IndexOMXLargeCap,
+                    indexCalculation = true,
+                    dividentRequired = false,
+                    profitRequired = false,
+                    buyRules =
+                        {
+                            new Rule (TRule.Index)
+                        },
+                    sellRules =
+                        {
+                            new Rule(TRule.Never)
+                        }
+                },
+                new Simulation()
+                {
+                    stockMarket = TMarket.IndexOMXSGI,
+                    indexCalculation = true,
+                    dividentRequired = false,
+                    profitRequired = false,
+                    buyRules =
+                        {
+                            new Rule (TRule.Index)
+                        },
+                    sellRules =
+                        {
+                            new Rule(TRule.Never)
+                        }
+                },
+
+
+
+
+            };
+        }
+        private List<Simulation> generateSimulations()
+        {
+            List<Simulation> returnSims = AddIndexes();
+
+            
+        
+            /*
+                     foreach (var market in Simulation.markets)
+                     {
+                         /*
+                          * div = true, profit false
+                          * div = true, profit true
+                          * div = false, profit false,
+                          * div = false, profit true
+
+                         */
+                        /*
+                        for (var i = 0; i < 4; i++)
+                            {
+                                returnSims.Add(
+                                new Simulation()
+                                {
+                                    stockMarket = market.Key,
+                                    indexCalculation = true,
+                                    dividentRequired = i < 2,
+                                    profitRequired = i % 2 != 0,
+
+                                    buyRules =
+                                    {
+                                        new Rule (TRule.Index)
+                                    },
+                                    sellRules =
+                                    {
+                                        new Rule(TRule.Never)
+                                    }
+                                });
+                            }
+                        }
+                    */
         
             return returnSims;
 
@@ -574,9 +670,9 @@ namespace StocksMonitor.src
 
             row.CreateCells(dataGrid,
                 sim.getNameString(),
-                sim.oneDay,
                 sim.oneWeek,
                 sim.oneMonth,
+                sim.sixMonths,
                 sim.oneYear,
                 sim.Investment,
                 sim.Value,

@@ -12,6 +12,7 @@ using StocksMonitor.src.Borsdata;
 using Borsdata.Api.Dal.Model;
 using System.Net.Http.Headers;
 using GrapeCity.DataVisualization.TypeScript;
+using GrapeCity.DataVisualization.Chart;
 
 namespace StocksMonitor.src.dataStoreNS
 {
@@ -47,9 +48,23 @@ namespace StocksMonitor.src.dataStoreNS
             this.avanza = new AvanzaParser();
         }
 
+        private void MarkIndexes()
+        {
+            foreach (var item in stocks)
+            {
+                item.IsIndex = false;
+            }
+
+            foreach (var item in stocks.Where(s => bd.indexes.Contains(s.Name)))
+            {
+                item.IsIndex = true;
+            }
+        }
+
         public async void Startup()
         {
             stocks = await storage.ReadData();
+            MarkIndexes();
         }
      
         public async void GetOwnedData()
@@ -148,6 +163,7 @@ namespace StocksMonitor.src.dataStoreNS
                     }
                 }
             }
+            MarkIndexes();
         }
         public async Task WriteToDb()
         {

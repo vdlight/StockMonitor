@@ -1,5 +1,6 @@
 ﻿using Microsoft.Identity.Client;
 using StocksMonitor.Migrations;
+using StocksMonitor.src;
 using StocksMonitor.src.databaseWrapper;
 using System;
 using System.Collections.Generic;
@@ -113,6 +114,11 @@ namespace StocksMonitor.src
         MidCap,
         SmallCap,
         FirstNorth,
+        IndexFirstNorthAll,
+        IndexOMXSmallCap, 
+        IndexOMXMidCap,
+        IndexOMXLargeCap,
+        IndexOMXSGI,
     }
 
     public enum TRule

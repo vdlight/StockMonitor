@@ -147,6 +147,8 @@ namespace StocksMonitor.src.databaseWrapper
         public List<History> History { get; set; } = []; // One-to-Many relationship
         public StockMisc? Misc { get; set; } = new(); // One-to-One relationship
 
+        public bool IsIndex = false;
+
         public FilterSelections filters = new();
 
         public void CopyDataFromNewStock(Stock rhs) 
