@@ -100,6 +100,7 @@ namespace StocksMonitor.src
 
             for (int i = 0; i < dataGrid.Columns.Count; i++)
             {
+                dataGrid.Columns[i].DefaultCellStyle.Format = "N2"; // Two decimals
                 if (i == 0)
                 {
                     // name shall be leftaligned, rest, center
@@ -192,7 +193,7 @@ namespace StocksMonitor.src
                     (wanted && stock.OwnedCnt > 0) ||
                     (intrested && !stock.filters.intrested) ||
                     (owned && stock.OwnedCnt == 0))
-                {
+                {           
                     continue;
                 }
 
@@ -203,7 +204,7 @@ namespace StocksMonitor.src
                 row.CreateCells(dataGrid,
                     stock.Name,
                     stock.Price,
-                    stock.MA200.ToString("F2"),
+                    stock.MA200,
                     stock.OwnedCnt,
                     earned,
                     stock.OwnedCnt > 0 ? stock.Price * stock.OwnedCnt : "", // Value

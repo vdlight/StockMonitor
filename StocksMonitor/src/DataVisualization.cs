@@ -89,7 +89,17 @@ namespace StocksMonitor.src
 
                 if (stock != null)
                 {
-                    var color = GetColor(stock.Name);
+                    Color color = GetColor(stock.Name);
+                    if (names.Count > 1) {
+                        color = GetColor(stock.Name);
+                    }
+                    else
+                    {
+                        color = Color.DarkBlue;
+
+                    }
+                    // TODO, markera flera aktier för jämförelse, ritar inte graf korrekt längre.
+
 
                     var price = $"Price {names[i]}";
                     chart.Series.Add(price);
