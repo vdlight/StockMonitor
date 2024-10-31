@@ -203,7 +203,7 @@ namespace StocksMonitor.src
                 row.CreateCells(dataGrid,
                     stock.Name,
                     stock.Price,
-                    stock.MA200,
+                    stock.MA200.ToString("F2"),
                     stock.OwnedCnt,
                     earned,
                     stock.OwnedCnt > 0 ? stock.Price * stock.OwnedCnt : "", // Value

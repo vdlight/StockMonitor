@@ -81,7 +81,7 @@ namespace StocksMonitor.src
                 range = DateTime.Now.AddDays(-31);
             }
 
-
+            // TODO, make it selectable what range
 
             for (int i = 0; i < names.Count; i++)
             {
@@ -115,11 +115,14 @@ namespace StocksMonitor.src
                     chart.Series[MA].ToolTip = "Date: #VALX, MA200: #VALY{N2}";
 
                     var cnt = 0;
-                
-                    foreach (var history in stock.History.Take(31))
+
+                    var reversedHistory = stock.History;
+                    reversedHistory.Reverse();
+
+                    foreach (var history in reversedHistory.Take(31))
                     {
-                        chart.Series[price].Points.AddXY(cnt, history.Price);
-                        chart.Series[MA].Points.AddXY(cnt, CalculateMAFromPriceAndMAPercentage(history.Price, history.MA200));
+                        chart.Series[price].Points.AddXY(history.Date, history.Price);
+                        chart.Series[MA].Points.AddXY(history.Date, CalculateMAFromPriceAndMAPercentage(history.Price, history.MA200));
                         cnt--;
                     }
                 }
