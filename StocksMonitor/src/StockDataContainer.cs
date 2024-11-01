@@ -39,7 +39,7 @@ namespace StocksMonitor.src
             this.dataGrid = dataGridView;
             this.store = store;
         }
-
+        // TODO, möjlighet attjämföra och se hur index går. T.ex. om FirstN ligger i negativ trend, dvs ma < 0, så ska jag nog inte köpa där om jag inte ser något speciellt. Marknaderna är lite fristående. Ibland går stora bolag bra, ibland smått.
         public void init()
         {
             dataGrid.Columns.Clear(); // Clear any existing columns

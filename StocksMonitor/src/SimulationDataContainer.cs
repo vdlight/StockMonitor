@@ -1,4 +1,5 @@
 ﻿using GrapeCity.DataVisualization.Chart;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using StocksMonitor.src;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,7 +42,7 @@ namespace StocksMonitor.src
         public bool profitRequired;
         public bool indexCalculation;
 
-        readonly decimal originalInvestment = 100000;
+        readonly decimal originalInvestment = 0;
         const decimal investmentTarget = 500;
 
         List<Stock> simulatorStocks = [];
@@ -227,12 +229,17 @@ namespace StocksMonitor.src
 
             if (!indexCalculation)
             {
+                // value is the value of own stocks, and the wallet money. But withdraw the investment money
                 currentVal += currentPortfolio.wallet;
+                currentVal -= currentPortfolio.investment;
+
                 oldVal += oldPortfolio.wallet;
+                oldVal -= oldPortfolio.investment; 
             }
 
             if(oldVal == 0)
             {
+                StockMonitorLogger.WriteMsg("ERROR, could not calculate  value for oldTimestamp " + oldDate.ToString() + ", returning zero.");
                 return 0;
             }
             
@@ -254,7 +261,7 @@ namespace StocksMonitor.src
             var currentDay = portfolioHistory.First();
 
             TotDevelopment =
-                CalculateDevelopmentBetweenDates(portfolioHistory.Last().timestamp, portfolioHistory.First().timestamp);
+                CalculateDevelopmentBetweenDates(portfolioHistory.Last().timestamp , currentDay.timestamp);
 
             Value = currentDay.value;
 
@@ -271,18 +278,23 @@ namespace StocksMonitor.src
             int buyCount = (int)((investmentTarget - (dataPoint.OwnedCnt * dataPoint.Price)) / dataPoint.Price);
             decimal cost = (dataPoint.Price * buyCount);
 
-            var walletAllows = cost > 0 && wallet >= cost;
+            if(cost  == 0)
+            {
+                return (0, 0);
+            }
 
+            if(cost > wallet)
+            {
+                AddToWallet(cost);
+            }
+            
             if (buyRules.Any(r => r.rule == TRule.Index))
             {
                 // no wallet simulation
-                walletAllows = true;
                 cost = 0;
                 buyCount = 1;
             }
-            
-
-            return walletAllows ? (buyCount, cost) : (0, 0);
+            return (buyCount, cost);
         }
 
         private bool ComplyToRules(List<Rule> rules, History datapoint)
@@ -356,7 +368,9 @@ namespace StocksMonitor.src
             var newestStock = stockHistories.LastOrDefault();
 
             ClearOldData();
-            
+
+
+            var ClearInvestmentFirstSimulationDay = true;
 
             if (oldestStock== null || newestStock == null)
             {
@@ -395,6 +409,13 @@ namespace StocksMonitor.src
 
                 if (allStocksHistoryDay.Any())
                 {
+                    // First day, i need a reference point otherwice it will be value - investment --> 0, rendering total simulation useless
+                    if(ClearInvestmentFirstSimulationDay)
+                    {
+                        ClearInvestmentFirstSimulationDay = false;
+                        Investment = 0;
+                    }
+
                     portfolioHistory.Add(
                         new Portfolio(
                             date: simulationDay,
@@ -601,7 +622,7 @@ namespace StocksMonitor.src
         private List<Simulation> generateSimulations()
         {
             List<Simulation> returnSims = AddIndexes();
-
+            // TODO, Möjlighet att i simuleringar, välja vilka markander som ska köras. Så kör jag alla varianter för vald marknad sedan
             returnSims.Add(new Simulation()
             {
                 dividentRequired = false,
@@ -617,7 +638,7 @@ namespace StocksMonitor.src
                     new Rule(TRule.BelowMa, -5)
                 }
             });
-        /*    returnSims.Add(new Simulation()
+            returnSims.Add(new Simulation()
             {
                 stockMarket = TMarket.All,
                 dividentRequired = false,
@@ -631,7 +652,33 @@ namespace StocksMonitor.src
                 {
                     new Rule(TRule.BelowMa, -5)
                 }
-            });*/
+            });
+            returnSims.Add(new Simulation()
+            {
+                stockMarket = TMarket.AllExceptFirstNorth,
+                dividentRequired = false,
+                profitRequired = false,
+                buyRules =
+                {
+                },
+                sellRules =
+                {
+                    new Rule(TRule.Never)
+                }
+            });
+            returnSims.Add(new Simulation()
+            {
+                stockMarket = TMarket.All,
+                dividentRequired = false,
+                profitRequired = false,
+                buyRules =
+                {
+                },
+                sellRules =
+                {
+                    new Rule(TRule.Never)
+                }
+            });
 
             return returnSims;
 
