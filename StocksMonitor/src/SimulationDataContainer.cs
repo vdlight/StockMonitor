@@ -69,26 +69,21 @@ namespace StocksMonitor.src
                 name += " index";
             }
             else {
-                name += ": Buy";
-                var rule = buyRules.Find(r => r.rule == TRule.AboveMa);
-                if (rule != null)
+
+                name += ": Buy: ";
+                foreach(var rule in buyRules)
                 {
-                    name += ": MA > " + rule.RuleValue;
-                }
-                buyRules.Find(r => r.rule == TRule.BelowMa);
-                if (rule != null)
-                {
-                    name += ": & < " + rule.RuleValue;
+                    name += rule.rule + " " + rule.RuleValue; 
                 }
 
-                sellRules.Find(r => r.rule == TRule.Never);
-                if (rule != null)
+                name += ". Sell: ";
+                foreach (var rule in sellRules)
                 {
-                    name += " and keep";
+                    name += rule.rule + " " + rule.RuleValue;
                 }
             }
 
-            if(dividentRequired)
+            if (dividentRequired)
             {
                 name += ". Div";
             }
@@ -176,6 +171,7 @@ namespace StocksMonitor.src
                     history.OwnedCnt = 0;
                 }
             }
+            portfolioHistory.Clear();
         }
 
 
@@ -232,7 +228,7 @@ namespace StocksMonitor.src
             if (!indexCalculation)
             {
                 currentVal += currentPortfolio.wallet;
-                oldVal = oldPortfolio.wallet;
+                oldVal += oldPortfolio.wallet;
             }
 
             if(oldVal == 0)
@@ -296,19 +292,21 @@ namespace StocksMonitor.src
                 return false;
             }
 
+
             // breaking any rules
             foreach (var rule in rules)
             {
                 switch (rule.rule)
                 {
+                    // DO not trust MA200 values of 0, since it can be just def value --> not calculated, will filter a few points, but very few i assume
                     case TRule.AboveMa:
-                        if (datapoint.MA200 < rule.RuleValue)
+                        if (datapoint.MA200 == 0 || datapoint.MA200 < rule.RuleValue)
                         {
                             return false;
                         }
                         break;
                     case TRule.BelowMa:
-                        if (datapoint.MA200 > rule.RuleValue)
+                        if (datapoint.MA200 == 0 || datapoint.MA200 > rule.RuleValue)
                         {
                             return false;
                         }
@@ -325,11 +323,12 @@ namespace StocksMonitor.src
             datapoint.OwnedCnt = stock.OwnedCnt;
             //h.Price = stock.Price;
 
+            // Buy
             if (datapoint.OwnedCnt == 0) {
                 if(ComplyToRules(buyRules, datapoint))
                 {
-                    var (count, price) = CalculateCost(datapoint, Wallet);
-                    Wallet -= price;
+                    var (count, totalCost) = CalculateCost(datapoint, Wallet);
+                    Wallet -= totalCost;
                     datapoint.OwnedCnt += count;
                 }
             }
@@ -337,8 +336,7 @@ namespace StocksMonitor.src
             {// SELL
                 if (ComplyToRules(sellRules, datapoint))
                 {
-                    var (count, price) = CalculateCost(datapoint, Wallet);
-                    Wallet += datapoint.OwnedCnt * price;
+                    Wallet += datapoint.OwnedCnt * datapoint.Price;
                     datapoint.OwnedCnt = 0;
                 }
             }
@@ -353,21 +351,35 @@ namespace StocksMonitor.src
             // TODO skriva owned cnt i stocklistan, per historik, för att få koll på utvekcling, väldigt lik vanliga procentuella uträkningen också
 
             // latest hisory is the same as current, dont duplicate
-            var oldestTimeStamp = simulatorStocks.SelectMany(s => s.History).OrderBy(h => h.Date).FirstOrDefault();
-            var newestTimeStamp = simulatorStocks.SelectMany(s => s.History).OrderBy(h => h.Date).LastOrDefault();
-            ClearOldData();
+            var stockHistories = simulatorStocks.SelectMany(s => s.History).OrderBy(h => h.Date);
+            var oldestStock = stockHistories.FirstOrDefault();
+            var newestStock = stockHistories.LastOrDefault();
 
-            if (oldestTimeStamp == null || newestTimeStamp == null)
+            ClearOldData();
+            
+
+            if (oldestStock== null || newestStock == null)
             {
                 StockMonitorLogger.WriteMsg("ABORT, Could not find timestamps, ABORT");
                 return;
             }
-            // History när läst från db går från äldsta i 0 --> 27/9, till nyaste sist 14 --> 22/10
-            var simulationDay = oldestTimeStamp.Date;
 
-            while (simulationDay != newestTimeStamp.Date.AddDays(1).Date)
+            // todo, tempcode
+            oldestStock.Date = newestStock.Date.AddYears(-1);
+
+            // History när läst från db går från äldsta i 0 --> 27/9, till nyaste sist 14 --> 22/10
+            var simulationDay = oldestStock.Date;
+
+ 
+
+            while (simulationDay != newestStock.Date.AddDays(1).Date)
             {
                 // TODO, behöver jag titta på om en aktie har ägts, men finns inte med längre, (bytt lista eller avnoterats) Som t.ex SAS, om jag hade ägt det, och de avnoterades. vad händer?
+
+                if(simulationDay < DateTime.Parse("2023-10-28"))
+                {
+                    StockMonitorLogger.WriteMsg("fdsakfda");
+                }
 
                 foreach (var stock in simulatorStocks)
                 {
@@ -502,6 +514,8 @@ namespace StocksMonitor.src
 
         private List<Simulation> AddIndexes()
         {
+            return new List<Simulation>();
+
             return new List<Simulation> { 
                 new Simulation()
                 {
@@ -603,7 +617,7 @@ namespace StocksMonitor.src
                     new Rule(TRule.BelowMa, -5)
                 }
             });
-            returnSims.Add(new Simulation()
+        /*    returnSims.Add(new Simulation()
             {
                 stockMarket = TMarket.All,
                 dividentRequired = false,
@@ -617,7 +631,7 @@ namespace StocksMonitor.src
                 {
                     new Rule(TRule.BelowMa, -5)
                 }
-            });
+            });*/
 
             return returnSims;
 
