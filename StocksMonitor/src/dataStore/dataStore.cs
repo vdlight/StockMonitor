@@ -140,13 +140,13 @@ namespace StocksMonitor.src.dataStoreNS
         }
         public void FillStoreFromBD()
         {
-            foreach (var instrument in bd.InstrumentPrices)
+            foreach (var instrument in bd.InstrumentDatas)
             {
                 if (stocks.Any(s => s.Name == instrument.Key))
                 {
                     UpdateStock(
                         stocks.First(s => s.Name == instrument.Key),
-                        instrument.Value
+                        instrument.Value.prices
                     );
                 }
                 else
@@ -158,7 +158,7 @@ namespace StocksMonitor.src.dataStoreNS
                     if (marketName != "") 
                     {
                         newStock.List = marketName;
-                        UpdateStock(newStock, instrument.Value);
+                        UpdateStock(newStock, instrument.Value.prices);
                         stocks.Add(newStock);
                     }
                 }

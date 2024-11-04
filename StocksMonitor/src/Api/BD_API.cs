@@ -95,6 +95,86 @@ namespace Borsdata.Api.Dal.Model
             }
         }
 
+        /// <summary> Return list of all reports for one instrument</summary>
+        public ReportsRespV1 GetReports(long instrumentId, int maxYearCount = 20, int maxR12QCount = 20, int original = 0)
+        {
+
+            string url = $"{_urlRoot}/v1/instruments/{instrumentId}/reports";
+            string query = $"{_querystring}&maxYearCount={maxYearCount}&maxR12QCount={maxR12QCount}&original={original}";
+
+            HttpResponseMessage response = WebbCall(url, query);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = response.Content.ReadAsStringAsync().Result;
+                ReportsRespV1 res = JsonConvert.DeserializeObject<ReportsRespV1>(json);
+                return res;
+            }
+            else
+            {
+                Console.WriteLine("GetReports {0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+            }
+
+            return null;
+        }
+
+
+        /// <summary>
+        /// Screener KPIs. Return one data point for one instrument.
+        /// You can find exact API URL on Borsdata screener in the KPI window and [API URL] button.
+        /// </summary>
+        /// <param name="instrumentId">Company Ericsson has instrumentId=77</param>
+        /// <param name="KpiId">KPI ID</param>
+        /// <param name="time">Time period for the KPI</param>
+        /// <param name="calc">Calculation format.</param>
+        /// <returns></returns>
+        public KpisRespV1 GetKpiScreenerSingle(long instrumentId, int KpiId, string time, string calc)
+        {
+            string url = $"{_urlRoot}/v1/Instruments/{instrumentId}/kpis/{KpiId}/{time}/{calc}";
+            HttpResponseMessage response = WebbCall(url, _querystring);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = response.Content.ReadAsStringAsync().Result;
+                KpisRespV1 res = JsonConvert.DeserializeObject<KpisRespV1>(json);
+                return res;
+            }
+            else
+            {
+                Console.WriteLine("GetKpiScreenerSingle time {0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+            }
+
+            return null;
+        }
+
+
+
+        /// <summary>
+        /// Screener KPIs. Return List of datapoints for all instruments.
+        /// You can find exact API URL on Borsdata screener in the KPI window and [API URL] button.
+        /// </summary>
+        /// <param name="KpiId">KPI ID</param>
+        /// <param name="time">Time period for the KPI</param>
+        /// <param name="calc">Calculation format</param>
+        /// <returns></returns>
+        public KpisAllCompRespV1 GetKpiScreener(int KpiId, string time, string calc)
+        {
+            string url = $"{_urlRoot}/v1/Instruments/kpis/{KpiId}/{time}/{calc}";
+            HttpResponseMessage response = WebbCall(url, _querystring);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = response.Content.ReadAsStringAsync().Result;
+                KpisAllCompRespV1 res = JsonConvert.DeserializeObject<KpisAllCompRespV1>(json);
+                return res;
+            }
+            else
+            {
+                Console.WriteLine("GetKpiScreener time {0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+            }
+
+            return null;
+        }
 
         public MarketsRespV1 GetMarkets()
         {

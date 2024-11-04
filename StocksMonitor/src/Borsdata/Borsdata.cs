@@ -1,14 +1,23 @@
 ﻿using Borsdata.Api.Dal.Infrastructure;
 using Borsdata.Api.Dal.Model;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace StocksMonitor.src.Borsdata
 {
+    public class InstrumentData
+    {
+        public decimal PE;
+        public decimal Divident;
+        public List<StockPriceV1> prices;
+    }
     public class BorsData
     {
         private List<InstrumentV1> _instruments;
@@ -32,11 +41,11 @@ namespace StocksMonitor.src.Borsdata
             "OMX Stockholm GI"
         };
 
-        public Dictionary<string, List<StockPriceV1>> InstrumentPrices { get; set; }
+        public Dictionary<string, InstrumentData> InstrumentDatas { get; set; }
 
         public BorsData() 
         {
-            InstrumentPrices = new Dictionary<string, List<StockPriceV1>>();
+            InstrumentDatas = new Dictionary<string, InstrumentData>();
             _marketsId = new Dictionary<string, long>();
             _CountriesId = new Dictionary<string, long>();
             _api = new BD_API();
@@ -89,7 +98,7 @@ namespace StocksMonitor.src.Borsdata
             GetAllMarkets();
             GetAllInstruments();
             FillStockPrices();
-
+            GetKpiScreener();
         }
         public void GetAllMarkets()
         {
@@ -110,6 +119,27 @@ namespace StocksMonitor.src.Borsdata
                     }
                 } 
             }
+        }
+
+        public void GetKpiScreener()
+        {
+            StockMonitorLogger.WriteMsg("Get KPI Screener from BD");
+            const int dividentKey = 1;
+            const int peKey = 6;
+
+
+            foreach (var instrument in _instruments)
+            {
+
+                var PE = _api.GetKpiScreenerSingle((long)instrument.InsId, peKey, TimeType.last, CalcType.latest);
+                var div = _api.GetKpiScreenerSingle((long)instrument.InsId, dividentKey, TimeType.last, CalcType.latest);
+
+
+                InstrumentDatas[instrument.Name].Divident = div != null ? (decimal)div.Value.N : 0;
+                InstrumentDatas[instrument.Name].PE = PE != null ? (decimal)PE.Value.N : 0;
+            }
+
+            StockMonitorLogger.WriteMsg("instrumentKPis : Addnode" + InstrumentDatas["Addnode"].Divident + " " + InstrumentDatas["ADdnode"].PE);
         }
 
         public void GetAllCountries()
@@ -186,7 +216,11 @@ namespace StocksMonitor.src.Borsdata
                     if (matchedInstrument != null)
                     {
                         var instrumentName = matchedInstrument.Name;
-                        InstrumentPrices[instrumentName] = sp.StockPricesList;
+                        InstrumentDatas[instrumentName] = new InstrumentData()
+                        {
+                            prices = sp.StockPricesList,
+                        };
+                            
                     }
                     else
                     {
