@@ -128,7 +128,7 @@ namespace StocksMonitor.src
                     break;
 
                 case TMarket.AllExceptFirstNorth:
-                    filtred = stocks.Where(s => s.List != markets[TMarket.FirstNorth]);
+                    filtred = stocks.Where(s => s.List != markets[TMarket.FirstNorth] && s.List != "Index");
                     break;
 
                 case TMarket.LargeCap:
@@ -184,7 +184,7 @@ namespace StocksMonitor.src
             var currentPortfolio = portfolioHistory.Find(p => p.timestamp == currentDate.Date);
             var searchLimit = 0;
 
-            while(currentPortfolio == null && searchLimit < 15)
+            while(currentPortfolio == null && searchLimit < 31)
             {
                 currentDate = currentDate.AddDays(-1); // if not find on current day, adjust to previous day, 
                 currentPortfolio = portfolioHistory.Find(p => p.timestamp == currentDate.Date);
@@ -275,7 +275,13 @@ namespace StocksMonitor.src
             int buyCount = (int)((investmentTarget - (ownedCnt * dataPoint.Price)) / dataPoint.Price);
             decimal cost = (dataPoint.Price * buyCount);
 
-            if(cost  == 0)
+            if (buyRules.Any(r => r.rule == TRule.Index))
+            {
+                // no wallet simulation
+                return (1, 0m);
+            }
+
+            if (cost  == 0) // cant fit more stocks in investment target
             {
                 return (0, 0);
             }
@@ -285,12 +291,7 @@ namespace StocksMonitor.src
                 AddToWallet(cost);
             }
             
-            if (buyRules.Any(r => r.rule == TRule.Index))
-            {
-                // no wallet simulation
-                cost = 0;
-                buyCount = 1;
-            }
+
             return (buyCount, cost);
         }
 
@@ -333,7 +334,7 @@ namespace StocksMonitor.src
             if (stock.OwnedCnt == 0) {
                 if(ComplyToRules(buyRules, datapoint))
                 {
-                    var (count, totalCost) = CalculateCost(datapoint, Wallet, stock.OwnedCnt);
+                    var (count, totalCost) = CalculateCost(dataPoint:datapoint, wallet:Wallet, ownedCnt:stock.OwnedCnt);
                     Wallet -= totalCost;
                     stock.OwnedCnt += count;
                 }
@@ -396,7 +397,7 @@ namespace StocksMonitor.src
 
                     if (h != null)
                     {
-                        HandleDatapoint(stock, h, Wallet);
+                        HandleDatapoint(stock:stock, datapoint:h, wallet:Wallet);
                         valueOfInvestments += (stock.OwnedCnt * h.Price);
                     }
                 }
@@ -530,10 +531,9 @@ namespace StocksMonitor.src
 
         private List<Simulation> AddIndexes()
         {
-            return new List<Simulation>();
 
             return new List<Simulation> { 
-                new Simulation()
+           /*     new Simulation()
                 {
                     stockMarket = TMarket.IndexFirstNorthAll,
                     indexCalculation = true,
@@ -562,7 +562,7 @@ namespace StocksMonitor.src
                         {
                             new Rule(TRule.Never)
                         }
-                },
+                },*/
                 new Simulation()
                 {
                     stockMarket = TMarket.IndexOMXMidCap,
@@ -593,7 +593,7 @@ namespace StocksMonitor.src
                             new Rule(TRule.Never)
                         }
                 },
-                new Simulation()
+                /*new Simulation()
                 {
                     stockMarket = TMarket.IndexOMXSGI,
                     indexCalculation = true,
@@ -608,7 +608,7 @@ namespace StocksMonitor.src
                             new Rule(TRule.Never)
                         }
                 },
-
+                */
 
 
 
@@ -618,122 +618,122 @@ namespace StocksMonitor.src
         {
             List<Simulation> returnSims = AddIndexes();
             // TODO, Möjlighet att i simuleringar, välja vilka markander som ska köras. Så kör jag alla varianter för vald marknad sedan
-            returnSims.Add(new Simulation()
-            {
-                dividentRequired = false,
-                profitRequired = false,
-                stockMarket = TMarket.AllExceptFirstNorth,
-                buyRules =
-                {
-                    new Rule(TRule.AboveMa, 0),
-                    new Rule(TRule.BelowMa, 15),
-                },
-                sellRules =
-                {
-                    new Rule(TRule.BelowMa, -5)
-                }
-            });
-            returnSims.Add(new Simulation()
-            {
-                stockMarket = TMarket.All,
-                dividentRequired = false,
-                profitRequired = false,
-                buyRules =
-                {
-                    new Rule(TRule.AboveMa, 0),
-                    new Rule(TRule.BelowMa, 15),
-                },
-                sellRules =
-                {
-                    new Rule(TRule.BelowMa, -5)
-                }
-            });
-            returnSims.Add(new Simulation()
-            {
-                stockMarket = TMarket.AllExceptFirstNorth,
-                dividentRequired = false,
-                profitRequired = false,
-                buyRules =
-                {
-                },
-                sellRules =
-                {
-                    new Rule(TRule.Never)
-                }
-            });
-            returnSims.Add(new Simulation()
-            {
-                stockMarket = TMarket.All,
-                dividentRequired = false,
-                profitRequired = false,
-                buyRules =
-                {
-                },
-                sellRules =
-                {
-                    new Rule(TRule.Never)
-                }
-            });
+/*  returnSims.Add(new Simulation()
+  {
+      dividentRequired = false,
+      profitRequired = false,
+      stockMarket = TMarket.AllExceptFirstNorth,
+      buyRules =
+      {
+          new Rule(TRule.AboveMa, 0),
+          new Rule(TRule.BelowMa, 15),
+      },
+      sellRules =
+      {
+          new Rule(TRule.BelowMa, -5)
+      }
+  });
+  returnSims.Add(new Simulation()
+  {
+      stockMarket = TMarket.All,
+      dividentRequired = false,
+      profitRequired = false,
+      buyRules =
+      {
+          new Rule(TRule.AboveMa, 0),
+          new Rule(TRule.BelowMa, 15),
+      },
+      sellRules =
+      {
+          new Rule(TRule.BelowMa, -5)
+      }
+  });
+  returnSims.Add(new Simulation()
+  {
+      stockMarket = TMarket.AllExceptFirstNorth,
+      dividentRequired = false,
+      profitRequired = false,
+      buyRules =
+      {
+      },
+      sellRules =
+      {
+          new Rule(TRule.Never)
+      }
+  });
+  returnSims.Add(new Simulation()
+  {
+      stockMarket = TMarket.All,
+      dividentRequired = false,
+      profitRequired = false,
+      buyRules =
+      {
+      },
+      sellRules =
+      {
+          new Rule(TRule.Never)
+      }
+  });*/
 
-            return returnSims;
+  return returnSims;
 
-            // TODO, kan generera namn, från TOString() eller så, för objekten, så de genereras. När datacolum skivs
-        }
-
-        
-        public void UpdateData()
-        {
-            dataGrid.Rows.Clear(); // Clear existing rows
-
-            simulations.AddRange(generateSimulations());
-                
-            foreach (var sim in simulations)
-            {
-                sim.Init(store.stocks);
-                sim.Run();
-                AddSimulationToDataGrid(sim);
-            }
-        }
+  // TODO, kan generera namn, från TOString() eller så, för objekten, så de genereras. När datacolum skivs
+}
 
 
-        public void AddSimulationToDataGrid(Simulation sim)
-        {
-            DataGridViewRow row = new DataGridViewRow();
-            
-            //var stockDevelopement = sim.strategy.GetType() == typeof(StockDevelopmentSimulation);
+public void UpdateData()
+{
+  dataGrid.Rows.Clear(); // Clear existing rows
 
-            row.CreateCells(dataGrid,
-                sim.getNameString(),
-                sim.oneWeek,
-                sim.oneMonth,
-                sim.sixMonths,
-                sim.oneYear,
-                sim.Investment,
-                sim.Value,
-                sim.Wallet,
-                sim.TotDevelopment
-                );
+  simulations.AddRange(generateSimulations());
 
-            dataGrid.Rows.Add(row);
-        }
-    }
-    public class Portfolio
-    {
-        public decimal wallet;
-        public decimal value;
-        public decimal investment;
-        public DateTime timestamp;
+  foreach (var sim in simulations)
+  {
+      sim.Init(store.stocks);
+      sim.Run();
+      AddSimulationToDataGrid(sim);
+  }
+}
 
 
-        public Portfolio(DateTime date, decimal wallet, decimal investment, decimal value)
-        {
-            this.timestamp = date;
-            this.wallet = wallet;
-            this.investment = investment;
-            this.value = value;
-        }
-    }
+public void AddSimulationToDataGrid(Simulation sim)
+{
+  DataGridViewRow row = new DataGridViewRow();
 
-  
+  //var stockDevelopement = sim.strategy.GetType() == typeof(StockDevelopmentSimulation);
+
+  row.CreateCells(dataGrid,
+      sim.getNameString(),
+      sim.oneWeek,
+      sim.oneMonth,
+      sim.sixMonths,
+      sim.oneYear,
+      sim.Investment,
+      sim.Value,
+      sim.Wallet,
+      sim.TotDevelopment
+      );
+
+  dataGrid.Rows.Add(row);
+}
+}
+public class Portfolio
+{
+public decimal wallet;
+public decimal value;
+public decimal investment;
+public DateTime timestamp;
+
+
+public Portfolio(DateTime date, decimal wallet, decimal investment, decimal value)
+{
+  this.timestamp = date;
+  this.wallet = wallet;
+  this.investment = investment;
+  this.value = value;
+}
+}
+
+
 }
 #endif

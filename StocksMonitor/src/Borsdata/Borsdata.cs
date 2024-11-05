@@ -25,10 +25,12 @@ namespace StocksMonitor.src.Borsdata
         private Dictionary<string, long> _marketsId;
         private Dictionary<string, long> _CountriesId;
 
-        const string largeCap = "Large Cap";
-        const string midCap = "Mid Cap";
-        const string smallCap = "Small Cap";
-        const string firstNorth = "First North";
+
+        //<markets
+        const string marketLargeCap = "Large Cap";
+        const string marketMidcap = "Mid Cap";
+        const string marketSmallCap = "Small Cap";
+        const string marketFirstNorth = "First North";
 
         const string countrySE = "Sverige";
 
@@ -194,8 +196,8 @@ namespace StocksMonitor.src.Borsdata
             _instruments.RemoveAll(i => i.CountryId != _CountriesId[countrySE]);
 
             var wantedMarketIds = _marketsId.Where( i => 
-                i.Key == largeCap || 
-                i.Key == midCap || 
+                i.Key == marketLargeCap || 
+                i.Key == marketMidcap || 
                 i.Key == smallCap || 
                 i.Key == firstNorth 
                 ).Select(m => m.Value).ToList();
