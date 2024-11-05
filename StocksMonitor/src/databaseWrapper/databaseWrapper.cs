@@ -25,7 +25,13 @@ namespace StocksMonitor.src.databaseWrapper
         {
             this.connStr = connStr;
         }
-        
+
+
+        public StockDataContext()
+        {
+            this.connStr = defConnString;
+        }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options
@@ -99,10 +105,7 @@ namespace StocksMonitor.src.databaseWrapper
                 .Property(h => h.Price)
                 .HasColumnType("decimal(10,2)")
                 .IsRequired(); // Setting as NOT NULL
-
-            modelBuilder.Entity<Stock>()
-                .Property(s => s.OwnedCnt)
-                .IsRequired(); // Setting as NOT NULL                 // INT is default ok mapping, no special handling needed
+    
 
             // Set up foreign key relationship
             modelBuilder.Entity<History>()
@@ -179,13 +182,11 @@ namespace StocksMonitor.src.databaseWrapper
         public DateTime Date { get; set; }      // Percentage of MA200 correspond to current price
         public decimal Price { get; set; }      // current price of stock
         public decimal MA200 { get; set; }      // Percentage of MA200 correspond to current price
-        public int OwnedCnt { get; set; }       // Number of stocks i own, 0 --> Not owned at all
-
+        
         public void CopyDataFromNewStock(Stock rhs)
         {
             this.MA200 = rhs.MA200;
             this.Price = rhs.Price;
-            this.OwnedCnt = rhs.OwnedCnt;
         }
 
         // Foreign Key

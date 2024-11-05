@@ -13,6 +13,7 @@ using Borsdata.Api.Dal.Model;
 using System.Net.Http.Headers;
 using GrapeCity.DataVisualization.TypeScript;
 using GrapeCity.DataVisualization.Chart;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace StocksMonitor.src.dataStoreNS
 {
@@ -99,13 +100,15 @@ namespace StocksMonitor.src.dataStoreNS
             WriteToDb();
         }
 
+
+
         private void UpdateStockHistory(History history, List<StockPriceV1> prices)
         {
             history.Price = (decimal)prices[0].C;
             history.MA200 = bd.CalculateMa200Percentage(prices);
         }
 
-        private void UpdateStock(Stock stock, List<StockPriceV1> prices)
+        private void UpdateStock(Stock stock, List<StockPriceV1> prices, decimal PE, decimal divident)
         {
 
             var newestValueFirstList = prices.ToList();
@@ -113,6 +116,8 @@ namespace StocksMonitor.src.dataStoreNS
 
             stock.Price = (decimal)newestValueFirstList[0].C;
             stock.MA200 = bd.CalculateMa200Percentage(newestValueFirstList);
+            stock.PeValue = PE;
+            stock.Divident = divident;
 
             while (newestValueFirstList.Any())
             {
@@ -146,7 +151,9 @@ namespace StocksMonitor.src.dataStoreNS
                 {
                     UpdateStock(
                         stocks.First(s => s.Name == instrument.Key),
-                        instrument.Value.prices
+                        prices: instrument.Value.prices,
+                        PE: instrument.Value.PE,
+                        divident: instrument.Value.Divident
                     );
                 }
                 else
@@ -158,7 +165,11 @@ namespace StocksMonitor.src.dataStoreNS
                     if (marketName != "") 
                     {
                         newStock.List = marketName;
-                        UpdateStock(newStock, instrument.Value.prices);
+                        UpdateStock(newStock, 
+                            prices: instrument.Value.prices, 
+                            PE: instrument.Value.PE, 
+                            divident: instrument.Value.Divident);
+                        
                         stocks.Add(newStock);
                     }
                 }

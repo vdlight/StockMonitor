@@ -59,21 +59,18 @@ namespace StockMonitor.Tests.StorageNs
                         {
                             MA200 = 0,
                             Price = 200,
-                            OwnedCnt = 20,
                             Date = DateTime.Parse("2024-08-02"),
                         },
                         new History
                         {
                             MA200 = 22,
                             Price = 230,
-                            OwnedCnt = 30,
                             Date = DateTime.Parse("2024-09-04"),
                         },
                         new History
                         {
                             MA200 = 20,
                             Price = 220,
-                            OwnedCnt = 24,
                             Date = DateTime.Parse("2024-10-06"),
                         }
                     }
@@ -94,21 +91,18 @@ namespace StockMonitor.Tests.StorageNs
                         {
                             MA200 = -23,
                             Price = 20,
-                            OwnedCnt = 20,
                             Date = DateTime.Parse("2024-08-01"),
                         },
                         new History
                         {
                             MA200 = 22,
                             Price = 230,
-                            OwnedCnt = 30,
                             Date = DateTime.Parse("2024-09-03"),
                         },
                         new History
                         {
                             MA200 = 20,
                             Price = 220,
-                            OwnedCnt = 24,
                             Date = DateTime.Parse("2024-10-04"),
                         }
                     }
@@ -141,21 +135,18 @@ namespace StockMonitor.Tests.StorageNs
                         {
                             MA200 = 22,
                             Price = 20,
-                            OwnedCnt = 0,
                             Date = DateTime.Parse("2024-07-02"),
                         },
                         new History
                         {
                             MA200 = 222,
                             Price = 2303,
-                            OwnedCnt = 3,
                             Date = DateTime.Parse("2024-08-04"),
                         },
                         new History
                         {
                             MA200 = 10,
                             Price = 2220,
-                            OwnedCnt = 14,
                             Date = DateTime.Parse("2024-10-06"),
                         }
                     }
@@ -167,8 +158,6 @@ namespace StockMonitor.Tests.StorageNs
                 Date = DateTime.Parse("2024-11-23"),
                 MA200 = 22,
                 Price = 2242,
-                OwnedCnt = 1
-
             });
          
             // After adding another stock with three history, it shall be there
@@ -219,7 +208,6 @@ namespace StockMonitor.Tests.StorageNs
         {
             const int decimals = 2;
 
-            Assert.That(actual.OwnedCnt, Is.EqualTo(expected.OwnedCnt));
             
             Assert.That(actual.Date, Is.EqualTo(expected.Date));
 

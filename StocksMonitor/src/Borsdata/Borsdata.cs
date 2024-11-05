@@ -97,6 +97,7 @@ namespace StocksMonitor.src.Borsdata
             GetAllCountries();
             GetAllMarkets();
             GetAllInstruments();
+
             FillStockPrices();
             GetKpiScreener();
         }
@@ -125,7 +126,7 @@ namespace StocksMonitor.src.Borsdata
         {
             StockMonitorLogger.WriteMsg("Get KPI Screener from BD");
             const int dividentKey = 1;
-            const int peKey = 6;
+            const int peKey = 2;
 
 
             foreach (var instrument in _instruments)
@@ -134,12 +135,17 @@ namespace StocksMonitor.src.Borsdata
                 var PE = _api.GetKpiScreenerSingle((long)instrument.InsId, peKey, TimeType.last, CalcType.latest);
                 var div = _api.GetKpiScreenerSingle((long)instrument.InsId, dividentKey, TimeType.last, CalcType.latest);
 
-
-                InstrumentDatas[instrument.Name].Divident = div != null ? (decimal)div.Value.N : 0;
-                InstrumentDatas[instrument.Name].PE = PE != null ? (decimal)PE.Value.N : 0;
+                try
+                {
+                    InstrumentDatas[instrument.Name].Divident = (decimal)(div?.Value.N ?? 0);
+                    InstrumentDatas[instrument.Name].PE = (decimal)(PE?.Value.N ?? 0);
+                }
+                catch (Exception ex)
+                {
+                    StockMonitorLogger.WriteMsg("WARNING, could not enter instrument data with name " + instrument.Name);        
+                }                
             }
 
-            StockMonitorLogger.WriteMsg("instrumentKPis : Addnode" + InstrumentDatas["Addnode"].Divident + " " + InstrumentDatas["ADdnode"].PE);
         }
 
         public void GetAllCountries()
@@ -177,24 +183,28 @@ namespace StocksMonitor.src.Borsdata
         {
             StockMonitorLogger.WriteMsg("Fill stock prices from BD");
 
-            // Only SE List
-            _instruments.RemoveAll(i => i.CountryId != _CountriesId[countrySE]);
-
-            GatherDataFromInstruments(_instruments.Where(i => i.MarketId ==
-                      _marketsId[largeCap]).ToList());
-            GatherDataFromInstruments(_instruments.Where(i => i.MarketId ==
-                      _marketsId[midCap]).ToList());
-            GatherDataFromInstruments(_instruments.Where(i => i.MarketId ==
-                      _marketsId[smallCap]).ToList());
-            GatherDataFromInstruments(_instruments.Where(i => i.MarketId ==
-                      _marketsId[firstNorth]).ToList());
-     
-            foreach(var index in indexes)
+            foreach (var index in indexes)
             {
                 GatherDataFromInstruments(
                     _instruments.Where(i => i.Name == index).ToList()
                 );
             }
+
+            // Only SE List
+            _instruments.RemoveAll(i => i.CountryId != _CountriesId[countrySE]);
+
+            var wantedMarketIds = _marketsId.Where( i => 
+                i.Key == largeCap || 
+                i.Key == midCap || 
+                i.Key == smallCap || 
+                i.Key == firstNorth 
+                ).Select(m => m.Value).ToList();
+
+            // remove all that does not belong to the markeids define
+            _instruments.RemoveAll(i => !wantedMarketIds.Contains((long)i.MarketId));
+
+            GatherDataFromInstruments(_instruments);
+            
         }
 
         private void GatherDataFromInstruments(List<InstrumentV1> instruments)

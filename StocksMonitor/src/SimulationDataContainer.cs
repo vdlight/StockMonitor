@@ -168,10 +168,7 @@ namespace StocksMonitor.src
             foreach (var stock in simulatorStocks)
             {
                 stock.OwnedCnt = 0;
-                foreach (var history in stock.History)
-                {
-                    history.OwnedCnt = 0;
-                }
+                
             }
             portfolioHistory.Clear();
         }
@@ -273,9 +270,9 @@ namespace StocksMonitor.src
                        
         }
 
-        protected (int, decimal) CalculateCost(History dataPoint, decimal wallet)
+        protected (int, decimal) CalculateCost(History dataPoint, decimal wallet, int ownedCnt)
         {
-            int buyCount = (int)((investmentTarget - (dataPoint.OwnedCnt * dataPoint.Price)) / dataPoint.Price);
+            int buyCount = (int)((investmentTarget - (ownedCnt * dataPoint.Price)) / dataPoint.Price);
             decimal cost = (dataPoint.Price * buyCount);
 
             if(cost  == 0)
@@ -331,31 +328,26 @@ namespace StocksMonitor.src
         }
         private void HandleDatapoint(Stock stock, History datapoint, decimal wallet)
         {
-            // copy latest status, to have as base for decision
-            datapoint.OwnedCnt = stock.OwnedCnt;
-            //h.Price = stock.Price;
-
+            
             // Buy
-            if (datapoint.OwnedCnt == 0) {
+            if (stock.OwnedCnt == 0) {
                 if(ComplyToRules(buyRules, datapoint))
                 {
-                    var (count, totalCost) = CalculateCost(datapoint, Wallet);
+                    var (count, totalCost) = CalculateCost(datapoint, Wallet, stock.OwnedCnt);
                     Wallet -= totalCost;
-                    datapoint.OwnedCnt += count;
+                    stock.OwnedCnt += count;
                 }
             }
             else
             {// SELL
                 if (ComplyToRules(sellRules, datapoint))
                 {
-                    Wallet += datapoint.OwnedCnt * datapoint.Price;
-                    datapoint.OwnedCnt = 0;
+                    Wallet += stock.OwnedCnt * datapoint.Price;
+                    stock.OwnedCnt = 0;
                 }
             }
 
-            // update stock status, from possible actions
-            stock.OwnedCnt = datapoint.OwnedCnt;
-            //stock.Price = h.Price;
+            
         }
 
         public void Run()
@@ -395,6 +387,8 @@ namespace StocksMonitor.src
                     StockMonitorLogger.WriteMsg("fdsakfda");
                 }
 
+                var valueOfInvestments = 0m;
+
                 foreach (var stock in simulatorStocks)
                 {
                     var h = stock.History.FirstOrDefault(h => h.Date == simulationDay);
@@ -403,6 +397,7 @@ namespace StocksMonitor.src
                     if (h != null)
                     {
                         HandleDatapoint(stock, h, Wallet);
+                        valueOfInvestments += (stock.OwnedCnt * h.Price);
                     }
                 }
                 var allStocksHistoryDay = simulatorStocks.SelectMany(s => s.History).Where(h => h.Date == simulationDay);
@@ -420,7 +415,7 @@ namespace StocksMonitor.src
                         new Portfolio(
                             date: simulationDay,
                             wallet: Wallet,
-                            value: allStocksHistoryDay.Sum(h => h.OwnedCnt * h.Price),
+                            value: valueOfInvestments,
                             investment: Investment
                         ));
                 }
