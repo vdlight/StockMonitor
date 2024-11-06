@@ -31,6 +31,7 @@ namespace StocksMonitor.src.Borsdata
         const string marketMidcap = "Mid Cap";
         const string marketSmallCap = "Small Cap";
         const string marketFirstNorth = "First North";
+        const string marketIndex = "Index";
 
         const string countrySE = "Sverige";
 
@@ -102,6 +103,8 @@ namespace StocksMonitor.src.Borsdata
 
             FillStockPrices();
             GetKpiScreener();
+
+            FilterReadData();    // TODO, maybe do this in simulation, to make it more clear the effect of it
         }
         public void GetAllMarkets()
         {
@@ -192,21 +195,33 @@ namespace StocksMonitor.src.Borsdata
                 );
             }
 
+            //TODO refactor
+
             // Only SE List
             _instruments.RemoveAll(i => i.CountryId != _CountriesId[countrySE]);
 
             var wantedMarketIds = _marketsId.Where( i => 
                 i.Key == marketLargeCap || 
                 i.Key == marketMidcap || 
-                i.Key == smallCap || 
-                i.Key == firstNorth 
+                i.Key == marketSmallCap || 
+                i.Key == marketFirstNorth ||
+                i.Key == marketIndex
                 ).Select(m => m.Value).ToList();
 
             // remove all that does not belong to the markeids define
             _instruments.RemoveAll(i => !wantedMarketIds.Contains((long)i.MarketId));
 
             GatherDataFromInstruments(_instruments);
-            
+        }
+
+        private void FilterReadData()
+        {
+            // REMOVE Stocks, that is to low value, --> Price < 5KR
+
+            // last element is newest
+            InstrumentDatas = InstrumentDatas
+            .Where(i => (decimal)i.Value.prices.LastOrDefault().C >= 5m)
+            .ToDictionary(i => i.Key, i => i.Value);
         }
 
         private void GatherDataFromInstruments(List<InstrumentV1> instruments)

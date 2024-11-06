@@ -11,14 +11,6 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace StocksMonitor.src
 {
-    public enum StratAction
-    {
-        SELL,
-        ADJ_DOWN,
-        BUY,
-        NONE
-    }
-
     public enum TMarket
     {
         All,
@@ -41,6 +33,7 @@ namespace StocksMonitor.src
         DividentAbove,
         PeAbove,
         Index,
+        AdjustBuy,
         None,
         Never
     }

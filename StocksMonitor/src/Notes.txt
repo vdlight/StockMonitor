@@ -1,39 +1,24 @@
-﻿   private List<Simulation> generateSimulations()
+﻿        protected (int, decimal) CalculateCost(History dataPoint, decimal wallet, int ownedCnt)
         {
-            List<Simulation> returnSims = AddIndexes();
+            int buyCount = (int)((investmentTarget - (ownedCnt * dataPoint.Price)) / dataPoint.Price);
+            decimal cost = (dataPoint.Price * buyCount);
 
-            returnSims.Add(new Simulation()
+            if (buyRules.Any(r => r.rule == TRule.Index))
             {
-                dividentRequired = false,
-                profitRequired = false,
-                stockMarket = TMarket.AllExceptFirstNorth,
-                buyRules =
-                {
-                    new Rule(TRule.AboveMa, 0),
-                    new Rule(TRule.BelowMa, 15),
-                },
-                sellRules =
-                {
-                    new Rule(TRule.BelowMa, -5)
-                }
-            });
-            returnSims.Add(new Simulation()
+                // no wallet simulation
+                return (1, 0m);
+            }
+
+            if (cost  == 0) // cant fit more stocks in investment target
             {
-                stockMarket = TMarket.All,
-                dividentRequired = false,
-                profitRequired = false,
-                buyRules =
-                {
-                    new Rule(TRule.AboveMa, 0),
-                    new Rule(TRule.BelowMa, 15),
-                },
-                sellRules =
-                {
-                    new Rule(TRule.BelowMa, -5)
-                }
-            });
+                return (0, 0);
+            }
 
-            return returnSims;
+            if(cost > wallet)
+            {
+                AddToWallet(cost);
+            }
+            
 
-            // TODO, kan generera namn, från TOString() eller så, för objekten, så de genereras. När datacolum skivs
+            return (buyCount, cost);
         }

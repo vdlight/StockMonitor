@@ -37,10 +37,13 @@ namespace StocksMonitor.src
 
         public List<Rule> buyRules;
         public List<Rule> sellRules;
+        public List<Rule> adjustBuyRules;
+        
         public TMarket stockMarket;
         public bool dividentRequired;
         public bool profitRequired;
         public bool indexCalculation;
+        public bool balanceInvestment;
 
         readonly decimal originalInvestment = 0;
         const decimal investmentTarget = 500;
@@ -60,6 +63,7 @@ namespace StocksMonitor.src
         {
             buyRules = [];
             sellRules = [];
+            adjustBuyRules = [];
         }
 
         public string getNameString()
@@ -77,6 +81,11 @@ namespace StocksMonitor.src
                 {
                     name += rule.rule + " " + rule.RuleValue; 
                 }
+                name += ": adjust: ";
+                foreach (var rule in adjustBuyRules)
+                {
+                    name += rule.rule + " " + rule.RuleValue;
+                }
 
                 name += ". Sell: ";
                 foreach (var rule in sellRules)
@@ -85,6 +94,11 @@ namespace StocksMonitor.src
                 }
             }
 
+            if (balanceInvestment)
+            {
+                name += " balance inv.";
+            }
+            
             if (dividentRequired)
             {
                 name += ". Div";
@@ -184,35 +198,32 @@ namespace StocksMonitor.src
             var currentPortfolio = portfolioHistory.Find(p => p.timestamp == currentDate.Date);
             var searchLimit = 0;
 
-            while(currentPortfolio == null && searchLimit < 31)
+            const int maxSearchLimit = 31;
+            while(currentPortfolio == null && maxSearchLimit < 31)
             {
                 currentDate = currentDate.AddDays(-1); // if not find on current day, adjust to previous day, 
                 currentPortfolio = portfolioHistory.Find(p => p.timestamp == currentDate.Date);
                 searchLimit++;
             }
 
-            if (searchLimit > 0)
+            if (searchLimit >= maxSearchLimit)
             {
-                StockMonitorLogger.WriteMsg("Current day: " + currentDay.ToString());
-                StockMonitorLogger.WriteMsg("AFTER");
-                StockMonitorLogger.WriteMsg("Current day: " + currentDate.ToString());
+                StockMonitorLogger.WriteMsg("ERROR, could not find current day");
             }
             
 
             var oldPortfolio = portfolioHistory.Find(p => p.timestamp == oldDate.Date);
             searchLimit = 0;
-            while (oldPortfolio == null && searchLimit < 15)
+            while (oldPortfolio == null && searchLimit < maxSearchLimit)
             {
                 oldDate = oldDate.AddDays(-1); // if not find on current day, adjust to previous day, 
                 oldPortfolio = portfolioHistory.Find(p => p.timestamp == oldDate.Date);
                 searchLimit++;
             }
 
-            if (searchLimit > 0)
+            if (searchLimit >= maxSearchLimit)
             {
-                StockMonitorLogger.WriteMsg("Old day: " + oldDay.ToString());
-                StockMonitorLogger.WriteMsg("AFTER ");
-                StockMonitorLogger.WriteMsg("Old day: " + oldDate.ToString());
+                StockMonitorLogger.WriteMsg("ERROR, could not find old day");
             }
 
             if (currentPortfolio == null || oldPortfolio == null)
@@ -236,6 +247,7 @@ namespace StocksMonitor.src
 
             if(oldVal == 0)
             {
+                // Possible error source is that simululation (with adjustment of dates) are outside the scope of the available portfolio data, --> simulation to short
                 StockMonitorLogger.WriteMsg("ERROR, could not calculate  value for oldTimestamp " + oldDate.ToString() + ", returning zero.");
                 return 0;
             }
@@ -286,6 +298,8 @@ namespace StocksMonitor.src
                 return (0, 0);
             }
 
+            // always make room for investment, to have "optimal" simulation
+
             if(cost > wallet)
             {
                 AddToWallet(cost);
@@ -327,6 +341,31 @@ namespace StocksMonitor.src
             return true;
                     
         }
+        private (int, decimal) CalculateBalancing(History dataPoint, decimal wallet, int ownedCnt)
+        {
+            if(dataPoint.Price == 0)
+            {
+                return (0, 0);
+            }
+
+            const decimal minAdjustment = investmentTarget * 0.20m;
+            var invested = dataPoint.Price * ownedCnt;
+            var room = invested - investmentTarget;
+
+            
+            int sellCount = (int)(room / dataPoint.Price);
+
+            if(sellCount > 0)
+            {
+                var adjustment = sellCount * dataPoint.Price;
+                if (adjustment > minAdjustment)
+                {
+                    return (sellCount,  adjustment);
+                }
+            }
+            return (0, 0);
+        }
+
         private void HandleDatapoint(Stock stock, History datapoint, decimal wallet)
         {
             
@@ -340,20 +379,34 @@ namespace StocksMonitor.src
                 }
             }
             else
-            {// SELL
+            {   // SELL ALL
                 if (ComplyToRules(sellRules, datapoint))
                 {
                     Wallet += stock.OwnedCnt * datapoint.Price;
                     stock.OwnedCnt = 0;
                 }
+                // buy more if room
+                else if(ComplyToRules(adjustBuyRules, datapoint))
+                {
+                    var (count, totalCost) = CalculateCost(dataPoint: datapoint, wallet: Wallet, ownedCnt: stock.OwnedCnt);
+                    Wallet -= totalCost;
+                    stock.OwnedCnt += count;
+                }
+                // sell off to balance
+                else if(balanceInvestment)
+                {
+                    var (count, totalValue) = CalculateBalancing(dataPoint: datapoint, wallet: Wallet, ownedCnt: stock.OwnedCnt);
+                    Wallet += totalValue;
+                    stock.OwnedCnt -= count;
+                }
             }
-
-            
+          
         }
 
         public void Run()
         {
             // TODO skriva owned cnt i stocklistan, per historik, för att få koll på utvekcling, väldigt lik vanliga procentuella uträkningen också
+
 
             // latest hisory is the same as current, dont duplicate
             var stockHistories = simulatorStocks.SelectMany(s => s.History).OrderBy(h => h.Date);
@@ -372,7 +425,7 @@ namespace StocksMonitor.src
             }
 
             // todo, tempcode
-            oldestStock.Date = newestStock.Date.AddYears(-1);
+            oldestStock.Date = newestStock.Date.AddDays(-400);
 
             // History när läst från db går från äldsta i 0 --> 27/9, till nyaste sist 14 --> 22/10
             var simulationDay = oldestStock.Date;
@@ -382,11 +435,6 @@ namespace StocksMonitor.src
             while (simulationDay != newestStock.Date.AddDays(1).Date)
             {
                 // TODO, behöver jag titta på om en aktie har ägts, men finns inte med längre, (bytt lista eller avnoterats) Som t.ex SAS, om jag hade ägt det, och de avnoterades. vad händer?
-
-                if(simulationDay < DateTime.Parse("2023-10-28"))
-                {
-                    StockMonitorLogger.WriteMsg("fdsakfda");
-                }
 
                 var valueOfInvestments = 0m;
 
@@ -531,9 +579,10 @@ namespace StocksMonitor.src
 
         private List<Simulation> AddIndexes()
         {
+            return new List<Simulation>();
 
             return new List<Simulation> { 
-           /*     new Simulation()
+                new Simulation()
                 {
                     stockMarket = TMarket.IndexFirstNorthAll,
                     indexCalculation = true,
@@ -562,7 +611,7 @@ namespace StocksMonitor.src
                         {
                             new Rule(TRule.Never)
                         }
-                },*/
+                },
                 new Simulation()
                 {
                     stockMarket = TMarket.IndexOMXMidCap,
@@ -593,7 +642,7 @@ namespace StocksMonitor.src
                             new Rule(TRule.Never)
                         }
                 },
-                /*new Simulation()
+                new Simulation()
                 {
                     stockMarket = TMarket.IndexOMXSGI,
                     indexCalculation = true,
@@ -607,133 +656,226 @@ namespace StocksMonitor.src
                         {
                             new Rule(TRule.Never)
                         }
-                },
-                */
-
-
-
+                }                
             };
         }
         private List<Simulation> generateSimulations()
         {
             List<Simulation> returnSims = AddIndexes();
             // TODO, Möjlighet att i simuleringar, välja vilka markander som ska köras. Så kör jag alla varianter för vald marknad sedan
-/*  returnSims.Add(new Simulation()
-  {
-      dividentRequired = false,
-      profitRequired = false,
-      stockMarket = TMarket.AllExceptFirstNorth,
-      buyRules =
-      {
-          new Rule(TRule.AboveMa, 0),
-          new Rule(TRule.BelowMa, 15),
-      },
-      sellRules =
-      {
-          new Rule(TRule.BelowMa, -5)
-      }
-  });
-  returnSims.Add(new Simulation()
-  {
-      stockMarket = TMarket.All,
-      dividentRequired = false,
-      profitRequired = false,
-      buyRules =
-      {
-          new Rule(TRule.AboveMa, 0),
-          new Rule(TRule.BelowMa, 15),
-      },
-      sellRules =
-      {
-          new Rule(TRule.BelowMa, -5)
-      }
-  });
-  returnSims.Add(new Simulation()
-  {
-      stockMarket = TMarket.AllExceptFirstNorth,
-      dividentRequired = false,
-      profitRequired = false,
-      buyRules =
-      {
-      },
-      sellRules =
-      {
-          new Rule(TRule.Never)
-      }
-  });
-  returnSims.Add(new Simulation()
-  {
-      stockMarket = TMarket.All,
-      dividentRequired = false,
-      profitRequired = false,
-      buyRules =
-      {
-      },
-      sellRules =
-      {
-          new Rule(TRule.Never)
-      }
-  });*/
+              returnSims.Add(new Simulation()
+              {
+                  dividentRequired = false,
+                  profitRequired = false,
+                  stockMarket = TMarket.AllExceptFirstNorth,
+                  buyRules =
+                  {
+                      new Rule(TRule.AboveMa, 0),
+                      new Rule(TRule.BelowMa, 15),
+                  },
+                  adjustBuyRules =
+                  {
+                      new Rule(TRule.Never)
+                  },
+                  sellRules =
+                  {
+                      new Rule(TRule.BelowMa, -5)
+                  },
+              });
+              returnSims.Add(new Simulation()
+              {
+                  stockMarket = TMarket.All,
+                  dividentRequired = false,
+                  profitRequired = false,
+                  buyRules =
+                  {
+                      new Rule(TRule.AboveMa, 0),
+                      new Rule(TRule.BelowMa, 15),
+                  },
+                  adjustBuyRules =
+                  {
+                      new Rule(TRule.Never)
+                  },
+                  sellRules =
+                  {
+                      new Rule(TRule.BelowMa, -5)
+                  }
+              });
+              returnSims.Add(new Simulation()
+              {
+                  stockMarket = TMarket.AllExceptFirstNorth,
+                  dividentRequired = false,
+                  profitRequired = false,
+                  buyRules =
+                  {
+                  },
+                  adjustBuyRules =
+                  {
+                      new Rule(TRule.Never)
+                  },
+                  sellRules =
+                  {
+                      new Rule(TRule.Never)
+                  }
+              });
+              returnSims.Add(new Simulation()
+              {
+                  stockMarket = TMarket.All,
+                  dividentRequired = false,
+                  profitRequired = false,
+                  buyRules =
+                  {
+                      new Rule(TRule.None)
+                  },
+                  adjustBuyRules =
+                  {
+                      new Rule(TRule.Never)
+                  },
+                  sellRules =
+                  {
+                      new Rule(TRule.Never)
+                  }
+              });
 
-  return returnSims;
+            // allow balancing
+            returnSims.Add(new Simulation()
+            {
+                dividentRequired = false,
+                profitRequired = false,
+                balanceInvestment = true,
+                stockMarket = TMarket.AllExceptFirstNorth,
+                buyRules =
+                  {
+                      new Rule(TRule.AboveMa, 0),
+                      new Rule(TRule.BelowMa, 15),
+                  },
+                adjustBuyRules =
+                  {
+                      new Rule(TRule.Never)
+                  },
+                sellRules =
+                  {
+                      new Rule(TRule.BelowMa, -5)
+                  },
+            });
+            returnSims.Add(new Simulation()
+            {
+                stockMarket = TMarket.All,
+                dividentRequired = false,
+                profitRequired = false,
+                balanceInvestment = true,
+                buyRules =
+                  {
+                      new Rule(TRule.AboveMa, 0),
+                      new Rule(TRule.BelowMa, 15),
+                  },
+                adjustBuyRules =
+                  {
+                      new Rule(TRule.Never)
+                  },
+                sellRules =
+                  {
+                      new Rule(TRule.BelowMa, -5)
+                  }
+            });
+            returnSims.Add(new Simulation()
+            {
+                stockMarket = TMarket.AllExceptFirstNorth,
+                dividentRequired = false,
+                profitRequired = false,
+                balanceInvestment = true,
+                buyRules =
+                  {
+                  },
+                adjustBuyRules =
+                  {
+                      new Rule(TRule.Never)
+                  },
+                sellRules =
+                  {
+                      new Rule(TRule.Never)
+                  }
+            });
+            returnSims.Add(new Simulation()
+            {
+                stockMarket = TMarket.All,
+                dividentRequired = false,
+                profitRequired = false,
+                balanceInvestment = true,
+                buyRules =
+                  {
+                      new Rule(TRule.None)
+                  },
+                adjustBuyRules =
+                  {
+                      new Rule(TRule.Never)
+                  },
+                sellRules =
+                  {
+                      new Rule(TRule.Never)
+                  }
+            });
 
-  // TODO, kan generera namn, från TOString() eller så, för objekten, så de genereras. När datacolum skivs
-}
+            return returnSims;
+
+          // TODO, kan generera namn, från TOString() eller så, för objekten, så de genereras. När datacolum skivs
+        }
 
 
-public void UpdateData()
-{
-  dataGrid.Rows.Clear(); // Clear existing rows
+        public void UpdateData()
+        {
+            dataGrid.Rows.Clear(); // Clear existing rows
 
-  simulations.AddRange(generateSimulations());
+            simulations.AddRange(generateSimulations());
 
-  foreach (var sim in simulations)
-  {
-      sim.Init(store.stocks);
-      sim.Run();
-      AddSimulationToDataGrid(sim);
-  }
-}
-
-
-public void AddSimulationToDataGrid(Simulation sim)
-{
-  DataGridViewRow row = new DataGridViewRow();
-
-  //var stockDevelopement = sim.strategy.GetType() == typeof(StockDevelopmentSimulation);
-
-  row.CreateCells(dataGrid,
-      sim.getNameString(),
-      sim.oneWeek,
-      sim.oneMonth,
-      sim.sixMonths,
-      sim.oneYear,
-      sim.Investment,
-      sim.Value,
-      sim.Wallet,
-      sim.TotDevelopment
-      );
-
-  dataGrid.Rows.Add(row);
-}
-}
-public class Portfolio
-{
-public decimal wallet;
-public decimal value;
-public decimal investment;
-public DateTime timestamp;
+            StockMonitorLogger.WriteMsg("Running " + simulations.Count + " simulations...");
+    
+            foreach (var sim in simulations)
+            {
+                sim.Init(store.stocks);
+                sim.Run();
+                AddSimulationToDataGrid(sim);
+            }
+        }
 
 
-public Portfolio(DateTime date, decimal wallet, decimal investment, decimal value)
-{
-  this.timestamp = date;
-  this.wallet = wallet;
-  this.investment = investment;
-  this.value = value;
-}
-}
+        public void AddSimulationToDataGrid(Simulation sim)
+        {
+          DataGridViewRow row = new DataGridViewRow();
+
+          //var stockDevelopement = sim.strategy.GetType() == typeof(StockDevelopmentSimulation);
+
+          row.CreateCells(dataGrid,
+              sim.getNameString(),
+              sim.oneWeek,
+              sim.oneMonth,
+              sim.sixMonths,
+              sim.oneYear,
+              sim.Investment,
+              sim.Value,
+              sim.Wallet,
+              sim.TotDevelopment
+              );
+
+          dataGrid.Rows.Add(row);
+        }
+    }
+
+    public class Portfolio
+    {
+        public decimal wallet;
+        public decimal value;
+        public decimal investment;
+        public DateTime timestamp;
 
 
+        public Portfolio(DateTime date, decimal wallet, decimal investment, decimal value)
+        {
+          this.timestamp = date;
+          this.wallet = wallet;
+          this.investment = investment;
+          this.value = value;
+        }
+    }
 }
 #endif

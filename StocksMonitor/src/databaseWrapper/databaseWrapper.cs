@@ -16,8 +16,8 @@ namespace StocksMonitor.src.databaseWrapper
         public DbSet<History> history { get; set; }
         public DbSet<StockMisc> miscs { get; set; }
 
-        public const string defConnString = "Server=JENSA;Database=master;Integrated Security=True;TrustServerCertificate=True;";
-        //public const string defConnString = "Server=NEX-5CD350FDG5;Database=Simulations;Integrated Security=True;TrustServerCertificate=True;";
+        //public const string defConnString = "Server=JENSA;Database=master;Integrated Security=True;TrustServerCertificate=True;";
+        public const string defConnString = "Server=NEX-5CD350FDG5;Database=Simulations;Integrated Security=True;TrustServerCertificate=True;";
         private string connStr = defConnString;
 
 
