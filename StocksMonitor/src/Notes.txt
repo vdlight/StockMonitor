@@ -1,24 +1,65 @@
-﻿        protected (int, decimal) CalculateCost(History dataPoint, decimal wallet, int ownedCnt)
-        {
-            int buyCount = (int)((investmentTarget - (ownedCnt * dataPoint.Price)) / dataPoint.Price);
-            decimal cost = (dataPoint.Price * buyCount);
-
-            if (buyRules.Any(r => r.rule == TRule.Index))
-            {
-                // no wallet simulation
-                return (1, 0m);
-            }
-
-            if (cost  == 0) // cant fit more stocks in investment target
-            {
-                return (0, 0);
-            }
-
-            if(cost > wallet)
-            {
-                AddToWallet(cost);
-            }
-            
-
-            return (buyCount, cost);
-        }
+﻿12:31:16 ERROR, did not find a match for 
+12:31:16 ERROR, did not find a match for 
+12:31:16 ERROR, did not find a match for 
+12:31:16 ERROR, did not find a match for 
+12:31:16 ERROR, did not find a match for 
+12:31:16 ERROR, did not find a match for 
+12:31:16 ERROR, did not find a match for 
+12:31:16 ERROR, did not find a match for 
+12:31:16 ERROR, did not find a match for 
+12:31:16 ERROR, did not find a match for 
+12:31:16 ERROR, did not find a match for 
+12:31:16 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 
+12:31:17 ERROR, did not find a match for 

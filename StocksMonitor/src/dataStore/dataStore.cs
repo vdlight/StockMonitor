@@ -25,7 +25,7 @@ namespace StocksMonitor.src.dataStoreNS
         private BorsData bd;
 
 
-        private string[] Markets = 
+        private string[] Markets =
         {
             "First North Stockholm",
             "Small Cap Stockholm",
@@ -34,9 +34,79 @@ namespace StocksMonitor.src.dataStoreNS
             "Own",
         };
 
+        private Dictionary<string, string> AvanzaToBD = new Dictionary<string, string>
+        { 
+            { "Samhällsbyggnadsbo. i Norden B", "dalkfd" },
+            { "Platzer Fastigheter Holding B", "dalkfd" },
+            { "Wallenstam B", "dalkfd" },
+            { "Proact IT Group", "dalkfd" },
+            { "Berner Industrier B", "dalkfd" },
+            { "Creades A", "dalkfd" },
+            { "Annehem Fastigheter B", "dalkfd" },
+            { "SAAB B", "dalkfd" },
+            { "K-Fast Holding B", "dalkfd" },
+            { "Pandox B", "dalkfd" },
+            { "Traction B", "dalkfd" },
+            { "Hennes & Mauritz B", "dalkfd" },
+            { "Medicover B", "dalkfd" },
+            { "Lundin Mining Corporation", "dalkfd" },
+            { "Addtech B", "dalkfd" },
+            { "HEBA B", "dalkfd" },
+            { "Lifco B", "dalkfd" },
+            { "RaySearch Laboratories B", "dalkfd" },
+            { "Nivika Fastigheter B", "dalkfd" },
+            { "Atrium Ljungberg B", "dalkfd" },
+            { "Fast. Balder B", "dalkfd" },
+            { "Genova Property Group", "dalkfd" },
+            { "Skanska B", "dalkfd" },
+            { "Brinova Fastigheter B", "dalkfd" },
+            { "Karnell", "dalkfd" },
+            { "Green Landscaping Group", "dalkfd" },
+            { "Sampo Oyj SDB", "dalkfd" },
+            { "Railcare Group", "dalkfd" },
+            { "HANZA", "dalkfd" },
+            { "Impact Coatings", "dalkfd" },
+            { "Softronic B", "dalkfd" },
+            { "Sintercast", "dalkfd" },
+            { "Fastighetsbolaget Emilshus B", "dalkfd" },
+            { "Byggmästare A J Ahlström H", "dalkfd" },
+            { "KlaraBo Sverige B", "dalkfd" },
+            { "ASSA ABLOY B", "dalkfd" },
+            { "Rejlers B", "dalkfd" },
+            { "Karnov Group", "dalkfd" },
+            { "TRATON", "dalkfd" },
+            { "Nederman Holding", "dalkfd" },
+            { "Scandic Hotels Group", "dalkfd" },
+            { "SkiStar B", "dalkfd" },
+            { "Norva24 Group", "dalkfd" },
+            { "Latour B", "dalkfd" },
+            { "John Mattson Fastighetsföret.", "dalkfd" },
+            { "OEM International B", "dalkfd" },
+            { "Arion Banki SDB", "dalkfd" },
+            { "SECTRA B", "dalkfd" },
+            { "Millicom Int. Cellular SDB B", "dalkfd" },
+            { "SWECO B", "dalkfd" },
+            { "engcon B", "dalkfd" },
+            { "Byggmax Group", "dalkfd" },
+            { "Cloetta B", "dalkfd" },
+            { "Clas Ohlson B", "dalkfd" },
+            { "Net Insight B", "dalkfd" },
+            { "Betsson B", "dalkfd" },
+            { "BONESUPPORT HOLDING", "dalkfd" },
+            { "INVISIO", "dalkfd" },
+            { "Lagercrantz Group B", "dalkfd" },
+            { "Alimak Group", "dalkfd" },
+            { "Embracer Group B", "dalkfd" },
+            { "Truecaller B", "dalkfd" },
+            { "Securitas B", "dalkfd" },
+            { "Peab B", "dalkfd" },
+            { "Cibus Nordic Real Estate", "dalkfd" },
+        };
+
         public DataStore(AvanzaParser avanza)
         {
             this.avanza = avanza;
+
         }
 
         public DataStore(BorsData bd)
@@ -80,7 +150,20 @@ namespace StocksMonitor.src.dataStoreNS
 
             foreach (var stock in ownedStocks)
             {
-                var match = stocks.Find(s => s.Name == stock.Name && s.Price == stock.Price);
+                
+                var match = stocks.Find(s => s.Name == stock.Name); // direct match by name
+
+                if (match == null)
+                {
+                    try
+                    {
+                        match = ConvertedNameSearch(stock.Name, stock.Price); // match with converted name and price match
+                    }
+                    catch (Exception ex)
+                    {
+                        StockMonitorLogger.WriteMsg("ERROR, did not find a match for " + stock.Name);
+                    }
+                }
 
                 if (match != null)
                 {
@@ -89,15 +172,23 @@ namespace StocksMonitor.src.dataStoreNS
                 }
             }
 
-            var stocksNotMatched = ownedStocks.FindAll(o => !stocks.Any(s => o.Name == s.Name && o.Price == s.Price));
-
-            foreach (var stock in stocksNotMatched)
-            {
-                StockMonitorLogger.WriteMsg("ERROR: Could not connect owned stock with name " + stock.Name
-                    + " and price " + stock.PurPrice);
-            }
-
             WriteToDb();
+        }
+
+        private Stock ConvertedNameSearch(string name, decimal price)
+        {
+            var convertedName = AvanzaToBD[name];
+
+            var match = stocks.find(stocks => stocks.Name == convertedName);
+
+            if(match != null)
+            {
+                if (match.Price == price)
+                    return match;
+                
+            }
+            
+            return null;
         }
 
 
