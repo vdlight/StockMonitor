@@ -14,6 +14,12 @@ using System.Net.Http.Headers;
 using GrapeCity.DataVisualization.TypeScript;
 using GrapeCity.DataVisualization.Chart;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Moq;
+using static System.Windows.Forms.AxHost;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
+using System.Security.Cryptography;
+using System.Windows.Forms;
 
 namespace StocksMonitor.src.dataStoreNS
 {
@@ -36,71 +42,30 @@ namespace StocksMonitor.src.dataStoreNS
 
         private Dictionary<string, string> AvanzaToBD = new Dictionary<string, string>
         { 
-            { "Samhällsbyggnadsbo. i Norden B", "dalkfd" },
-            { "Platzer Fastigheter Holding B", "dalkfd" },
-            { "Wallenstam B", "dalkfd" },
-            { "Proact IT Group", "dalkfd" },
-            { "Berner Industrier B", "dalkfd" },
-            { "Creades A", "dalkfd" },
-            { "Annehem Fastigheter B", "dalkfd" },
-            { "SAAB B", "dalkfd" },
-            { "K-Fast Holding B", "dalkfd" },
-            { "Pandox B", "dalkfd" },
-            { "Traction B", "dalkfd" },
-            { "Hennes & Mauritz B", "dalkfd" },
-            { "Medicover B", "dalkfd" },
-            { "Lundin Mining Corporation", "dalkfd" },
-            { "Addtech B", "dalkfd" },
-            { "HEBA B", "dalkfd" },
-            { "Lifco B", "dalkfd" },
-            { "RaySearch Laboratories B", "dalkfd" },
-            { "Nivika Fastigheter B", "dalkfd" },
-            { "Atrium Ljungberg B", "dalkfd" },
-            { "Fast. Balder B", "dalkfd" },
-            { "Genova Property Group", "dalkfd" },
-            { "Skanska B", "dalkfd" },
-            { "Brinova Fastigheter B", "dalkfd" },
-            { "Karnell", "dalkfd" },
-            { "Green Landscaping Group", "dalkfd" },
-            { "Sampo Oyj SDB", "dalkfd" },
-            { "Railcare Group", "dalkfd" },
-            { "HANZA", "dalkfd" },
-            { "Impact Coatings", "dalkfd" },
-            { "Softronic B", "dalkfd" },
-            { "Sintercast", "dalkfd" },
-            { "Fastighetsbolaget Emilshus B", "dalkfd" },
-            { "Byggmästare A J Ahlström H", "dalkfd" },
-            { "KlaraBo Sverige B", "dalkfd" },
-            { "ASSA ABLOY B", "dalkfd" },
-            { "Rejlers B", "dalkfd" },
-            { "Karnov Group", "dalkfd" },
-            { "TRATON", "dalkfd" },
-            { "Nederman Holding", "dalkfd" },
-            { "Scandic Hotels Group", "dalkfd" },
-            { "SkiStar B", "dalkfd" },
-            { "Norva24 Group", "dalkfd" },
-            { "Latour B", "dalkfd" },
-            { "John Mattson Fastighetsföret.", "dalkfd" },
-            { "OEM International B", "dalkfd" },
-            { "Arion Banki SDB", "dalkfd" },
-            { "SECTRA B", "dalkfd" },
-            { "Millicom Int. Cellular SDB B", "dalkfd" },
-            { "SWECO B", "dalkfd" },
-            { "engcon B", "dalkfd" },
-            { "Byggmax Group", "dalkfd" },
-            { "Cloetta B", "dalkfd" },
-            { "Clas Ohlson B", "dalkfd" },
-            { "Net Insight B", "dalkfd" },
-            { "Betsson B", "dalkfd" },
-            { "BONESUPPORT HOLDING", "dalkfd" },
-            { "INVISIO", "dalkfd" },
-            { "Lagercrantz Group B", "dalkfd" },
-            { "Alimak Group", "dalkfd" },
-            { "Embracer Group B", "dalkfd" },
-            { "Truecaller B", "dalkfd" },
-            { "Securitas B", "dalkfd" },
-            { "Peab B", "dalkfd" },
-            { "Cibus Nordic Real Estate", "dalkfd" },
+            { "Samhällsbyggnadsbo. i Norden B", "Samhällsbyggnadsbolag B" },
+            { "Platzer Fastigheter Holding B", "Platzer Fastigheter" },
+            { "Proact IT Group", "Proact IT" },
+            { "Lundin Mining Corporation", "Lundin Mining" },
+            { "Green Landscaping Group", "Green Landscaping"},
+            {"Fast. Balder B", "Fast Balder" },
+            {"KlaraBo Sverige B", "KlaraBo" },
+            {"Genova Property Group","Genova Property"},
+            {"Nederman Holding", "Nederman"},       // TODO, ignore Holding eller Group på slutet
+            {"Railcare Group", "Railcare" },
+            {"Sampo Oyj SDB", "Sampo" },
+            {"Byggmästare A J Ahlström H", "Byggmästare AJ Ahlström"},
+            {"Arion Banki SDB","Arion Banki" },
+            {"John Mattson Fastighetsföret.", "John Mattson" },
+            {"Karnov Group", "Karnov" },
+            {"Norva24 Group", "Norva24" },
+            {"Scandic Hotels Group", "Scandic Hotels" },
+            {"Millicom Int. Cellular SDB", "Millicom" },
+            {"Byggmax Group", "Byggmax" },
+            {"Lagercrantz Group B", "Lagercrantz"},
+            {"Embracer Group B", "Embracer" },
+            {"BONESUPPORT HOLDING", "Bonesupport" },
+            {"Alimak Group", "Alimak" },
+            {"Cibus Nordic Real Estate", "Cibus Nordic"}
         };
 
         public DataStore(AvanzaParser avanza)
@@ -151,7 +116,7 @@ namespace StocksMonitor.src.dataStoreNS
             foreach (var stock in ownedStocks)
             {
                 
-                var match = stocks.Find(s => s.Name == stock.Name); // direct match by name
+                var match = stocks.Find(s => s.Name.ToLower() == stock.Name.ToLower()); // direct match by name
 
                 if (match == null)
                 {
@@ -172,20 +137,28 @@ namespace StocksMonitor.src.dataStoreNS
                 }
             }
 
-            WriteToDb();
+            await WriteToDb();
         }
 
         private Stock ConvertedNameSearch(string name, decimal price)
         {
-            var convertedName = AvanzaToBD[name];
+            // OFten BD ignore stating A or B stock, when there is only one. And filter away caps to find match
+            var match = stocks.find(stocks => stocks.Name.ToLower() == name.substr(0, name.Length - 1).trim().ToLower());
 
-            var match = stocks.find(stocks => stocks.Name == convertedName);
+            if (match != null)
+            {
+                return match;
+            }
 
-            if(match != null)
+            var convertedName = AvanzaToBD[name].ToLower();
+
+            match = stocks.find(stocks => stocks.Name.ToLower() == convertedName);
+
+            if (match != null)
             {
                 if (match.Price == price)
                     return match;
-                
+
             }
             
             return null;

@@ -1,65 +1,25 @@
-﻿12:31:16 ERROR, did not find a match for 
-12:31:16 ERROR, did not find a match for 
-12:31:16 ERROR, did not find a match for 
-12:31:16 ERROR, did not find a match for 
-12:31:16 ERROR, did not find a match for 
-12:31:16 ERROR, did not find a match for 
-12:31:16 ERROR, did not find a match for 
-12:31:16 ERROR, did not find a match for 
-12:31:16 ERROR, did not find a match for 
-12:31:16 ERROR, did not find a match for 
-12:31:16 ERROR, did not find a match for 
-12:31:16 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
-12:31:17 ERROR, did not find a match for 
+﻿20:00:36 ERROR, did not find a match for Green Landscaping Group
+20:00:36 ERROR, did not find a match for Fast. Balder B
+20:00:36 ERROR, did not find a match for KlaraBo Sverige B
+20:00:36 ERROR, did not find a match for Genova Property Group
+20:00:36 ERROR, did not find a match for Sintercast
+20:00:36 ERROR, did not find a match for Nederman Holding
+20:00:36 ERROR, did not find a match for Railcare Group
+20:00:36 ERROR, did not find a match for Sampo Oyj SDB
+20:00:36 ERROR, did not find a match for Byggmästare A J Ahlström H
+20:00:36 ERROR, did not find a match for Arion Banki SDB
+20:00:36 ERROR, did not find a match for John Mattson Fastighetsföret.
+20:00:36 ERROR, did not find a match for SWECO B
+20:00:37 ERROR, did not find a match for Karnov Group
+20:00:37 ERROR, did not find a match for Norva24 Group
+20:00:37 ERROR, did not find a match for Scandic Hotels Group
+20:00:37 ERROR, did not find a match for HANZA
+20:00:37 ERROR, did not find a match for TRATON
+20:00:37 ERROR, did not find a match for Millicom Int. Cellular SDB
+20:00:37 ERROR, did not find a match for Byggmax Group
+20:00:37 ERROR, did not find a match for Lagercrantz Group B
+20:00:37 ERROR, did not find a match for Embracer Group B
+20:00:37 ERROR, did not find a match for BONESUPPORT HOLDING
+20:00:37 ERROR, did not find a match for Alimak Group
+20:00:37 ERROR, did not find a match for INVISIO
+20:00:37 ERROR, did not find a match for Cibus Nordic Real Estate
