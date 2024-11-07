@@ -30,7 +30,7 @@ namespace Borsdata.Api.Dal.Model
                 _client = new HttpClient();
                 _client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-                _querystring = "?authKey=" + key;
+                _querystring = "?authKey=" + key + "&maxcount=20";
                 _timer = Stopwatch.StartNew();
                 _urlRoot = "https://apiservice.borsdata.se";
                 //_urlRoot = "https://bd-apimanager-dev.azure-api.net";

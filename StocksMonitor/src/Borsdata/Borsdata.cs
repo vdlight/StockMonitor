@@ -233,7 +233,7 @@ namespace StocksMonitor.src.Borsdata
                 // TODO, läser just nu data för senaste året
 
                 // TODO, kör första är äldstsa datum när jag läst in till histoiken
-                StockPricesRespV1 sp = _api.GetStockPrices(instrument.InsId.Value, DateTime.Today.AddYears(-2), DateTime.Today);
+                StockPricesRespV1 sp = _api.GetStockPrices(instrument.InsId.Value, DateTime.Today.AddYears(-19), DateTime.Today);
 
                 //StockPricesRespV1 sp = _api.GetStockPrices(i.InsId.Value);
                 if (sp != null)

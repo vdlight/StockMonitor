@@ -34,6 +34,7 @@ namespace StocksMonitor.src
         PeAbove,
         Index,
         AdjustBuy,
+        SellProfit,
         None,
         Never
     }
