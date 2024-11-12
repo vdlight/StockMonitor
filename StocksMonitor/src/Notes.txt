@@ -1,25 +1,30 @@
-﻿20:00:36 ERROR, did not find a match for Green Landscaping Group
-20:00:36 ERROR, did not find a match for Fast. Balder B
-20:00:36 ERROR, did not find a match for KlaraBo Sverige B
-20:00:36 ERROR, did not find a match for Genova Property Group
-20:00:36 ERROR, did not find a match for Sintercast
-20:00:36 ERROR, did not find a match for Nederman Holding
-20:00:36 ERROR, did not find a match for Railcare Group
-20:00:36 ERROR, did not find a match for Sampo Oyj SDB
-20:00:36 ERROR, did not find a match for Byggmästare A J Ahlström H
-20:00:36 ERROR, did not find a match for Arion Banki SDB
-20:00:36 ERROR, did not find a match for John Mattson Fastighetsföret.
-20:00:36 ERROR, did not find a match for SWECO B
-20:00:37 ERROR, did not find a match for Karnov Group
-20:00:37 ERROR, did not find a match for Norva24 Group
-20:00:37 ERROR, did not find a match for Scandic Hotels Group
-20:00:37 ERROR, did not find a match for HANZA
-20:00:37 ERROR, did not find a match for TRATON
-20:00:37 ERROR, did not find a match for Millicom Int. Cellular SDB
-20:00:37 ERROR, did not find a match for Byggmax Group
-20:00:37 ERROR, did not find a match for Lagercrantz Group B
-20:00:37 ERROR, did not find a match for Embracer Group B
-20:00:37 ERROR, did not find a match for BONESUPPORT HOLDING
-20:00:37 ERROR, did not find a match for Alimak Group
-20:00:37 ERROR, did not find a match for INVISIO
-20:00:37 ERROR, did not find a match for Cibus Nordic Real Estate
+﻿    // Member variables to hold results of each calculation
+    public decimal Result1 { get; private set; }
+    public decimal Result2 { get; private set; }
+    public decimal Result3 { get; private set; }
+
+    public void PerformCalculations()
+    {
+        // List of tasks to handle each calculation independently
+        List<Task<decimal>> tasks = new List<Task<decimal>>
+        {
+            Task.Run(() => CalculatePart1()),
+            Task.Run(() => CalculatePart2()),
+            Task.Run(() => CalculatePart3())
+        };
+
+        // Wait for all tasks to complete
+        Task.WhenAll(tasks).Wait();
+
+        // Assign task results to member variables
+        Result1 = tasks[0].Result;
+        Result2 = tasks[1].Result;
+        Result3 = tasks[2].Result;
+    }
+
+    // Example calculations for different parts of the data
+    private decimal CalculatePart1()
+    {
+        // Simulate calculation
+        return 100.0m;
+    }

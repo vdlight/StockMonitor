@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.Identity.Client;
 using StocksMonitor.src;
 using StocksMonitor.src.databaseWrapper;
 using StocksMonitor.src.dataStoreNS;
@@ -48,7 +49,7 @@ namespace StocksMonitor.src
         readonly decimal originalInvestment = 0;
         const decimal investmentTarget = 500;
 
-        List<Stock> simulatorStocks = [];
+        List<Stock> simulatorStocks = [];  // TODO, make readonly
         public string name { get; set; }
         
         public decimal oneMonth { get; private set; } = 0;
@@ -57,11 +58,10 @@ namespace StocksMonitor.src
         public decimal twoYears { get; private set; } = 0;
         public decimal fiveYears { get; private set; } = 0;
         public decimal tenYears { get; private set; } = 0;
+        public decimal fifteenYears { get; private set; } = 0;
         public decimal Investment { get; private set; } = 0;
         public decimal Value { get; private set; } = 0;
         public decimal Wallet { get; private set; } = 0;
-        public decimal TotDevelopment { get; private set; } = 0; // fifteen years
-
 
         public Simulation()
         {
@@ -176,117 +176,14 @@ namespace StocksMonitor.src
             {
                 AddToWallet(originalInvestment);
             }
-
         }
-
-        public List<Portfolio> portfolioHistory = [];
-
-        private void ClearOldData()
-        {
-            foreach (var stock in simulatorStocks)
-            {
-                stock.OwnedCnt = 0;
-                
-            }
-            portfolioHistory.Clear();
-        }
-
 
         // TODO, add PE And divident to stockData, no need to save to history, just latest data is enough
         // TODO, kanske ska simuleringarna att köra, men att jag kan ställa saker i någon "konfig" investeringssumma, adj rate, marknadsval, ma justeringar / nivåer
-        private decimal CalculateDevelopmentBetweenDates(DateTime oldDate, DateTime currentDate)
-        {
-            var currentDay = currentDate;
-            var oldDay = oldDate;
 
-            var currentPortfolio = portfolioHistory.Find(p => p.timestamp == currentDate.Date);
-            var searchLimit = 0;
-
-            const int maxSearchLimit = 31;
-
-
-
-            while(currentPortfolio == null && maxSearchLimit < 31)
-            {
-                currentDate = currentDate.AddDays(-1); // if not find on current day, adjust to previous day, 
-                currentPortfolio = portfolioHistory.Find(p => p.timestamp == currentDate.Date);
-                searchLimit++;
-            }
-
-            if (searchLimit >= maxSearchLimit)
-            {
-                StockMonitorLogger.WriteMsg("ERROR, could not find current day");
-            }
-            
-
-            var oldPortfolio = portfolioHistory.Find(p => p.timestamp == oldDate.Date);
-            searchLimit = 0;
-            while (oldPortfolio == null && searchLimit < maxSearchLimit)
-            {
-                oldDate = oldDate.AddDays(-1); // if not find on current day, adjust to previous day, 
-                oldPortfolio = portfolioHistory.Find(p => p.timestamp == oldDate.Date);
-                searchLimit++;
-            }
-
-            if (searchLimit >= maxSearchLimit)
-            {
-                StockMonitorLogger.WriteMsg("ERROR, could not find old day");
-            }
-
-            if (currentPortfolio == null || oldPortfolio == null)
-            {
-                StockMonitorLogger.WriteMsg("ERROR, could not find dates to calculate portfolio development, Skipping");
-                return 0;
-            }
-
-            var currentVal = currentPortfolio.value;
-            var oldVal = oldPortfolio.value;
-
-            if (!indexCalculation)
-            {
-                // value is the value of own stocks, and the wallet money. But withdraw the investment money
-                currentVal += currentPortfolio.wallet;
-                currentVal -= currentPortfolio.investment;
-
-                oldVal += oldPortfolio.wallet;
-                oldVal -= oldPortfolio.investment; 
-            }
-
-            if(oldVal == 0)
-            {
-                // Possible error source is that simululation (with adjustment of dates) are outside the scope of the available portfolio data, --> simulation to short
-                StockMonitorLogger.WriteMsg("ERROR, could not calculate value for oldTimestamp " + oldDate.ToString() + ", returning zero.");
-                return 0;
-            }
-            
-            var diff = currentVal - oldVal;
-            return (diff / oldVal) * 100;
-        }
         // TODO, flytta strategier till simulering, så jag kan hantera smidigare i helhet. 
         // t.,exa att titta på historik, för att hitta MA brytpunkter, eller att sortera datan, på .tex. närmast MA för att köpa först där, isf det som ligger högst upp på intervall.
-        public void CalculateSimulationResult()
-        {
-            portfolioHistory.Reverse();
-
-            if (!portfolioHistory.Any())
-            {
-                StockMonitorLogger.WriteMsg("ERROR, Could not find first and last entry from history, ABORT");
-                return;
-            }
-
-            var currentDay = portfolioHistory.First();
-
-            Value = currentDay.value;
-            
-            oneMonth = CalculateDevelopmentBetweenDates(currentDay.timestamp.AddMonths(-1), currentDay.timestamp);
-            sixMonths = CalculateDevelopmentBetweenDates(currentDay.timestamp.AddMonths(-6), currentDay.timestamp);
-            oneYear = CalculateDevelopmentBetweenDates(currentDay.timestamp.AddYears(-1), currentDay.timestamp);
-            twoYears = CalculateDevelopmentBetweenDates(currentDay.timestamp.AddYears(-2), currentDay.timestamp);
-            fiveYears = CalculateDevelopmentBetweenDates(currentDay.timestamp.AddYears(-5), currentDay.timestamp);
-            tenYears = CalculateDevelopmentBetweenDates(currentDay.timestamp.AddYears(-10), currentDay.timestamp);
-            TotDevelopment = CalculateDevelopmentBetweenDates(currentDay.timestamp.AddYears(-15), currentDay.timestamp); // 15 years1
-        }
-
+       
         protected (int, decimal) CalculateCost(History dataPoint, decimal wallet, int ownedCnt)
         {
             int buyCount = (int)((investmentTarget - (ownedCnt * dataPoint.Price)) / dataPoint.Price);
@@ -310,7 +207,6 @@ namespace StocksMonitor.src
                 AddToWallet(cost);
             }
             
-
             return (buyCount, cost);
         }
 
@@ -415,38 +311,24 @@ namespace StocksMonitor.src
           
         }
 
-        public void Run()
+        public decimal SimulateStocks(List<Stock> stocks)
         {
-            // TODO skriva owned cnt i stocklistan, per historik, för att få koll på utvekcling, väldigt lik vanliga procentuella uträkningen också
-
-
-            // latest hisory is the same as current, dont duplicate
-            var stockHistories = simulatorStocks.SelectMany(s => s.History).OrderBy(h => h.Date);
-            var oldestStock = stockHistories.FirstOrDefault();
-            var newestStock = stockHistories.LastOrDefault();
-
-            ClearOldData();
-
-
+            List<Stock> simStock = stocks.ToList(); // To list create copy
+            List<Portfolio> portfolioHistory = []; // TODO, if date is more than data, return 0
+            
             var ClearInvestmentFirstSimulationDay = true;
 
-            if (oldestStock== null || newestStock == null)
-            {
-                StockMonitorLogger.WriteMsg("ABORT, Could not find timestamps, ABORT");
-                return;
-            }
-
-            // todo, tempcode
-            oldestStock.Date = newestStock.Date.AddYears(-1).AddDays(-17);
-
+            // latest hisory is the same as current, dont duplicate
+            var histories = simStock.SelectMany(s => s.History).OrderBy(h => h.Date);
+            var oldestStock = histories.FirstOrDefault();
+            var newestStock = histories.LastOrDefault();
+            // TODO, värden som beräknas sparas i respektive värde, dvs 6m 1y osv. Kan fixa så när man vill ställa custom tid, så beräknas bara dessa om
             // History när läst från db går från äldsta i 0 --> 27/9, till nyaste sist 14 --> 22/10
             var simulationDay = oldestStock.Date;
             var dividentMonth = simulationDay.AddMonths(4);
 
             while (simulationDay != newestStock.Date.AddDays(1).Date)
             {
-                // TODO, behöver jag titta på om en aktie har ägts, men finns inte med längre, (bytt lista eller avnoterats) Som t.ex SAS, om jag hade ägt det, och de avnoterades. vad händer?
-
                 var valueOfInvestments = 0m;
                 bool divident = false;
 
@@ -456,23 +338,23 @@ namespace StocksMonitor.src
                     divident = true;
                 }
 
-                foreach (var stock in simulatorStocks)
+                foreach (var stock in simStock)
                 {
                     var h = stock.History.FirstOrDefault(h => h.Date == simulationDay);
                     // TODO, datagrid och graf, kan yllas anting med simulator data eller utevklingsdata. Utvecklingsdata kan komma från simulering eller inte.
 
                     if (h != null)
                     {
-                        HandleDatapoint(stock:stock, datapoint:h, wallet:Wallet, divident:divident);
+                        HandleDatapoint(stock: stock, datapoint: h, wallet: Wallet, divident: divident);
                         valueOfInvestments += (stock.OwnedCnt * h.Price);
                     }
                 }
-                var allStocksHistoryDay = simulatorStocks.SelectMany(s => s.History).Where(h => h.Date == simulationDay);
+                var allStocksHistoryDay = simStock.SelectMany(s => s.History).Where(h => h.Date == simulationDay);
 
                 if (allStocksHistoryDay.Any())
                 {
                     // First day, i need a reference point otherwice it will be value - investment --> 0, rendering total simulation useless
-                    if(ClearInvestmentFirstSimulationDay)
+                    if (ClearInvestmentFirstSimulationDay)
                     {
                         ClearInvestmentFirstSimulationDay = false;
                         Investment = 0;
@@ -487,12 +369,96 @@ namespace StocksMonitor.src
                         ));
                 }
                 simulationDay = simulationDay.AddDays(+1);
-
-
             }
-            // TODOD, grafen när det gäller simuleringarna, visar bara portfölhistory, i procentutveckling steg för steg
-         
-            CalculateSimulationResult();
+
+
+            // Calculate result
+            var currentPortfolio = portfolioHistory.Last();
+            var oldPortfolio = portfolioHistory.First();
+
+            var currentVal = currentPortfolio.value;
+            var oldVal = oldPortfolio.value;
+
+            if (!indexCalculation)
+            {
+                // value is the value of own stocks, and the wallet money. But withdraw the investment money
+                currentVal += currentPortfolio.wallet;
+                currentVal -= currentPortfolio.investment;
+
+                oldVal += oldPortfolio.wallet;
+                oldVal -= oldPortfolio.investment; 
+            }
+            var diff = currentVal - oldVal;
+            return (diff / oldVal) * 100;
+        }
+
+        public List<Stock> getStocksFromDate(DateTime from)
+        {
+            return simulatorStocks
+                .Select(stock => new Stock
+                {
+                    Name = stock.Name,
+                    MA200 = stock.MA200,
+                    Divident = stock.Divident,
+                    List = stock.List,
+                    OwnedCnt = 0,
+                    PeValue = stock.PeValue,
+                    PurPrice = stock.PurPrice,
+                    History = stock.History
+                    .Where(h => h.Date >= from)
+                    .OrderBy(h => h.Date)
+                    .ToList()
+                })
+            .ToList();
+        }
+
+        public void Run()
+        {
+            // TODO skriva owned cnt i stocklistan, per historik, för att få koll på utvekcling, väldigt lik vanliga procentuella uträkningen också
+
+            var stockHistories = simulatorStocks.SelectMany(s => s.History).OrderBy(h => h.Date);
+
+            if (stockHistories.Last() == null)
+            {
+                return;
+            }
+            var newestDate = stockHistories.Last().Date;
+
+            List<Task<decimal>> calculations = new List<Task<decimal>>
+            {
+            /*    Task.Run(() => SimulateStocks(getStocksFromDate(
+                    newestDate.AddMonths(-1)
+                    ))),
+                Task.Run(() => SimulateStocks(getStocksFromDate(
+                    newestDate.AddMonths(-6)
+                    ))),*/
+                Task.Run(() => SimulateStocks(getStocksFromDate(
+                    newestDate.AddYears(-1)
+                    ))),
+                /*Task.Run(() => SimulateStocks(getStocksFromDate(
+                    newestDate.AddYears(-2)
+                    ))),
+                Task.Run(() => SimulateStocks(getStocksFromDate(
+                    newestDate.AddYears(-5)
+                    ))),
+                Task.Run(() => SimulateStocks(getStocksFromDate(
+                    newestDate.AddYears(-10)
+                    ))),
+                Task.Run(() => SimulateStocks(getStocksFromDate(
+                    newestDate.AddYears(-15)
+                    )))*/
+            };
+
+            Task.WhenAll(calculations).Wait();
+
+            //oneMonth = calculations[0].Result;
+            //sixMonths= calculations[1].Result;
+            oneYear = calculations[0].Result;
+            //twoYears = calculations[3].Result;
+            //fiveYears = calculations[4].Result;
+            //tenYears = calculations[5].Result;
+            
+            //fifteenYears = calculations[6].Result;
         }
     }
 
@@ -566,9 +532,9 @@ namespace StocksMonitor.src
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "Tot %",
-                HeaderText = "Tot % (15y)",
-                ToolTipText = "Total development",
+                Name = "15y %",
+                HeaderText = "15y %",
+                ToolTipText = "15 years",
                 ValueType = typeof(decimal)
             });
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
@@ -660,7 +626,7 @@ namespace StocksMonitor.src
                         {
                             new Rule(TRule.Never)
                         }
-                },*/
+                },
                 new Simulation()
                 {
                     stockMarket = TMarket.IndexOMXLargeCap,
@@ -675,7 +641,7 @@ namespace StocksMonitor.src
                         {
                             new Rule(TRule.Never)
                         }
-                },
+                },*/
                 new Simulation()
                 {
                     stockMarket = TMarket.IndexOMXSGI,
@@ -735,7 +701,7 @@ namespace StocksMonitor.src
                       new Rule(TRule.BelowMa, -5)
                   }
               });
-              returnSims.Add(new Simulation()
+           /*   returnSims.Add(new Simulation()
               {
                   stockMarket = TMarket.AllExceptFirstNorth,
                   dividentRequired = false,
@@ -1051,7 +1017,7 @@ namespace StocksMonitor.src
               sim.twoYears,
               sim.fiveYears,
               sim.tenYears,
-              sim.TotDevelopment,
+              sim.fifteenYears,
               sim.Investment,
               sim.Value,
               sim.Wallet
