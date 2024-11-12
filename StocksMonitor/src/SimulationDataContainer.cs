@@ -437,7 +437,7 @@ namespace StocksMonitor.src
             }
 
             // todo, tempcode
-            oldestStock.Date = newestStock.Date.AddYears(-1);
+            oldestStock.Date = newestStock.Date.AddYears(-1).AddDays(-17);
 
             // History när läst från db går från äldsta i 0 --> 27/9, till nyaste sist 14 --> 22/10
             var simulationDay = oldestStock.Date;
@@ -614,9 +614,8 @@ namespace StocksMonitor.src
 
         private List<Simulation> AddIndexes()
         {
-            return new List<Simulation>();
 
-            return new List<Simulation> { 
+            return new List<Simulation> {   /*  
                 new Simulation()
                 {
                     stockMarket = TMarket.IndexFirstNorthAll,
@@ -632,7 +631,7 @@ namespace StocksMonitor.src
                             new Rule(TRule.Never)
                         }
                 },
-                new Simulation()
+            new Simulation()
                 {
                     stockMarket = TMarket.IndexOMXSmallCap,
                     indexCalculation = true,
@@ -661,7 +660,7 @@ namespace StocksMonitor.src
                         {
                             new Rule(TRule.Never)
                         }
-                },
+                },*/
                 new Simulation()
                 {
                     stockMarket = TMarket.IndexOMXLargeCap,
@@ -772,6 +771,7 @@ namespace StocksMonitor.src
                   }
               });
 
+           
             // allow balancing
             returnSims.Add(new Simulation()
             {
@@ -851,6 +851,7 @@ namespace StocksMonitor.src
                   }
             });
 
+            /*
             // Divident stocks only, buy and keep
             returnSims.Add(new Simulation()
             {
@@ -1008,7 +1009,7 @@ namespace StocksMonitor.src
                       new Rule(TRule.BelowMa, -5)
                   },
             });
-
+            */
 
             return returnSims;
 
