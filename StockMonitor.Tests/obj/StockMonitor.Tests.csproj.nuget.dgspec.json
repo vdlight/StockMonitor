@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\git\\StockMonitor\\StockMonitor.Tests\\StockMonitor.Tests.csproj": {}
+    "D:\\git\\StockMonitor\\StockMonitor.Tests\\StockMonitor.Tests.csproj": {}
   },
   "projects": {
-    "C:\\git\\StockMonitor\\StockMonitor.Tests\\StockMonitor.Tests.csproj": {
+    "D:\\git\\StockMonitor\\StockMonitor.Tests\\StockMonitor.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\git\\StockMonitor\\StockMonitor.Tests\\StockMonitor.Tests.csproj",
+        "projectUniqueName": "D:\\git\\StockMonitor\\StockMonitor.Tests\\StockMonitor.Tests.csproj",
         "projectName": "StockMonitor.Tests",
-        "projectPath": "C:\\git\\StockMonitor\\StockMonitor.Tests\\StockMonitor.Tests.csproj",
-        "packagesPath": "C:\\Users\\40123310\\.nuget\\packages\\",
-        "outputPath": "C:\\git\\StockMonitor\\StockMonitor.Tests\\obj\\",
+        "projectPath": "D:\\git\\StockMonitor\\StockMonitor.Tests\\StockMonitor.Tests.csproj",
+        "packagesPath": "C:\\Users\\jensa\\.nuget\\packages\\",
+        "outputPath": "D:\\git\\StockMonitor\\StockMonitor.Tests\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\40123310\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\jensa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -32,8 +28,8 @@
           "net8.0-windows7.0": {
             "targetAlias": "net8.0-windows",
             "projectReferences": {
-              "C:\\git\\StockMonitor\\StocksMonitor\\StocksMonitor.csproj": {
-                "projectPath": "C:\\git\\StockMonitor\\StocksMonitor\\StocksMonitor.csproj"
+              "D:\\git\\StockMonitor\\StocksMonitor\\StocksMonitor.csproj": {
+                "projectPath": "D:\\git\\StockMonitor\\StocksMonitor\\StocksMonitor.csproj"
               }
             }
           }
@@ -86,25 +82,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\git\\StockMonitor\\StocksMonitor\\StocksMonitor.csproj": {
+    "D:\\git\\StockMonitor\\StocksMonitor\\StocksMonitor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\git\\StockMonitor\\StocksMonitor\\StocksMonitor.csproj",
+        "projectUniqueName": "D:\\git\\StockMonitor\\StocksMonitor\\StocksMonitor.csproj",
         "projectName": "StocksMonitor",
-        "projectPath": "C:\\git\\StockMonitor\\StocksMonitor\\StocksMonitor.csproj",
-        "packagesPath": "C:\\Users\\40123310\\.nuget\\packages\\",
-        "outputPath": "C:\\git\\StockMonitor\\StocksMonitor\\obj\\",
+        "projectPath": "D:\\git\\StockMonitor\\StocksMonitor\\StocksMonitor.csproj",
+        "packagesPath": "C:\\Users\\jensa\\.nuget\\packages\\",
+        "outputPath": "D:\\git\\StockMonitor\\StocksMonitor\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\40123310\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\jensa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -197,7 +189,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

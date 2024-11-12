@@ -345,7 +345,14 @@ namespace StocksMonitor.src
 
                     if (h != null)
                     {
-                        HandleDatapoint(stock: stock, datapoint: h, wallet: Wallet, divident: divident);
+                        if (indexCalculation)
+                        {
+                            stock.OwnedCnt = 1; // Always own the index, no actions
+                        }
+                        else
+                        {
+                            HandleDatapoint(stock: stock, datapoint: h, wallet: Wallet, divident: divident);
+                        }
                         valueOfInvestments += (stock.OwnedCnt * h.Price);
                     }
                 }
@@ -379,15 +386,13 @@ namespace StocksMonitor.src
             var currentVal = currentPortfolio.value;
             var oldVal = oldPortfolio.value;
 
-            if (!indexCalculation)
-            {
-                // value is the value of own stocks, and the wallet money. But withdraw the investment money
-                currentVal += currentPortfolio.wallet;
-                currentVal -= currentPortfolio.investment;
+           
+            currentVal += currentPortfolio.wallet;
+            currentVal -= currentPortfolio.investment;
 
-                oldVal += oldPortfolio.wallet;
-                oldVal -= oldPortfolio.investment; 
-            }
+            oldVal += oldPortfolio.wallet;
+            oldVal -= oldPortfolio.investment; 
+
             var diff = currentVal - oldVal;
             return (diff / oldVal) * 100;
         }
@@ -426,16 +431,16 @@ namespace StocksMonitor.src
 
             List<Task<decimal>> calculations = new List<Task<decimal>>
             {
-            /*    Task.Run(() => SimulateStocks(getStocksFromDate(
+                Task.Run(() => SimulateStocks(getStocksFromDate(
                     newestDate.AddMonths(-1)
                     ))),
                 Task.Run(() => SimulateStocks(getStocksFromDate(
                     newestDate.AddMonths(-6)
-                    ))),*/
+                    ))),
                 Task.Run(() => SimulateStocks(getStocksFromDate(
                     newestDate.AddYears(-1)
                     ))),
-                /*Task.Run(() => SimulateStocks(getStocksFromDate(
+                Task.Run(() => SimulateStocks(getStocksFromDate(
                     newestDate.AddYears(-2)
                     ))),
                 Task.Run(() => SimulateStocks(getStocksFromDate(
@@ -446,19 +451,18 @@ namespace StocksMonitor.src
                     ))),
                 Task.Run(() => SimulateStocks(getStocksFromDate(
                     newestDate.AddYears(-15)
-                    )))*/
+                    )))
             };
 
             Task.WhenAll(calculations).Wait();
 
-            //oneMonth = calculations[0].Result;
-            //sixMonths= calculations[1].Result;
-            oneYear = calculations[0].Result;
-            //twoYears = calculations[3].Result;
-            //fiveYears = calculations[4].Result;
-            //tenYears = calculations[5].Result;
-            
-            //fifteenYears = calculations[6].Result;
+            oneMonth = calculations[0].Result;
+            sixMonths= calculations[1].Result;
+            oneYear = calculations[2].Result;
+            twoYears = calculations[3].Result;
+            fiveYears = calculations[4].Result;
+            tenYears = calculations[5].Result;
+            fifteenYears = calculations[6].Result;
         }
     }
 
