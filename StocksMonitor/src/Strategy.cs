@@ -32,7 +32,6 @@ namespace StocksMonitor.src
         AboveMa,
         DividentAbove,
         PeAbove,
-        Index,
         AdjustBuy,
         SellProfit,
         None,

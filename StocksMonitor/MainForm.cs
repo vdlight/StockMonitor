@@ -20,6 +20,7 @@ using GrapeCity.DataVisualization.Chart;
 using System.Net.WebSockets;
 using StocksMonitor.src.avanzaParser;
 using System.Linq;
+using StocksMonitor.src.Simulation;
 
 namespace StocksMonitor
 {
