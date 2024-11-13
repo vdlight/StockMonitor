@@ -1,15 +1,15 @@
 
 OMXS30
--0,82%
- 17:30 
+-0,07%
+ 17:29 
 (
-6,55%
+4,86%
  i år)
 DJ USA
-2,49%
- 19:39 
+0,27%
+ 19:18 
 (
-23,61%
+25,49%
  i år)
 Inloggad som Jens
 -
@@ -35,16 +35,16 @@ Kalender
 Analys
 
 Alla konton
-Senast uppdaterad: alldeles nyss
+Senast uppdaterad: 10 sek sedan
 
 Totalt värde
-87 284 kr
+87 215 kr
 
 Tillgängligt för köp
-632 kr
+109 kr
 
 Utveckling i år
-+16,70%
++16,14%
 
 Aktier
 Min konfig
@@ -52,248 +52,223 @@ Utveckling
 Inköpsinfo
 Historik
 Nyckeltal
- Land	Namn 	 Antal	 Inköpskurs	 Senast	Verktyg
-Logistea B
-29	17,59 SEK	14,98	
-K-Fast Holding B
-22	23,41 SEK	20,15	
-Linc
-6	87,33 SEK	77,00	
-AAK
-2	330,50 SEK	293,40	
-Annehem Fastigheter B
-26	19,69 SEK	17,55	
-Advenica
-41	11,83 SEK	10,55	
-Proact IT Group
-4	151,00 SEK	135,20	
-Creades A
-7	78,14 SEK	70,30	
-Essity B
-2	323,50 SEK	292,50	
-Telia Company
-15	33,87 SEK	30,85	
-Pandox B
-3	197,67 SEK	181,40	
-ITAB Shop Concept
-20	25,75 SEK	23,70	
-Öresund
-4	121,75 SEK	112,20	
+ Land	Namn ▲	 Antal	 Inköpskurs	 Senast	Verktyg
+AcadeMedia
+8	67,38 SEK	63,00	
+Actic Group
+80	6,21 SEK	6,40	
+Addtech B
+2	309,00 SEK	299,00	
+Alfa Laval
+2	442,50 SEK	465,10	
+Alimak Group
+5	105,20 SEK	120,80	
+Ambea
+6	90,33 SEK	95,45	
+AQ Group
+4	120,25 SEK	145,12	
+Arion Bank SDB
+43	11,77 SEK	12,15	
+Arla Plast
+11	50,00 SEK	49,90	
+Assa Abloy B
+2	326,50 SEK	327,70	
+Atrium Ljungberg B
+3	219,33 SEK	208,00	
+Attendo
+11	48,64 SEK	49,95	
+Balder B
+6	84,67 SEK	83,58	
+Betsson B
+4	126,00 SEK	143,02	
+Billerud
+5	105,40 SEK	100,10	
+Björn Borg
+9	60,67 SEK	60,83	
+Boliden
+2	327,50 SEK	313,90	
+BONESUPPORT
+2	296,00 SEK	348,40	
+Brinova Fastigheter B
+21	24,86 SEK	24,90	
+Bure Equity
+1	366,92 SEK	369,00	
+Byggmax Group
+11	40,92 SEK	45,32	
+Byggmästare Anders J Ahlström Holding B
+2	259,50 SEK	256,00	
+Cibus Nordic Real Estate
+3	123,03 SEK	170,25	
+Clas Ohlson B
+3	158,00 SEK	190,00	
+Cloetta
+21	24,24 SEK	25,86	
+Dynavox Group
+9	54,20 SEK	65,50	
+Eastnine
+12	43,50 SEK	45,235	
+Embracer Group B
+17	25,70 SEK	27,10	
+Emilshus B
+12	43,92 SEK	44,00	
+Enea
+5	86,17 SEK	99,70	
+engcon B
+4	113,60 SEK	118,40	
+Epiroc B
+3	189,00 SEK	179,00	
+EQL Pharma
+8	53,90 SEK	61,00	
+Ericsson B
+6	75,71 SEK	87,96	
 Fastpartner A
 7	75,86 SEK	70,10	
-HEBA B
-15	34,20 SEK	31,65	
-NIBE Industrier B
-9	54,89 SEK	50,84	
-EQT
-2	331,50 SEK	307,30	
-Nivika Fastigheter B
-12	43,00 SEK	39,90	
-Billerud
-5	105,40 SEK	98,85	
-Indutrade
-2	306,50 SEK	287,60	
-Björn Borg
-9	60,67 SEK	57,01	
-Atrium Ljungberg B
-3	219,33 SEK	206,50	
-NP3 Fastigheter
-2	266,00 SEK	250,50	
-Cavotec
-27	19,00 SEK	17,90	
-Nyfosa
-4	113,50 SEK	107,10	
-SAAB B
-2	237,50 SEK	224,30	
-Systemair
-6	85,33 SEK	81,00	
-Fastighetsbolaget Emilshus B
-12	43,92 SEK	41,80	
-Lundin Mining Corporation
-5	109,20 SEK	104,10	
-Hennes & Mauritz B
-3	168,00 SEK	160,70	
-Green Landscaping Group
-7	77,57 SEK	74,30	
-Fast. Balder B
-6	84,67 SEK	81,56	
-KlaraBo Sverige B
-25	20,36 SEK	19,68	
-Holmen B
-2	429,00 SEK	417,40	
-Lifco B
-2	328,50 SEK	319,80	
-AcadeMedia
-8	67,38 SEK	65,60	
-Genova Property Group
-10	50,10 SEK	48,80	
-Sintercast
-5	113,80 SEK	111,00	
-Addtech B
-2	309,00 SEK	303,00	
-Brinova Fastigheter B
-21	24,86 SEK	24,40	
-NCC B
-3	158,75 SEK	156,60	
-Epiroc B
-3	189,00 SEK	186,90	
-Latour B
-2	280,88 SEK	277,90	
-Attendo
-11	48,64 SEK	48,15	
-Nederman Holding
-2	220,33 SEK	218,50	
-Skanska B
-3	221,00 SEK	220,20	
-Traction B
-2	298,50 SEK	298,00	
-Rejlers B
-4	148,75 SEK	148,80	
-Nordea Bank
-4	126,00 SEK	126,45	
-Railcare Group
-17	30,88 SEK	31,10	
-Net Insight B
-72	7,00 SEK	7,05	
-Actic Group
-80	6,21 SEK	6,26	
-Sampo Oyj SDB
-1	471,50 SEK	476,00	
-Byggmästare A J Ahlström H
-2	259,50 SEK	262,00	
-Boliden
-2	327,50 SEK	330,80	
-RaySearch Laboratories B
-3	157,50 SEK	159,20	
-SEB A
-3	153,38 SEK	155,85	
-Arion Banki SDB
-43	11,77 SEK	12,00	
-Bure Equity
-1	366,92 SEK	374,40	
-ASSA ABLOY B
-2	326,50 SEK	333,60	
-OEM International B
-4	118,80 SEK	121,60	
-John Mattson Fastighetsföret.
-8	62,88 SEK	64,40	
-SWECO B
-3	168,00 SEK	172,10	
-Softronic B
-22	23,36 SEK	24,00	
-Eastnine
-12	43,50 SEK	44,80	
-Karnov Group
-7	77,71 SEK	80,10	
-Norva24 Group
-17	29,88 SEK	30,80	
-Probi
-2	262,50 SEK	271,00	
-Scandic Hotels Group
-7	67,00 SEK	69,20	
-SECTRA B
-2	265,00 SEK	274,00	
-Inwido
-3	184,00 SEK	190,80	
-Arla Plast
-11	50,00 SEK	52,00	
-SkiStar B
-3	158,25 SEK	165,20	
-HANZA
-7	69,14 SEK	72,20	
-TRATON
-2	335,00 SEK	350,50	
-engcon B
-4	113,60 SEK	119,00	
-Sleep Cycle
-11	40,82 SEK	42,80	
-Millicom Int. Cellular SDB
-2	276,50 SEK	290,00	
-Ambea
-6	90,33 SEK	95,00	
-Qliro
-18	24,00 SEK	25,25	
-Alfa Laval
-2	442,50 SEK	467,00	
 Flerie
-12	42,08 SEK	44,47	
-Byggmax Group
-11	40,92 SEK	43,30	
-Cloetta B
-21	24,24 SEK	26,18	
-Mildef Group
-6	83,83 SEK	90,90	
-Vestum
-51	9,92 SEK	10,84	
-Betsson B
-4	126,00 SEK	138,40	
-Mycronic
-2	370,50 SEK	407,00	
-MEKO
-4	132,50 SEK	145,60	
-Tele2 B
-4	99,60 SEK	111,10	
-Clas Ohlson B
-3	158,00 SEK	178,30	
-Lagercrantz Group B
-3	181,25 SEK	206,40	
-Industrivärden C
-2	319,59 SEK	364,10	
-Embracer Group B
-17	25,70 SEK	29,46	
-Dynavox Group
-9	54,20 SEK	62,40	
-BONESUPPORT HOLDING
-2	296,00 SEK	341,40	
-Alimak Group
-5	105,20 SEK	122,60	
-Ericsson B
-6	75,71 SEK	88,74	
-INVISIO
-2	234,67 SEK	276,50	
+12	42,08 SEK	44,86	
+Genova Property Group
+10	50,10 SEK	48,10	
+HANZA
+7	69,14 SEK	70,60	
+Holmen B
+2	429,00 SEK	412,20	
 Humana
 15	33,60 SEK	39,70	
-Enea
-5	86,17 SEK	102,00	
-AQ Group
-4	120,25 SEK	142,72	
-Truecaller B
-12	39,50 SEK	47,00	
+Industrivärden C
+2	319,59 SEK	358,00	
+Indutrade
+2	306,50 SEK	282,00	
 Investor B
-2	238,39 SEK	303,65	
-EQL Pharma
-8	53,90 SEK	68,80	
+2	238,39 SEK	296,70	
+INVISIO
+2	234,67 SEK	284,00	
+Inwido
+3	184,00 SEK	191,10	
+ITAB Shop Concept
+20	25,75 SEK	24,30	
+John Mattson
+8	62,88 SEK	65,60	
+Karnov Group
+7	77,71 SEK	80,00	
+KlaraBo
+25	20,36 SEK	21,15	
+Lagercrantz Group B
+3	181,25 SEK	200,80	
+Lifco B
+2	328,50 SEK	322,60	
+Linc
+6	87,33 SEK	78,70	
+Logistea B
+29	17,59 SEK	15,40	
+Lundin Mining Corporation
+5	109,20 SEK	103,00	
+MEKO
+4	132,50 SEK	134,40	
+Micro Systemation B
+9	53,00 SEK	51,80	
+MilDef Group
+6	83,83 SEK	96,50	
+Millicom International Cellular SDB
+2	276,50 SEK	285,60	
+Mycronic
+2	370,50 SEK	411,60	
+NCC B
+3	158,75 SEK	158,90	
+Nederman Holding
+2	220,33 SEK	213,00	
+Net Insight B
+72	7,00 SEK	6,75	
+Nivika
+12	43,00 SEK	39,30	
+Nordea Bank
+4	126,00 SEK	122,05	
+Nordnet
+3	162,40 SEK	231,80	
+Norva24
+17	29,88 SEK	31,25	
+NP3 Fastigheter
+2	266,00 SEK	249,00	
+Nyfosa
+4	113,50 SEK	107,00	
+OEM International B
+4	118,80 SEK	122,00	
+Pandox B
+3	197,67 SEK	183,60	
 Peab B
 6	62,45 SEK	83,40	
-Cibus Nordic Real Estate
-3	123,03 SEK	168,10	
+Proact IT Group
+4	151,00 SEK	134,20	
+Probi
+2	262,50 SEK	265,00	
+Qliro
+18	24,00 SEK	25,00	
+Railcare Group
+17	30,88 SEK	28,60	
+RaySearch Laboratories B
+3	157,50 SEK	191,20	
+Rejlers B
+4	148,75 SEK	147,60	
+SAAB B
+2	237,50 SEK	242,20	
+Sampo A SDB
+1	471,50 SEK	462,00	
+Scandic Hotels Group
+7	67,00 SEK	69,90	
+SEB A
+3	153,38 SEK	149,70	
+Sectra B
+2	265,00 SEK	278,80	
 Securitas B
-4	100,04 SEK	140,80	
-Nordnet
-3	162,40 SEK	229,60	
+4	100,04 SEK	137,65	
+Skanska B
+3	221,00 SEK	222,60	
+SkiStar B
+3	158,25 SEK	171,50	
+Sleep Cycle
+11	40,82 SEK	42,20	
+Softronic B
+22	23,36 SEK	24,70	
+Sweco B
+3	168,00 SEK	168,30	
+Systemair
+6	85,33 SEK	89,40	
+Tele2 B
+4	99,60 SEK	111,25	
+Traction B
+2	298,50 SEK	288,00	
+TRATON SE
+2	335,00 SEK	357,50	
+Truecaller
+12	39,50 SEK	46,08	
+Vestum
+51	9,92 SEK	10,62	
 Totalt värde				
 Fördelning
+Chart
+Pie chart with 2 slices.
+Cirkeldiagram över din fördelning
+View as data table, Chart
+End of interactive chart.
 
 Aktier
-67,39%
+58,81%
 
 Pengar
-32,61%
+41,19%
 Utdelning
 Totalt
-2 910 kr
-Kommande 141 kr
-Utbetalda 2 769 kr
+2 904 kr
+Kommande 98 kr
+Utbetalda 2 806 kr
 Avancerade nyckeltal
 
 Sharpekvot 12 mån
-0,97
+0,92
 
 Standardavvikelse 12 mån
-0,12%
+11,85%
 
 Årsavkastning (CAGR)
-−8,62%
+−8,72%
 Om att investera i värdepapper
 
 Tänk på att det kan svänga! Att spara i fonder, aktier och andra värdepapper har över tid varit ett bra sätt att få pengar att växa, men hur det går i framtiden vet ju ingen. Det kan gå både upp och ner så det är alltså inte säkert att du får tillbaka pengarna du satte in från början.

@@ -154,67 +154,8 @@ namespace StocksMonitor.src.Simulation
         private List<SimulationConfiguration> AddIndexes()
         {
 
-            return new List<SimulationConfiguration> {   /*  
-                new Simulation()
-                {
-                    stockMarket = TMarket.IndexFirstNorthAll,
-                    indexCalculation = true,
-                    dividentRequired = false,
-                    profitRequired = false,
-                    buyRules =
-                        {
-                            new Rule (TRule.Index)
-                        },
-                    sellRules =
-                        {
-                            new Rule(TRule.Never)
-                        }
-                },
-            new Simulation()
-                {
-                    stockMarket = TMarket.IndexOMXSmallCap,
-                    indexCalculation = true,
-                    dividentRequired = false,
-                    profitRequired = false,
-                    buyRules =
-                        {
-                            new Rule (TRule.Index)
-                        },
-                    sellRules =
-                        {
-                            new Rule(TRule.Never)
-                        }
-                },
-                new Simulation()
-                {
-                    stockMarket = TMarket.IndexOMXMidCap,
-                    indexCalculation = true,
-                    dividentRequired = false,
-                    profitRequired = false,
-                    buyRules =
-                        {
-                            new Rule (TRule.Index)
-                        },
-                    sellRules =
-                        {
-                            new Rule(TRule.Never)
-                        }
-                },
-                new Simulation()
-                {
-                    stockMarket = TMarket.IndexOMXLargeCap,
-                    indexCalculation = true,
-                    dividentRequired = false,
-                    profitRequired = false,
-                    buyRules =
-                        {
-                            new Rule (TRule.Index)
-                        },
-                    sellRules =
-                        {
-                            new Rule(TRule.Never)
-                        }
-                },*/
+            return new List<SimulationConfiguration> {   
+
                 new SimulationConfiguration()
                 {
                     stockMarket = TMarket.IndexOMXSGI,
@@ -316,6 +257,52 @@ namespace StocksMonitor.src.Simulation
                                     sellRules =
                                     {
                                         new Rule(TRule.None)
+                                    }
+                                },
+                                stockMarket = market,
+                            });
+                            // buy within limits, and rebuy, sell below -5
+                            returnSims.Add(new SimulationConfiguration()
+                            {
+                                configuration = {
+                                    dividentRequired = divident == 1,
+                                    profitRequired = profitRequired == 1,
+                                    balanceInvestment = balance == 1,
+                                    buyRules =
+                                    {
+                                        new Rule(TRule.None),
+                                    },
+                                    adjustBuyRules =
+                                    {
+                                        new Rule(TRule.AboveMa, 0),
+                                        new Rule(TRule.BelowMa, 15)
+                                    },
+                                    sellRules =
+                                    {
+                                        new Rule(TRule.BelowMa, -5)
+                                    }
+                                },
+                                stockMarket = market,
+                            });
+                            // buy within limits, and rebuy, never sell
+                            returnSims.Add(new SimulationConfiguration()
+                            {
+                                configuration = {
+                                    dividentRequired = divident == 1,
+                                    profitRequired = profitRequired == 1,
+                                    balanceInvestment = balance == 1,
+                                    buyRules =
+                                    {
+                                        new Rule(TRule.None),
+                                    },
+                                    adjustBuyRules =
+                                    {
+                                        new Rule(TRule.AboveMa, 0),
+                                        new Rule(TRule.BelowMa, 15)
+                                    },
+                                    sellRules =
+                                    {
+                                        new Rule(TRule.Never)
                                     }
                                 },
                                 stockMarket = market,

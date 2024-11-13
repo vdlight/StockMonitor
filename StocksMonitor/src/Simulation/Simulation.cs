@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace StocksMonitor.src.Simulation
 {
+#if SIMULATIONS
     public class SimulationNew
     {
         public bool indexCalculation;
@@ -248,4 +250,5 @@ namespace StocksMonitor.src.Simulation
             Investment += value;
         }
     }
+#endif
 }

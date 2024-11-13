@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#if SIMULATIONS
 namespace StocksMonitor.src.Simulation
 {
     public struct Configuration {
@@ -36,7 +37,7 @@ namespace StocksMonitor.src.Simulation
             { TMarket.IndexOMXLargeCap, "OMX Large Cap" },
             { TMarket.IndexOMXSGI, "OMX Stockholm GI" }
         };
-
+        //TODO: Kunna spara mina simuleringar att hämta upp smidigt istället för att köra om hela tiden? 
         public Configuration configuration;
         public decimal Investment { get; private set; } = 0;
         public decimal Value { get; private set; } = 0;
@@ -262,3 +263,4 @@ namespace StocksMonitor.src.Simulation
         }
     }
 }
+#endif
