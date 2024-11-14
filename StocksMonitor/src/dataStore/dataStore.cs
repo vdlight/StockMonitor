@@ -88,6 +88,8 @@ namespace StocksMonitor.src.dataStoreNS
         }
         public DataStore() 
         { 
+            // TODO: rita ut i grafen på simuleringar, så jag kan se sälj / köp ,, justering i grafen, samt värdet under hela perioden
+            // detta då när man simulerar en (eller fåtal) aktie bara. 
             this.bd = new BorsData();
             this.avanza = new AvanzaParser();
         }

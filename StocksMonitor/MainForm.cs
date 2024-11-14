@@ -21,6 +21,7 @@ using System.Net.WebSockets;
 using StocksMonitor.src.avanzaParser;
 using System.Linq;
 using StocksMonitor.src.Simulation;
+using StocksMonitor.src.StockScreener;
 
 namespace StocksMonitor
 {
@@ -28,9 +29,14 @@ namespace StocksMonitor
     {
         DataStore store = new DataStore();
         private bool startup = true;
-        private DataVisualization dataVisualization;
-        private DataContainer dataContainer;
 
+#if SIMULATIONS
+
+        private SimulationDataVisualization dataVisualization;
+#else
+        private StockDataVisualization dataVisualization;
+#endif
+        private DataContainer dataContainer;
 
         private List<Stock> multiSelect = new List<Stock>();
         private Stock selectedStock;
@@ -64,10 +70,12 @@ namespace StocksMonitor
             StockFiltersGroupBox.Visible = false;
             dataContainer = new DataContainer(dataGrid, store);
             dataContainer.init();
+            dataVisualization = new SimulationDataVisualization(stockChart);
 #else
             this.Text = "StockMonitor " + "RELEASE ";
             dataContainer = new DataContainer(dataGrid, store);
             dataContainer.init();
+            dataVisualization = new StockDataVisualization(stockChart);
 
             // TODO, react for changes
             dataContainer.SetLimits(
@@ -82,7 +90,7 @@ namespace StocksMonitor
             StockMonitorLogger.SetOutput(consoleOutput);
             timer1000.Enabled = true;
 
-            dataVisualization = new DataVisualization(stockChart);
+
 
             oneMonthRadioButton.Checked = true;
         }
@@ -130,7 +138,7 @@ namespace StocksMonitor
             testMenu.Enabled = false;
 #endif
 
-#if SIMULATIONS 
+#if SIMULATIONS
 
             //parseData.Enabled = false;
 #endif
@@ -408,7 +416,7 @@ namespace StocksMonitor
                     {
                         selectedNames.Add(row.Cells["Name"].Value.ToString());
                     }
-                    dataVisualization.SelectedRows(selectedNames, store.stocks, oneWeekRadioButton.Checked);
+                    dataVisualization.SelectedRows(selectedNames, store.stocks, oneYearRadioButton.Checked);
                 }
                 catch (Exception exception)
                 {
@@ -421,188 +429,10 @@ namespace StocksMonitor
             dataGrid_SelectionChanged(sender, e);
         }
 
-        private void oneWeekRadioButton_CheckedChanged(object sender, EventArgs e)
+        private void oneYearRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             dataGrid_SelectionChanged(sender, e);
         }
-
-
-#if false
-        private void TestWarningCalculations()
-        {
-            // clear stocks data in store
-            store.stocks = [];
-
-            undeMa200limit.Text = "0";
-            overProfit_textbox.Text = "20";
-            overLossTextbox.Text = "10";
-
-            // normal, no warnings
-            store.stocks.Add(new Stock()
-            {
-                Name = "ABB",
-                Price = 100.0m,
-                PurPrice = 95.0m,   // 5 kr profit / stock
-                OwnedCnt = 2,
-                MA200 = 10.2m,      // Price 10.2 % over MA
-            });
-            store.stocks.Add(new Stock()
-            {
-                Name = "SAAB",
-                Price = 100.2m,
-                PurPrice = 110.4m,   // 10 kr loss / stock --> not enough loss
-                OwnedCnt = 2,
-                MA200 = 0.2m,      // Price 0.2 % over MA
-            });
-            store.stocks.Add(new Stock()
-            {
-                Name = "Investor",
-                Price = 110.4m, // Total value = 110.4 * 5 --> 552, not enough to start sell
-                PurPrice = 91,   // 19.4 kr profit / stock --> enoght profit to sell one
-                OwnedCnt = 5, //    21 % profit
-                MA200 = 0.2m,      // Price 0.2 % over MA
-            });
-            UpdateStocksView();
-
-            CompareInt(underMa200Warning, 0);
-            CompareInt(overProfitWarning, 0);
-            CompareInt(overLossLimitWarning, 0);
-            CompareBool(store.stocks[0].filters.warning, false);
-            CompareBool(store.stocks[1].filters.warning, false);
-            CompareBool(store.stocks[2].filters.warning, false);
-
-            store.stocks.Add(new Stock()
-            {
-                Name = "Securitas",
-                Price = 110.4m, // Total value = 110.4 * 5 --> 552, not enough to start sell
-                PurPrice = 91,   // 19.4 kr profit / stock --> enoght profit to sell one
-                OwnedCnt = 5, //    21 % profit
-                MA200 = -0.2m,      // Price 0.2 % under MA
-            });
-            UpdateStocksView();
-
-            CompareInt(underMa200Warning, 1);
-            CompareInt(overProfitWarning, 0);
-            CompareInt(overLossLimitWarning, 0);
-            CompareBool(store.stocks[0].filters.warning, false);
-            CompareBool(store.stocks[1].filters.warning, false);
-            CompareBool(store.stocks[2].filters.warning, false);
-            CompareBool(store.stocks[3].filters.warning, true);
-
-            undeMa200limit.Text = "-1"; // lower level of MA limit, so that warning shall not trigg, 1 percentage allowed under MA
-            UpdateStocksView();
-
-            CompareInt(underMa200Warning, 0);
-            CompareInt(overProfitWarning, 0);
-            CompareInt(overLossLimitWarning, 0);
-            CompareBool(store.stocks[0].filters.warning, false);
-            CompareBool(store.stocks[1].filters.warning, false);
-            CompareBool(store.stocks[2].filters.warning, false);
-            CompareBool(store.stocks[3].filters.warning, false);
-
-
-            store.stocks.Add(new Stock()
-            {
-                Name = "Addvice",
-                Price = 121.1m, // Total value = 121.1 * 5 --> , 605.5 enough to sell, but cant sell, because will be less than incestment
-                PurPrice = 91,   // 30,1  kr profit / stock --> enoght profit to sell one
-                OwnedCnt = 5, //    21 % profit
-                MA200 = 0.2m,      // Price 0.2 % over MA
-            });
-            UpdateStocksView();
-
-            CompareInt(underMa200Warning, 0);
-            CompareInt(overProfitWarning, 0);
-            CompareInt(overLossLimitWarning, 0);
-            CompareBool(store.stocks[0].filters.warning, false);
-            CompareBool(store.stocks[1].filters.warning, false);
-            CompareBool(store.stocks[2].filters.warning, false);
-            CompareBool(store.stocks[3].filters.warning, false);
-            CompareBool(store.stocks[4].filters.warning, false);
-
-
-            store.stocks.Add(new Stock()
-            {
-                Name = "Addtech",
-                Price = 126.3m, // Total value = 126.3 * 5 --> , 631.5 enough to sell, and can sell of one 126, and still keep above investment
-                PurPrice = 91,   // 30,1  kr profit / stock --> enoght profit to sell one
-                OwnedCnt = 5, //    21 % profit
-                MA200 = 0.2m,      // Price 0.2 % over MA
-            });
-            UpdateStocksView();
-
-            CompareInt(underMa200Warning, 0);
-            CompareInt(overProfitWarning, 1);
-            CompareInt(overLossLimitWarning, 0);
-            CompareBool(store.stocks[0].filters.warning, false);
-            CompareBool(store.stocks[1].filters.warning, false);
-            CompareBool(store.stocks[2].filters.warning, false);
-            CompareBool(store.stocks[3].filters.warning, false);
-            CompareBool(store.stocks[4].filters.warning, false);
-            CompareBool(store.stocks[5].filters.warning, true);
-
-
-            store.stocks.Add(new Stock()
-            {
-                Name = "SBB",
-                Price = 98,      // Total value = 99 * 5 --> , 495, loss of 55, with is over 10% of talatl investment
-                PurPrice = 110,   // 11 kr loss per stock
-                OwnedCnt = 5,     //    total investement 550
-                MA200 = 0.2m,      // Price 0.2 % over MA
-            });
-            UpdateStocksView();
-
-            CompareInt(underMa200Warning, 0);
-            CompareInt(overProfitWarning, 1);
-            CompareInt(overLossLimitWarning, 1);
-            CompareBool(store.stocks[0].filters.warning, false);
-            CompareBool(store.stocks[1].filters.warning, false);
-            CompareBool(store.stocks[2].filters.warning, false);
-            CompareBool(store.stocks[3].filters.warning, false);
-            CompareBool(store.stocks[4].filters.warning, false);
-            CompareBool(store.stocks[5].filters.warning, true);
-            CompareBool(store.stocks[6].filters.warning, true);
-
-            store.stocks.Add(new Stock()
-            {
-                Name = "SEB",
-                Price = 98,      // Total value = 99 * 5 --> , 495, loss of 55, with is over 10% of talatl investment
-                PurPrice = 110,   // 11 kr loss per stock
-                OwnedCnt = 5,     //    total investement 550
-                MA200 = -1.2m,      // Price under MA limit aswell now
-            });
-            UpdateStocksView();
-
-            CompareInt(underMa200Warning, 1);
-            CompareInt(overProfitWarning, 1);
-            CompareInt(overLossLimitWarning, 2);
-            CompareBool(store.stocks[0].filters.warning, false);
-            CompareBool(store.stocks[1].filters.warning, false);
-            CompareBool(store.stocks[2].filters.warning, false);
-            CompareBool(store.stocks[3].filters.warning, false);
-            CompareBool(store.stocks[4].filters.warning, false);
-            CompareBool(store.stocks[5].filters.warning, true);
-            CompareBool(store.stocks[6].filters.warning, true);
-            CompareBool(store.stocks[7].filters.warning, true);
-
-        }
-
-        private void CompareInt(int lhs, int rhs)
-        {
-            if (lhs != rhs)
-            {
-                StockMonitorLogger.WriteMsg($"ERROR: {lhs} and {rhs} are not as expected");
-            }
-        }
-        private void CompareBool(bool lhs, bool rhs)
-        {
-            if (lhs != rhs)
-            {
-                StockMonitorLogger.WriteMsg($"ERROR: {lhs} and {rhs} are not as expected");
-            }
-        }
-#endif
     }
 }
-
 

@@ -64,7 +64,7 @@
             WarningsGroupBox = new GroupBox();
             Ma200Highlimit = new TextBox();
             oneMonthRadioButton = new RadioButton();
-            oneWeekRadioButton = new RadioButton();
+            oneYearRadioButton = new RadioButton();
             selectedLabel = new Label();
             ((System.ComponentModel.ISupportInitialize)stockChart).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGrid).BeginInit();
@@ -358,17 +358,17 @@
             oneMonthRadioButton.UseVisualStyleBackColor = true;
             oneMonthRadioButton.CheckedChanged += oneMonthRadioButton_CheckedChanged;
             // 
-            // oneWeekRadioButton
+            // oneYearRadioButton
             // 
-            oneWeekRadioButton.AutoSize = true;
-            oneWeekRadioButton.Location = new Point(1607, 30);
-            oneWeekRadioButton.Name = "oneWeekRadioButton";
-            oneWeekRadioButton.Size = new Size(79, 19);
-            oneWeekRadioButton.TabIndex = 35;
-            oneWeekRadioButton.TabStop = true;
-            oneWeekRadioButton.Text = "One Week";
-            oneWeekRadioButton.UseVisualStyleBackColor = true;
-            oneWeekRadioButton.CheckedChanged += oneWeekRadioButton_CheckedChanged;
+            oneYearRadioButton.AutoSize = true;
+            oneYearRadioButton.Location = new Point(1607, 30);
+            oneYearRadioButton.Name = "oneYearRadioButton";
+            oneYearRadioButton.Size = new Size(72, 19);
+            oneYearRadioButton.TabIndex = 35;
+            oneYearRadioButton.TabStop = true;
+            oneYearRadioButton.Text = "One Year";
+            oneYearRadioButton.UseVisualStyleBackColor = true;
+            oneYearRadioButton.CheckedChanged += oneYearRadioButton_CheckedChanged;
             // 
             // selectedLabel
             // 
@@ -385,7 +385,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(2234, 828);
             Controls.Add(selectedLabel);
-            Controls.Add(oneWeekRadioButton);
+            Controls.Add(oneYearRadioButton);
             Controls.Add(oneMonthRadioButton);
             Controls.Add(WarningsGroupBox);
             Controls.Add(StockFiltersGroupBox);
@@ -447,7 +447,7 @@
         private GroupBox StockFiltersGroupBox;
         private GroupBox WarningsGroupBox;
         private RadioButton oneMonthRadioButton;
-        private RadioButton oneWeekRadioButton;
+        private RadioButton oneYearRadioButton;
         private Label selectedLabel;
         private TextBox Ma200Highlimit;
     }
