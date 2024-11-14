@@ -26,7 +26,7 @@ namespace StocksMonitor.src.Borsdata
         private Dictionary<string, long> _CountriesId;
 
 
-        //<markets
+        // <markets
         const string marketLargeCap = "Large Cap";
         const string marketMidcap = "Mid Cap";
         const string marketSmallCap = "Small Cap";

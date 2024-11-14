@@ -65,7 +65,15 @@ namespace StocksMonitor.src.dataStoreNS
             {"Embracer Group B", "Embracer" },
             {"BONESUPPORT HOLDING", "Bonesupport" },
             {"Alimak Group", "Alimak" },
-            {"Cibus Nordic Real Estate", "Cibus Nordic"}
+            {"Cibus Nordic Real Estate", "Cibus Nordic"},
+            {"Balder B", "Fast Balder"},
+            {"Arion Bank SDB", "Arion Banki"},
+            {"Byggmästare Anders J Ahlström Holding B", "Byggmästare AJ Ahlström"},
+            {"Emilshus B", "Fastighetsbolaget Emilshus"},
+            {"Millicom International Cellular SDB", "Millicom" },
+            {"Nivika", "Nivika Fastigheter" },
+            {"Sampo A SDB", "Sampo"},
+            {"TRATON SE", "Traton" }
         };
 
         public DataStore(AvanzaParser avanza)
@@ -83,7 +91,7 @@ namespace StocksMonitor.src.dataStoreNS
             this.bd = new BorsData();
             this.avanza = new AvanzaParser();
         }
-
+        // TODOD, testa att bara köra vinster vid 20 % och sälja, szedan börja om, snitta ner vid behov
         private void MarkIndexes()
         {
             foreach (var item in stocks)
