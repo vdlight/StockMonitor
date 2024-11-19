@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using StocksMonitor.src.databaseWrapper;
+using StocksMonitor.Storage.StockDataContextNS;
+
 
 #nullable disable
 

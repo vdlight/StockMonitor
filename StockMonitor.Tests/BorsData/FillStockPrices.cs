@@ -1,25 +1,21 @@
-﻿using Borsdata.Api.Dal.Model;
-using NUnit.Framework;
-using StocksMonitor.src.Borsdata;
-using StocksMonitor.src.dataStoreNS;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+﻿using NUnit.Framework;
 
+using StocksMonitor.BorsData.BorsdataNS;
+using StocksMonitor.Data.DataStoreNS;
 
-
-namespace StockMonitor.Tests.BorsData_NS
+namespace StocksMonitor.Tests.BorsData_NS
 {
     [TestFixture]
     public class FillStockPrices
     {
         private DataStore _store;
-        private BorsData _bd;
+        private BD _bd;
 
         [SetUp]
         public void Setup()
         {
-            _bd = new BorsData();
+            _bd = new BD();
             _store = new DataStore(_bd);
-
         }
 
         [Test]

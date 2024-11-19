@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Concurrent;
 
-namespace StocksMonitor.src
+namespace StocksMonitor.LoggerNS
 {
-    public static class StockMonitorLogger
+    public static class StocksMonitorLogger
     {
         private static RichTextBox? output;
 
@@ -55,5 +50,4 @@ namespace StocksMonitor.src
             return $"{hour}:{minute}:{second}";
         }
     }
-
 }

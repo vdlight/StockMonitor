@@ -1,11 +1,7 @@
-﻿using StocksMonitor.src.databaseWrapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StocksMonitor.LoggerNS;
+using StocksMonitor.Data.StockNS;
 
-namespace StocksMonitor.src.avanzaParser
+namespace StocksMonitor.Avanza.OwnedListParserNS
 {
     public class OwnedListParser()
     {
@@ -131,17 +127,16 @@ namespace StocksMonitor.src.avanzaParser
             // TODO, skipping headline check just now
             if (expectedStack.Count != 0 || expectedHeadlineCategories != "")
             {
-                StockMonitorLogger.WriteMsg("ERROR: When parsing innehav, headlines does not correspond expected, ABORT");
+                StocksMonitorLogger.WriteMsg("ERROR: When parsing innehav, headlines does not correspond expected, ABORT");
                 return false;
             }
 
             return true;
         }
 
-
         public List<Stock> Parse()
         {
-            StockMonitorLogger.WriteMsg("Parsing owned Avanza stocks");
+            StocksMonitorLogger.WriteMsg("Parsing owned Avanza stocks");
             readLines();
             if (!CorrectPageParsed())
             {

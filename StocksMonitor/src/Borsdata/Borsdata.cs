@@ -1,16 +1,9 @@
 ﻿using Borsdata.Api.Dal.Infrastructure;
 using Borsdata.Api.Dal.Model;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace StocksMonitor.src.Borsdata
+using StocksMonitor.LoggerNS;
+
+namespace StocksMonitor.BorsData.BorsdataNS
 {
     public class InstrumentData
     {
@@ -18,7 +11,7 @@ namespace StocksMonitor.src.Borsdata
         public decimal Divident;
         public List<StockPriceV1> prices;
     }
-    public class BorsData
+    public class BD
     {
         private List<InstrumentV1> _instruments;
         private BD_API _api;
@@ -46,14 +39,12 @@ namespace StocksMonitor.src.Borsdata
 
         public Dictionary<string, InstrumentData> InstrumentDatas { get; set; }
 
-        public BorsData() 
+        public BD() 
         {
             InstrumentDatas = new Dictionary<string, InstrumentData>();
             _marketsId = new Dictionary<string, long>();
             _CountriesId = new Dictionary<string, long>();
             _api = new BD_API();
-
-
         }
 
         public string GetMarketName(string instrumentName)
@@ -69,7 +60,7 @@ namespace StocksMonitor.src.Borsdata
                 }
             }
 
-            StockMonitorLogger.WriteMsg("ERROR could not get market name, for stock with name " + instrumentName);
+            StocksMonitorLogger.WriteMsg("ERROR could not get market name, for stock with name " + instrumentName);
 
             return "";
 
@@ -108,7 +99,7 @@ namespace StocksMonitor.src.Borsdata
         }
         public void GetAllMarkets()
         {
-            StockMonitorLogger.WriteMsg("Get all markets from BD");
+            StocksMonitorLogger.WriteMsg("Get all markets from BD");
 
             var _markets = _api.GetMarkets();
             if (_markets != null) {
@@ -121,7 +112,7 @@ namespace StocksMonitor.src.Borsdata
                     }
                     else
                     {
-                        StockMonitorLogger.WriteMsg("WARNING, could not read market id of " + market.Name);
+                        StocksMonitorLogger.WriteMsg("WARNING, could not read market id of " + market.Name);
                     }
                 } 
             }
@@ -129,10 +120,11 @@ namespace StocksMonitor.src.Borsdata
 
         public void GetKpiScreener()
         {
-            StockMonitorLogger.WriteMsg("Get KPI Screener from BD");
+            StocksMonitorLogger.WriteMsg("Get KPI Screener from BD");
             const int dividentKey = 1;
             const int peKey = 2;
 
+            // TODO, get KPIs for all instruments, then assign, faster than asking one by one
 
             foreach (var instrument in _instruments)
             {
@@ -147,7 +139,7 @@ namespace StocksMonitor.src.Borsdata
                 }
                 catch (Exception ex)
                 {
-                    StockMonitorLogger.WriteMsg("WARNING, could not enter instrument data with name " + instrument.Name);        
+                    StocksMonitorLogger.WriteMsg("WARNING, could not enter instrument data with name " + instrument.Name);        
                 }                
             }
 
@@ -155,7 +147,7 @@ namespace StocksMonitor.src.Borsdata
 
         public void GetAllCountries()
         {
-            StockMonitorLogger.WriteMsg("Get all countries from BD");
+            StocksMonitorLogger.WriteMsg("Get all countries from BD");
 
             var _countries = _api.GetCountries();
             if (_countries != null)
@@ -171,7 +163,7 @@ namespace StocksMonitor.src.Borsdata
                     }
                     else
                     {
-                        StockMonitorLogger.WriteMsg("WARNING, could not read market id of " + country.Name);
+                        StocksMonitorLogger.WriteMsg("WARNING, could not read market id of " + country.Name);
                     }
                 }
             }
@@ -179,14 +171,14 @@ namespace StocksMonitor.src.Borsdata
 
         public void GetAllInstruments()
         {
-            StockMonitorLogger.WriteMsg("Get all instruments from BD");
+            StocksMonitorLogger.WriteMsg("Get all instruments from BD");
             _instruments = _api.GetInstruments().Instruments;
 
         }
 
         private void FillStockPrices()
         {
-            StockMonitorLogger.WriteMsg("Fill stock prices from BD");
+            StocksMonitorLogger.WriteMsg("Fill stock prices from BD");
 
             foreach (var index in indexes)
             {
@@ -247,11 +239,10 @@ namespace StocksMonitor.src.Borsdata
                         {
                             prices = sp.StockPricesList,
                         };
-                            
                     }
                     else
                     {
-                        StockMonitorLogger.WriteMsg("ERROR: Could not set instrument prices for stock with ID " + instrument.InsId);
+                        StocksMonitorLogger.WriteMsg("ERROR: Could not set instrument prices for stock with ID " + instrument.InsId);
                     }
                 }
             }

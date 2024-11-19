@@ -1,24 +1,14 @@
-﻿using GrapeCity.DataVisualization.Chart;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using Microsoft.Identity.Client;
-using StocksMonitor.src.databaseWrapper;
-using StocksMonitor.src.dataStoreNS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.DataVisualization.Charting;
+﻿
+using StocksMonitor.Data.DataStoreNS;
+using StocksMonitor.LoggerNS;
+using StocksMonitor.Data.StockNS;
+using StocksMonitor.Simulation.ConfigurationNS;
+using StocksMonitor.Simulation.SimulationNS;
+using StocksMonitor.Simulation.DefinitionsNS;
 
-
-#if SIMULATIONS
-namespace StocksMonitor.src.Simulation
+namespace StocksMonitor.Simulation.DataContainerNS
 {
+#if SIMULATIONS
     public class DataContainer
     {
         private DataGridView dataGrid;
@@ -151,179 +141,16 @@ namespace StocksMonitor.src.Simulation
             dataGrid.Columns[0].MinimumWidth = 250;
         }
 
-        private List<SimulationConfiguration> AddIndexes()
-        {
-
-            return new List<SimulationConfiguration> {   
-
-                new SimulationConfiguration()
-                {
-                    stockMarket = TMarket.IndexOMXSGI,
-                    configuration =
-                    {
-                        indexCalculation = true,
-                        dividentRequired = false,
-                        profitRequired = false,
-                        buyRules =
-                        {
-                            new Rule (TRule.None)
-                        },
-                        sellRules =
-                        {
-                            new Rule(TRule.Never)
-                        }
-                    }
-
-                }
-            };
-        }
-        private List<SimulationConfiguration> generateSimulations()
-        {
-            List<SimulationConfiguration> returnSims = AddIndexes();
-            // TODO, Möjlighet att i simuleringar, välja vilka markander som ska köras. Så kör jag alla varianter för vald marknad sedan
-            TMarket[] selectedMarkets = {
-                TMarket.All, TMarket.AllExceptFirstNorth
-            };
-
-            foreach (var market in selectedMarkets)
-            {
-                for(int balance = 0; balance <= 1; balance ++)
-                { 
-                    for (int profitRequired = 0; profitRequired <= 1; profitRequired++)
-                    {
-                        for (int divident = 0; divident <= 1; divident++)
-                        {
-                            // buy within ma limits. never adjust, sell
-                            returnSims.Add(new SimulationConfiguration()
-                            {
-                                configuration = {
-                                    dividentRequired = divident == 1,
-                                    profitRequired = profitRequired == 1,
-                                    balanceInvestment = balance == 1,
-                                    buyRules =
-                                    {
-                                        new Rule(TRule.AboveMa, 0),
-                                        new Rule(TRule.BelowMa, 15),
-                                    },
-                                    adjustBuyRules =
-                                    {
-                                        new Rule(TRule.Never)
-                                    },
-                                    sellRules =
-                                    {
-                                        new Rule(TRule.BelowMa, -5)
-                                    }
-                                },
-                                stockMarket = market,
-                            });
-                            // buy within ma limits. never adjust, never sell
-                            returnSims.Add(new SimulationConfiguration()
-                            {
-                                configuration = {
-                                    dividentRequired = divident == 1,
-                                    profitRequired = profitRequired == 1,
-                                    balanceInvestment = balance == 1,
-                                    buyRules =
-                                    {
-                                        new Rule(TRule.AboveMa, 0),
-                                        new Rule(TRule.BelowMa, 15),
-                                    },
-                                    adjustBuyRules =
-                                    {
-                                        new Rule(TRule.Never)
-                                    },
-                                    sellRules =
-                                    {
-                                        new Rule(TRule.None)
-                                    }
-                                },
-                                stockMarket = market,
-                            });
-                            // buy and keep, never adjust
-                            returnSims.Add(new SimulationConfiguration()
-                            {
-                                configuration = {
-                                    dividentRequired = divident == 1,
-                                    profitRequired = profitRequired == 1,
-                                    balanceInvestment = balance == 1,
-                                    buyRules =
-                                    {
-                                        new Rule(TRule.None),
-                                    },
-                                    adjustBuyRules =
-                                    {
-                                        new Rule(TRule.Never)
-                                    },
-                                    sellRules =
-                                    {
-                                        new Rule(TRule.None)
-                                    }
-                                },
-                                stockMarket = market,
-                            });
-                            // buy within limits, and rebuy, sell below -5
-                            returnSims.Add(new SimulationConfiguration()
-                            {
-                                configuration = {
-                                    dividentRequired = divident == 1,
-                                    profitRequired = profitRequired == 1,
-                                    balanceInvestment = balance == 1,
-                                    buyRules =
-                                    {
-                                        new Rule(TRule.None),
-                                    },
-                                    adjustBuyRules =
-                                    {
-                                        new Rule(TRule.AboveMa, 0),
-                                        new Rule(TRule.BelowMa, 15)
-                                    },
-                                    sellRules =
-                                    {
-                                        new Rule(TRule.BelowMa, -5)
-                                    }
-                                },
-                                stockMarket = market,
-                            });
-                            // buy within limits, and rebuy, never sell
-                            returnSims.Add(new SimulationConfiguration()
-                            {
-                                configuration = {
-                                    dividentRequired = divident == 1,
-                                    profitRequired = profitRequired == 1,
-                                    balanceInvestment = balance == 1,
-                                    buyRules =
-                                    {
-                                        new Rule(TRule.None),
-                                    },
-                                    adjustBuyRules =
-                                    {
-                                        new Rule(TRule.AboveMa, 0),
-                                        new Rule(TRule.BelowMa, 15)
-                                    },
-                                    sellRules =
-                                    {
-                                        new Rule(TRule.Never)
-                                    }
-                                },
-                                stockMarket = market,
-                            });
-                        }
-                    }
-                }
-            }
-            return returnSims;
-            // TODO, kan generera namn, från TOString() eller så, för objekten, så de genereras. När datacolum skivs
-        }
-
+       
 
         public void UpdateData()
         {
             dataGrid.Rows.Clear(); // Clear existing rows
 
-            simulations.AddRange(generateSimulations());
+            simulations.AddRange(SimulationDefinitions.generateSimulations());
 
             var simCount = simulations.Count(); // TODO, rename to like configuration?
-            StockMonitorLogger.WriteMsg("Running " + simCount + " simulations...");
+            StocksMonitorLogger.WriteMsg("Running " + simCount + " simulations...");
 
             var tasks = new List<Task>();
 
@@ -336,15 +163,12 @@ namespace StocksMonitor.src.Simulation
 
             Task.WhenAll(tasks).Wait();
             simulations.ForEach(s => AddSimulationToDataGrid(s));
-            StockMonitorLogger.WriteMsg("Simulations Done");
+            StocksMonitorLogger.WriteMsg("Simulations Done");
         }
-
 
         public void AddSimulationToDataGrid(SimulationConfiguration sim)
         {
             DataGridViewRow row = new DataGridViewRow();
-
-            //var stockDevelopement = sim.strategy.GetType() == typeof(StockDevelopmentSimulation);
 
             row.CreateCells(dataGrid,
                 sim.getNameString(),
@@ -370,7 +194,6 @@ namespace StocksMonitor.src.Simulation
         public decimal investment;
         public DateTime timestamp;
 
-
         public Portfolio(DateTime date, decimal wallet, decimal investment, decimal value)
         {
             timestamp = date;
@@ -379,5 +202,5 @@ namespace StocksMonitor.src.Simulation
             this.value = value;
         }
     }
+    #endif
 }
-#endif

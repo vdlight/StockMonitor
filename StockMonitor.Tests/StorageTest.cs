@@ -1,31 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using StocksMonitor.src;
-using StocksMonitor.src.databaseWrapper;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Configuration;
-using System.Diagnostics;
-using System.Diagnostics.Metrics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace StockMonitor.Tests.StorageNs
+using StocksMonitor.Storage.DatabaseNS;
+using StocksMonitor.Data.HistoryNS;
+using StocksMonitor.Data.StockNS;
+using StocksMonitor.Storage.StockDataContextNS;
+
+namespace StocksMonitor.Tests.Storage_NS
 {
     [TestFixture]
     public class StorageTest
     {
-        private Storage storage;
+        private Database database;
         private List<Stock> stocks;
         private const string connStr = "Server=JENSA;Database=master;Integrated Security=True;TrustServerCertificate=True;";
 
         [SetUp]
         public void Setup()
         {
-            storage = new Storage();
+            database = new Database();
 
             ClearAllTablesInDB();
         }
@@ -33,7 +26,7 @@ namespace StockMonitor.Tests.StorageNs
         [Test]
         public async Task ClearDataAtStartup()
         {
-            stocks = await storage.ReadData(connStr);
+            stocks = await database.ReadData(connStr);
 
             Assert.That(stocks.Count, Is.EqualTo(0));
 
@@ -110,9 +103,9 @@ namespace StockMonitor.Tests.StorageNs
             };
 
 
-            await storage.WriteData(stocks, connStr);
+            await database.WriteData(stocks, connStr);
 
-            var readStocks = await storage.ReadData(connStr);
+            var readStocks = await database.ReadData(connStr);
 
             AssertData(readStocks, stocks);
 
@@ -162,9 +155,9 @@ namespace StockMonitor.Tests.StorageNs
          
             // After adding another stock with three history, it shall be there
             // also updating a stock with new data, that info shall also be there.
-            await storage.WriteData(stocks, connStr);
+            await database.WriteData(stocks, connStr);
 
-            readStocks = await storage.ReadData(connStr);
+            readStocks = await database.ReadData(connStr);
             AssertData(readStocks, stocks);
 
         }

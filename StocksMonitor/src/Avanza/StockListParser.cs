@@ -1,11 +1,7 @@
-﻿using StocksMonitor.src.databaseWrapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StocksMonitor.LoggerNS;
+using StocksMonitor.Data.StockNS;
 
-namespace StocksMonitor.src.avanzaParser
+namespace StocksMonitor.Avanza.StockListParserNS
 {
     public class StockListParser
     {
@@ -163,7 +159,7 @@ namespace StocksMonitor.src.avanzaParser
             }
             if (expectedStack.Count != 0 || expectedHeadlineCategories != "")
             {
-                StockMonitorLogger.WriteMsg("ERROR: When parsing StockList, headlines does not correspond expected, ABORT");
+                StocksMonitorLogger.WriteMsg("ERROR: When parsing StockList, headlines does not correspond expected, ABORT");
                 return false;
             }
 
@@ -172,7 +168,7 @@ namespace StocksMonitor.src.avanzaParser
 
         public bool Parse()
         {
-            StockMonitorLogger.WriteMsg("Parsing Avanza stock list");
+            StocksMonitorLogger.WriteMsg("Parsing Avanza stock list");
             Read();
             if (!CorrectPageParsed())
             {

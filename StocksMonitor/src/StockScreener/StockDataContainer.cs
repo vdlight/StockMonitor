@@ -1,15 +1,9 @@
-﻿using StocksMonitor.src.databaseWrapper;
-using StocksMonitor.src.dataStoreNS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StocksMonitor.Data.DataStoreNS;
+using StocksMonitor.Data.StockNS;
 
-#if !SIMULATIONS
-namespace StocksMonitor.src
+namespace StocksMonitor.StockScreener.DataContainerNS
 {
+#if !SIMULATIONS
     public class DataContainer { 
         private DataGridView dataGrid;
         private DataStore store;
@@ -241,5 +235,5 @@ namespace StocksMonitor.src
             // TODO, write testcase to confirm order of columns
         }
     }
-}
 #endif
+}

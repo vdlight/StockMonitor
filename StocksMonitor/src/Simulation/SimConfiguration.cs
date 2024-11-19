@@ -1,13 +1,10 @@
-﻿using StocksMonitor.src.databaseWrapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using StocksMonitor.Data.StockNS;
+using StocksMonitor.Simulation.SimulationNS;
 
-#if SIMULATIONS
-namespace StocksMonitor.src.Simulation
+namespace StocksMonitor.Simulation.ConfigurationNS
 {
+#if SIMULATIONS
     public struct Configuration {
         public bool dividentRequired;
         public bool profitRequired;
@@ -23,29 +20,31 @@ namespace StocksMonitor.src.Simulation
 
     public class SimulationConfiguration
     {
-        public static readonly Dictionary<TMarket, string> markets = new Dictionary<TMarket, string>
+        public static readonly Dictionary<TMarket, string> markets = new Dictionary<TMarket, string> // TODO, move to definition file?
         {
-            { TMarket.All, "All Sthlm" },
-            { TMarket.AllExceptFirstNorth, "All except First North" },
-            { TMarket.LargeCap, "Large Cap" },
-            { TMarket.MidCap, "Mid Cap" },
-            { TMarket.SmallCap, "Small Cap" },
-            { TMarket.FirstNorth, "First North" },
-            { TMarket.IndexFirstNorthAll, "First North All" },
-            { TMarket.IndexOMXSmallCap, "OMX Small Cap" },
-            { TMarket.IndexOMXMidCap, "OMX Mid Cap" },
-            { TMarket.IndexOMXLargeCap, "OMX Large Cap" },
-            { TMarket.IndexOMXSGI, "OMX Stockholm GI" }
+            { TMarket.All, "Sthlm" },
+            { TMarket.AllExceptFirstNorth, "All exc FNorth" },
+            { TMarket.LargeCap, "Large" },
+            { TMarket.MidCap, "Mid" },
+            { TMarket.SmallCap, "Small" },
+            { TMarket.FirstNorth, "FNorth" },
+            { TMarket.IndexFirstNorthAll, "FNorth" },
+            { TMarket.IndexOMXSmallCap, "OMX Small" },
+            { TMarket.IndexOMXMidCap, "OMX Mid" },
+            { TMarket.IndexOMXLargeCap, "OMX Large " },
+            { TMarket.IndexOMXSGI, "OMX SGI" }
         };
         //TODO: Kunna spara mina simuleringar att hämta upp smidigt istället för att köra om hela tiden? 
         public Configuration configuration;
         public decimal Investment { get; private set; } = 0;
         public decimal Value { get; private set; } = 0;
         public decimal Wallet { get; private set; } = 0;
+        
         public TMarket stockMarket;
+        public List<Stock> individualStocks = new List<Stock>();
 
+        private List<Stock> simulatorStocks = [];  
 
-        List<Stock> simulatorStocks = [];  // TODO, make readonly
         public string name { get; set; }
 
         public decimal oneMonth { get; private set; } = 0;
@@ -56,12 +55,13 @@ namespace StocksMonitor.src.Simulation
         public decimal tenYears { get; private set; } = 0;
         public decimal fifteenYears { get; private set; } = 0;
 
-
         public SimulationConfiguration()
         {
             configuration.buyRules = [];
             configuration.sellRules = [];
             configuration.adjustBuyRules = [];
+
+            individualStocks = [];
         }
 
         public string getNameString()
@@ -75,21 +75,21 @@ namespace StocksMonitor.src.Simulation
             else
             {
 
-                name += ": Buy: ";
+                name += ": Buy:";
                 foreach (var rule in configuration.buyRules)
                 {
-                    name += rule.rule + " " + rule.RuleValue;
+                    name += " " + rule.rule + " " + rule.RuleValue;
                 }
-                name += ": adjust: ";
+                name += ": adjust:";
                 foreach (var rule in configuration.adjustBuyRules)
                 {
-                    name += rule.rule + " " + rule.RuleValue;
+                    name += " " + rule.rule + " " + rule.RuleValue;
                 }
 
-                name += ". Sell: ";
+                name += ". Sell:";
                 foreach (var rule in configuration.sellRules)
                 {
-                    name += rule.rule + " " + rule.RuleValue;
+                    name += " " + rule.rule + " " + rule.RuleValue;
                 }
             }
 
@@ -110,52 +110,57 @@ namespace StocksMonitor.src.Simulation
             return name;
         }
 
-
-
-
         public void Init(List<Stock> stocks)
         {
             IEnumerable<Stock> filtred = stocks;
             configuration.indexCalculation = false;
             // TODO, add warnings if filters stop working?
-            switch (stockMarket)
+
+            // induvidual stocks, or market filters
+            if(individualStocks.Count > 0)
             {
-                case TMarket.IndexFirstNorthAll:
-                    filtred = stocks.Where(s => s.Name == "First North All");
-                    configuration.indexCalculation = true;
-                    break;
-                case TMarket.IndexOMXSmallCap:
-                    filtred = stocks.Where(s => s.Name == "OMX Small Cap");
-                    configuration.indexCalculation = true;
-                    break;
-                case TMarket.IndexOMXMidCap:
-                    filtred = stocks.Where(s => s.Name == "OMX Mid Cap");
-                    configuration.indexCalculation = true;
-                    break;
-                case TMarket.IndexOMXLargeCap:
-                    filtred = stocks.Where(s => s.Name == "OMX Large Cap");
-                    configuration.indexCalculation = true;
-                    break;
-                case TMarket.IndexOMXSGI:
-                    filtred = stocks.Where(s => s.Name == "OMX Stockholm GI");
-                    configuration.indexCalculation = true;
-                    break;
+                filtred = stocks.Where(s => individualStocks.Any(i => i.Name == s.Name));
+            }else
+            {
+                switch (stockMarket)
+                {
+                    case TMarket.IndexFirstNorthAll:
+                        filtred = stocks.Where(s => s.Name == "First North All");
+                        configuration.indexCalculation = true;
+                        break;
+                    case TMarket.IndexOMXSmallCap:
+                        filtred = stocks.Where(s => s.Name == "OMX Small Cap");
+                        configuration.indexCalculation = true;
+                        break;
+                    case TMarket.IndexOMXMidCap:
+                        filtred = stocks.Where(s => s.Name == "OMX Mid Cap");
+                        configuration.indexCalculation = true;
+                        break;
+                    case TMarket.IndexOMXLargeCap:
+                        filtred = stocks.Where(s => s.Name == "OMX Large Cap");
+                        configuration.indexCalculation = true;
+                        break;
+                    case TMarket.IndexOMXSGI:
+                        filtred = stocks.Where(s => s.Name == "OMX Stockholm GI");
+                        configuration.indexCalculation = true;
+                        break;
 
-                case TMarket.AllExceptFirstNorth:
-                    filtred = stocks.Where(s => s.List != markets[TMarket.FirstNorth] && s.List != "Index");
-                    break;
+                    case TMarket.AllExceptFirstNorth:
+                        filtred = stocks.Where(s => s.List != markets[TMarket.FirstNorth] && s.List != "Index");
+                        break;
 
-                case TMarket.LargeCap:
-                case TMarket.MidCap:
-                case TMarket.SmallCap:
-                case TMarket.FirstNorth:
-                    filtred = stocks.Where(s => s.List == markets[stockMarket]);
-                    break;
+                    case TMarket.LargeCap:
+                    case TMarket.MidCap:
+                    case TMarket.SmallCap:
+                    case TMarket.FirstNorth:
+                        filtred = stocks.Where(s => s.List == markets[stockMarket]);
+                        break;
 
-                case TMarket.All:
-                default:
-                    filtred = stocks.Where(s => s.List != "Index");
-                    break;
+                    case TMarket.All:
+                    default:
+                        filtred = stocks.Where(s => s.List != "Index");
+                        break;
+                }
             }
 
             if (configuration.dividentRequired)
@@ -262,5 +267,5 @@ namespace StocksMonitor.src.Simulation
             fifteenYears = fifteenYearsSim.result;  
         }
     }
+    #endif
 }
-#endif

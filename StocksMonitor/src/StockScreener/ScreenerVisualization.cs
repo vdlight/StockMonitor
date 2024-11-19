@@ -1,12 +1,11 @@
-﻿using StocksMonitor.src.databaseWrapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.DataVisualization.Charting;
+﻿using System.Windows.Forms.DataVisualization.Charting;
 
-namespace StocksMonitor.src.StockScreener
+using StocksMonitor.LoggerNS;
+using StocksMonitor.Data.StockNS;
+using StocksMonitor.Data.HistoryNS;
+using StocksMonitor.DatavisualizationNS;
+
+namespace StocksMonitor.StockScreener.VisualizationNS
 {
     public class StockDataVisualization : DataVisualization 
     {
@@ -110,7 +109,7 @@ namespace StocksMonitor.src.StockScreener
                 }
                 else
                 {
-                    StockMonitorLogger.WriteMsg($"ERROR: failed to chart stock name{names[i]}");
+                    StocksMonitorLogger.WriteMsg($"ERROR: failed to chart stock name{names[i]}");
                 }
             }
         }

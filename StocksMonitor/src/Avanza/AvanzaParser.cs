@@ -1,28 +1,24 @@
-﻿using StocksMonitor.Migrations;
-using StocksMonitor.src.databaseWrapper;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
-using System.Windows.Forms;
-using System;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Collections.Generic;
+﻿using StocksMonitor.LoggerNS;
+using StocksMonitor.Data.StockNS;
+using StocksMonitor.Avanza.OwnedListParserNS;
 
-namespace StocksMonitor.src.avanzaParser
+namespace StocksMonitor.Avanza.AvanzaParserNS
 {
     public class AvanzaParser
     {
         public List<Stock> Run()
         {
-            StockMonitorLogger.WriteMsg("Parsing avanza stocks");
+            StocksMonitorLogger.WriteMsg("Parsing avanza stocks");
             
             var stocks = new OwnedListParser().Parse();
 
             if (stocks.Count == 0)
             {
-                StockMonitorLogger.WriteMsg($"ERROR Parsing avanza stocks failed, ABORT");
+                StocksMonitorLogger.WriteMsg($"ERROR Parsing avanza stocks failed, ABORT");
             }
             else
             {
-                StockMonitorLogger.WriteMsg($"Parsing avanza stocks, {stocks.Count} pcs DONE");
+                StocksMonitorLogger.WriteMsg($"Parsing avanza stocks, {stocks.Count} pcs DONE");
             }
             
             return stocks;

@@ -1,12 +1,11 @@
-﻿using StocksMonitor.src.databaseWrapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms.DataVisualization.Charting;
+﻿using System.Windows.Forms.DataVisualization.Charting;
 
-namespace StocksMonitor.src.StockScreener
+using StocksMonitor.DatavisualizationNS;
+using StocksMonitor.LoggerNS;
+using StocksMonitor.Data.HistoryNS;
+using StocksMonitor.Data.StockNS;
+
+namespace StocksMonitor.Simulation.VisualizationNS
 {
     public class SimulationDataVisualization : DataVisualization 
     {
@@ -67,7 +66,6 @@ namespace StocksMonitor.src.StockScreener
                     }
                     // TODO, markera flera aktier för jämförelse, ritar inte graf korrekt längre.
 
-
                     var price = $"Price {names[i]}";
                     chart.Series.Add(price);
                     chart.Series[price].Color = color;
@@ -110,10 +108,9 @@ namespace StocksMonitor.src.StockScreener
                 }
                 else
                 {
-                    StockMonitorLogger.WriteMsg($"ERROR: failed to chart stock name{names[i]}");
+                    StocksMonitorLogger.WriteMsg($"ERROR: failed to chart stock name{names[i]}");
                 }
             }
         }
-
     }
 }

@@ -1,20 +1,21 @@
 ﻿using Borsdata.Api.Dal.Model;
 using NUnit.Framework;
-using StocksMonitor.src.Borsdata;
+
+using StocksMonitor.BorsData.BorsdataNS;
 
 
 
-namespace StockMonitor.Tests.BorsData_NS
+namespace StocksMonitor.Tests.BorsData_NS
 {
     [TestFixture]
     public class CalculateMa200
     {
-        private BorsData _bd;
+        private BD _bd;
 
         [SetUp]
         public void Setup()
         {
-            _bd = new BorsData();
+            _bd = new BD();
         }
 
         [Test]

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StockMonitor.Tests.DataStoreNS.FillOwnedDataNS
+namespace StocksMonitor.Tests.DataStoreNS.FillOwnedDataNS
 {
     public class DataStoreTests
     {

@@ -1,19 +1,16 @@
-﻿using Borsdata.Api.Dal.Model;
+﻿
 using NUnit.Framework;
-using StocksMonitor.src.Borsdata;
-using StocksMonitor.src.databaseWrapper;
-using StocksMonitor.src.dataStoreNS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace StockMonitor.Test.DataStoreNS.FillStoreNS
+using StocksMonitor.BorsData.BorsdataNS;
+using StocksMonitor.Data.DataStoreNS;
+using StocksMonitor.Data.HistoryNS;
+using StocksMonitor.Data.StockNS;
+
+namespace StocksMonitor.Test.DataStoreNS.FillStoreNS
 {
     public class DataStoreTests
     {
-        private BorsData bd;
+        private BD bd;
         private DataStore store;
 
 
@@ -22,7 +19,7 @@ namespace StockMonitor.Test.DataStoreNS.FillStoreNS
         [SetUp]
         public void Setup()
         {
-            bd = new BorsData();
+            bd = new BD();
             store = new DataStore(bd);
         }
 

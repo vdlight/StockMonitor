@@ -1,14 +1,53 @@
-﻿using StocksMonitor.src.databaseWrapper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StocksMonitor.LoggerNS;
+using StocksMonitor.Simulation.ConfigurationNS;
+using StocksMonitor.Simulation.DataContainerNS;
+using StocksMonitor.Data.StockNS;
+using StocksMonitor.Data.HistoryNS;
 
 
-namespace StocksMonitor.src.Simulation
+namespace StocksMonitor.Simulation.SimulationNS
 {
 #if SIMULATIONS
+    public enum TMarket
+    {
+        All,
+        AllExceptFirstNorth,
+        LargeCap,
+        MidCap,
+        SmallCap,
+        FirstNorth,
+        IndexFirstNorthAll,
+        IndexOMXSmallCap,
+        IndexOMXMidCap,
+        IndexOMXLargeCap,
+        IndexOMXSGI,
+    }
+
+    public enum TRule
+    {
+        BelowMa,
+        AboveMa,
+        DividentAbove,
+        PeAbove,
+        AdjustBuy,
+        SellProfit,
+        None,
+        Never
+    }
+    public class Rule
+    {
+        public readonly TRule rule;
+        public readonly decimal RuleValue;
+
+        public Rule(TRule rule, decimal value = 0) { this.rule = rule; this.RuleValue = value; }
+
+    }
+
     public class SimulationNew
     {
         public bool indexCalculation;
@@ -123,7 +162,7 @@ namespace StocksMonitor.src.Simulation
             try { 
                 result =  diff / oldVal * 100;
             }
-            catch (Exception ex) { StockMonitorLogger.WriteMsg("ERROR: Division by zero? "); }
+            catch (Exception ex) { StocksMonitorLogger.WriteMsg("ERROR: Division by zero? "); }
         }
         private void HandleDatapoint(Stock stock, History datapoint, decimal wallet, bool divident)
         {

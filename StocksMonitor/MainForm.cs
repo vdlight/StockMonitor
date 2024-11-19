@@ -1,27 +1,8 @@
-
-using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
-using Microsoft.Identity.Client.Extensions.Msal;
-using StocksMonitor.src.databaseWrapper;
-using StocksMonitor.src.dataStoreNS;
-using System;
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Windows.Forms;
-using StocksMonitor.src;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Windows.Forms.DataVisualization.Charting;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
-using Borsdata.Api.Dal.Model;
-using StocksMonitor.src.Borsdata;
-using GrapeCity.DataVisualization.Chart;
-using System.Net.WebSockets;
-using StocksMonitor.src.avanzaParser;
-using System.Linq;
-using StocksMonitor.src.Simulation;
-using StocksMonitor.src.StockScreener;
+using StocksMonitor.Data.DataStoreNS;
+using StocksMonitor.LoggerNS;
+using StocksMonitor.StockScreener.DataContainerNS;
+using StocksMonitor.StockScreener.VisualizationNS;
+using StocksMonitor.Data.StockNS;
 
 namespace StocksMonitor
 {
@@ -31,7 +12,6 @@ namespace StocksMonitor
         private bool startup = true;
 
 #if SIMULATIONS
-
         private SimulationDataVisualization dataVisualization;
 #else
         private StockDataVisualization dataVisualization;
@@ -53,7 +33,7 @@ namespace StocksMonitor
             refillTextbox.Text = "10";
 
 #if DEBUG
-            this.Text = "StockMonitor debug";
+            this.Text = "StocksMonitor debug";
             dataContainer = new DataContainer(dataGrid, store);
             dataContainer.init();
 
@@ -64,15 +44,16 @@ namespace StocksMonitor
                 decimal.Parse(refillTextbox.Text),
                 decimal.Parse(overProfit_textbox.Text)
             );
+
 #elif SIMULATIONS
-            this.Text = "StockMonitor simulations";
+            this.Text = "StocksMonitor simulations";
             WarningsGroupBox.Visible = false;
             StockFiltersGroupBox.Visible = false;
             dataContainer = new DataContainer(dataGrid, store);
             dataContainer.init();
             dataVisualization = new SimulationDataVisualization(stockChart);
 #else
-            this.Text = "StockMonitor " + "RELEASE ";
+            this.Text = "StocksMonitor " + "RELEASE ";
             dataContainer = new DataContainer(dataGrid, store);
             dataContainer.init();
             dataVisualization = new StockDataVisualization(stockChart);
@@ -84,14 +65,10 @@ namespace StocksMonitor
                 decimal.Parse(refillTextbox.Text),
                 decimal.Parse(overProfit_textbox.Text)
             );
-
 #endif
 
-            StockMonitorLogger.SetOutput(consoleOutput);
+            StocksMonitorLogger.SetOutput(consoleOutput);
             timer1000.Enabled = true;
-
-
-
             oneMonthRadioButton.Checked = true;
         }
 
@@ -121,14 +98,12 @@ namespace StocksMonitor
 
             var simulationRun = new ToolStripMenuItem("Simulation run");
             simulationMenu.DropDownItems.Add(simulationRun);
-
             
             // event handlers
             getStockData.Click += new EventHandler(GetStockData_Click);
             getOwnedData.Click += new EventHandler(GetOwnedData_Click);
             testRun.Click += new EventHandler(TestRun_Click);
             simulationRun.Click += new EventHandler(SimulationRun_Click);
-            
 
             // add menustrip to form
             this.Controls.Add(menuStrip1);
@@ -164,66 +139,18 @@ namespace StocksMonitor
             }
 
             store.UpdateStockDataBD();
-
-            /*
-            DialogResult result;
-            var updatedDate = DateTime.Now.Date.Date;
-
-            if (updatedDate.DayOfWeek == DayOfWeek.Sunday || updatedDate.DayOfWeek == DayOfWeek.Saturday)
-            {
-                result = MessageBox.Show("It is weekend! Adjusting date to friday and overwrite if you continue", "Weekend alert", MessageBoxButtons.OKCancel);
-                if (result == DialogResult.Cancel) {
-                    StockMonitorLogger.WriteMsg("Skipping parsing data and writing to DB, due to weekend");
-                    return;
-                }
-                
-                while(updatedDate.DayOfWeek > DayOfWeek.Friday)
-                {
-                    updatedDate = updatedDate.AddDays(-1);
-                }
-            }
-
-            result = MessageBox.Show("Do you want to fetch avanza data and write to DB", "Prod DB overwrite", MessageBoxButtons.OKCancel);
-            if (result == DialogResult.Cancel)
-            {
-                StockMonitorLogger.WriteMsg("Skipping parsing data and writing to DB");
-                return;
-            }
-
-
-
-
-
-
-            // this task is async, but dont bother wait here in gui thread, since not dependent on all data
-            Task.Run(async () => await
-                    store.FetchDataFromAvanza(updatedDate)
-            );*/
-
         }
         private void SimulationRun_Click(object? sender, EventArgs e)
         {
   
-            //store.ReadFromDB();
-
-
         }
-        
-
+      
         private async void TestRun_Click(object? sender, EventArgs e)
         {
             if (sender == null)
             {
                 return;
             }
-#if false
-            StockMonitorLogger.WriteMsg("Test Start");
-            // Test
-            await store.TestRun();
-
-            TestWarningCalculations();
-            StockMonitorLogger.WriteMsg("Test End");
-#endif
         }
 
         private async void timer1000_Tick(object sender, EventArgs e)
@@ -236,35 +163,29 @@ namespace StocksMonitor
                 store.Startup();
             }
 
-            timeLabel.Text = $"Time: {StockMonitorLogger.GetTimeString()}";
+            timeLabel.Text = $"Time: {StocksMonitorLogger.GetTimeString()}";
         }
-
-
-
 
         //   TODO, kan jag högerklicka i listan och sätta en, filtrera, och dölj attribut som jag sparar tillsammans med aktien, så att jag lätt kan filtrera vad jag vill navigera emellan i grafen
 
-
-      
- 
         private void UpdateStocksView()
         {
-            StockMonitorLogger.WriteMsg("Refreshing data grid");
+            StocksMonitorLogger.WriteMsg("Refreshing data grid");
 
 #if SIMULATIONS
             dataContainer.UpdateData();
 #else
             dataContainer.UpdateData(
-                showWarnings_checkbox.Checked, 
-                hiddenCheckBox.Checked,
-                wantedCheckbox.Checked,
-                intrestedCheckBox.Checked,
-                ownedCheckBox.Checked);
+                warnings: showWarnings_checkbox.Checked, 
+                hidden: hiddenCheckBox.Checked,
+                wanted: wantedCheckbox.Checked,
+                intrested: intrestedCheckBox.Checked,
+                owned: ownedCheckBox.Checked);
 
 #endif
             // TODO; möjlighet att välja prcentuell utveckling i graph. bra för jämförelser när listor har så olika priser, också gällande t.ex. index jämf
             UpdateInfotexts();
-            StockMonitorLogger.WriteMsg("Refreshing data grid DONE");
+            StocksMonitorLogger.WriteMsg("Refreshing data grid DONE");
         }
 
         private void UpdateInfotexts()
@@ -281,8 +202,7 @@ namespace StocksMonitor
 
         private void RefreshButton_Click(object sender, EventArgs e)
         {
-            UpdateStocksView();
-       //     Task.Run(async() => await store.CalculateHistorySums()); TODO, ska beräkna Summeringar för att kontrolelra Index
+            UpdateStocksView();       
         }
 
         private void intrestedButton_Click(object sender, EventArgs e)
@@ -319,7 +239,6 @@ namespace StocksMonitor
 
             intrestedButton.BackColor = selectedStock.filters.intrested ? selectedColor : defaultColor;
             hiddenButton.BackColor = selectedStock.filters.hidden ? selectedColor : defaultColor;
-   
 
             selectedRow.Cells["Hidden"].Value = selectedStock.filters.hidden ? "X" : "";
             selectedRow.Cells["Intrested"].Value = selectedStock.filters.intrested ? "X" : "";
@@ -353,7 +272,6 @@ namespace StocksMonitor
 
             updateStockFilterInformation();
         }
-
         
         private void clearHiddenButton_Click(object sender, EventArgs e)
         {
@@ -400,7 +318,7 @@ namespace StocksMonitor
                     name = selectedRow.Cells["Name"].Value.ToString();
                     if(name == null)
                     {
-                        StockMonitorLogger.WriteMsg("WARNING: could not read name of selected stock");
+                        StocksMonitorLogger.WriteMsg("WARNING: could not read name of selected stock");
                         return; 
                     }
 
@@ -420,7 +338,7 @@ namespace StocksMonitor
                 }
                 catch (Exception exception)
                 {
-                    StockMonitorLogger.WriteMsg("ERROR: datagrid_SelectionCHanged " + exception.Message);
+                    StocksMonitorLogger.WriteMsg("ERROR: datagrid_SelectionCHanged " + exception.Message);
                 }
             }
         }
@@ -435,4 +353,3 @@ namespace StocksMonitor
         }
     }
 }
-
