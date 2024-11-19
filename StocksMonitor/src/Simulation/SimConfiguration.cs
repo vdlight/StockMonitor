@@ -1,6 +1,8 @@
 ﻿
 using StocksMonitor.Data.StockNS;
 using StocksMonitor.Simulation.SimulationNS;
+using System.Diagnostics.Eventing.Reader;
+using System.Runtime.CompilerServices;
 
 namespace StocksMonitor.Simulation.ConfigurationNS
 {
@@ -41,7 +43,7 @@ namespace StocksMonitor.Simulation.ConfigurationNS
         public decimal Wallet { get; private set; } = 0;
         
         public TMarket stockMarket;
-        public List<Stock> individualStocks = new List<Stock>();
+        public String individualStock;
 
         private List<Stock> simulatorStocks = [];  
 
@@ -54,6 +56,7 @@ namespace StocksMonitor.Simulation.ConfigurationNS
         public decimal fiveYears { get; private set; } = 0;
         public decimal tenYears { get; private set; } = 0;
         public decimal fifteenYears { get; private set; } = 0;
+        public decimal customDate { get; private set; } = 0;
 
         public SimulationConfiguration()
         {
@@ -61,12 +64,21 @@ namespace StocksMonitor.Simulation.ConfigurationNS
             configuration.sellRules = [];
             configuration.adjustBuyRules = [];
 
-            individualStocks = [];
+            individualStock = "";
         }
 
         public string getNameString()
         {
-            string name = markets[stockMarket];
+            string name;
+            
+            if(individualStock != "")
+            {
+                name = individualStock;
+            }
+            else
+            {
+                name = markets[stockMarket];
+            }
 
             if (configuration.indexCalculation)
             {
@@ -117,9 +129,9 @@ namespace StocksMonitor.Simulation.ConfigurationNS
             // TODO, add warnings if filters stop working?
 
             // induvidual stocks, or market filters
-            if(individualStocks.Count > 0)
+            if(individualStock != "")
             {
-                filtred = stocks.Where(s => individualStocks.Any(i => i.Name == s.Name));
+                filtred = stocks.Where(s => s.Name == individualStock);
             }else
             {
                 switch (stockMarket)
@@ -202,6 +214,35 @@ namespace StocksMonitor.Simulation.ConfigurationNS
             .ToList();
         }
 
+        public void RunCustom(List<Stock> stocks)
+        {
+            Init(stocks); // filter out stocks for interesting market 
+
+            var stockHistories = simulatorStocks.SelectMany(s => s.History).OrderBy(h => h.Date);
+
+            if (stockHistories.Last() == null)
+            {
+                return;
+            }
+            var newestDate = stockHistories.Last().Date;
+
+            var customDateSim = new SimulationNew(
+                getStocksFromDate(newestDate.AddYears(-15)),
+                configuration: configuration);
+
+            var tasks = new List<Task>();
+            tasks.Add(
+                Task.Run( () => customDateSim.SimulateStocks()
+                ));
+            
+            Task.WhenAll(tasks).Wait();
+
+            customDate = customDateSim.result;
+
+            Investment = customDateSim.Investment;
+            Value = customDateSim.Value;
+            Wallet = customDateSim.Wallet;
+        }
         public void Run(List<Stock> stocks)
         {
             // TODO skriva owned cnt i stocklistan, per historik, för att få koll på utvekcling, väldigt lik vanliga procentuella uträkningen också
@@ -264,7 +305,11 @@ namespace StocksMonitor.Simulation.ConfigurationNS
             twoYears = twoYearsSim.result;  
             fiveYears = fiveYearsSim.result;
             tenYears = tenYearsSim.result;
-            fifteenYears = fifteenYearsSim.result;  
+            fifteenYears = fifteenYearsSim.result;
+
+            Investment = fifteenYearsSim.Investment;
+            Value = fifteenYearsSim.Value;
+            Wallet = fifteenYearsSim.Wallet;
         }
     }
     #endif

@@ -23,7 +23,6 @@ namespace StocksMonitor.Simulation.VisualizationNS
         }
         private decimal CalculateMAFromPriceAndMAPercentage(decimal price, decimal MAPercentage)
         {
-
             /*          If the price is 100 and MA200 is -2 (indicating the price is 2% below its 200-day moving average), the calculation will be:
              *          100/(1+(−2/100))=100/0.98=102.04
              *          This adjusts the price relative to the moving average level.
@@ -54,7 +53,7 @@ namespace StocksMonitor.Simulation.VisualizationNS
 
                 if (stock != null)
                 {
-                    Color color = GetColor(stock.Name);
+                    var color = GetColor(stock.Name);
                     if (names.Count > 1)
                     {
                         color = GetColor(stock.Name);

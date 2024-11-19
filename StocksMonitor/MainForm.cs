@@ -2,6 +2,8 @@ using StocksMonitor.Data.DataStoreNS;
 using StocksMonitor.LoggerNS;
 using StocksMonitor.StockScreener.DataContainerNS;
 using StocksMonitor.StockScreener.VisualizationNS;
+using StocksMonitor.Simulation.DataContainerNS;
+using StocksMonitor.Simulation.VisualizationNS;
 using StocksMonitor.Data.StockNS;
 
 namespace StocksMonitor
@@ -52,11 +54,15 @@ namespace StocksMonitor
             dataContainer = new DataContainer(dataGrid, store);
             dataContainer.init();
             dataVisualization = new SimulationDataVisualization(stockChart);
+
 #else
             this.Text = "StocksMonitor " + "RELEASE ";
             dataContainer = new DataContainer(dataGrid, store);
             dataContainer.init();
             dataVisualization = new StockDataVisualization(stockChart);
+            fromCalander.Visible = false;
+            toCalender.Visible = false;
+            addCustomButton.Visible = false;
 
             // TODO, react for changes
             dataContainer.SetLimits(
@@ -98,7 +104,7 @@ namespace StocksMonitor
 
             var simulationRun = new ToolStripMenuItem("Simulation run");
             simulationMenu.DropDownItems.Add(simulationRun);
-            
+
             // event handlers
             getStockData.Click += new EventHandler(GetStockData_Click);
             getOwnedData.Click += new EventHandler(GetOwnedData_Click);
@@ -142,9 +148,9 @@ namespace StocksMonitor
         }
         private void SimulationRun_Click(object? sender, EventArgs e)
         {
-  
+
         }
-      
+
         private async void TestRun_Click(object? sender, EventArgs e)
         {
             if (sender == null)
@@ -202,7 +208,7 @@ namespace StocksMonitor
 
         private void RefreshButton_Click(object sender, EventArgs e)
         {
-            UpdateStocksView();       
+            UpdateStocksView();
         }
 
         private void intrestedButton_Click(object sender, EventArgs e)
@@ -211,10 +217,10 @@ namespace StocksMonitor
             var setToStatus = !selectedStock.filters.intrested;
             List<string> names = [];
 
-            foreach(DataGridViewRow row in dataGrid.SelectedRows)
+            foreach (DataGridViewRow row in dataGrid.SelectedRows)
             {
                 names.Add(row.Cells["Name"].Value.ToString());
-                row.Cells["Intrested"].Value = setToStatus? "X" : "";
+                row.Cells["Intrested"].Value = setToStatus ? "X" : "";
                 if (row.Cells["Hidden"].Value == "X")
                 {
                     row.Cells["Hidden"].Value = "";
@@ -222,12 +228,12 @@ namespace StocksMonitor
             }
 
             var filtredStocks = store.stocks.Where(s => names.Contains(s.Name)).ToList();
-            
-            foreach(var stock in filtredStocks)
+
+            foreach (var stock in filtredStocks)
             {
                 stock.filters.intrested = setToStatus;
-                
-                if(stock.filters.intrested)
+
+                if (stock.filters.intrested)
                     stock.filters.hidden = false;
             }
             updateStockFilterInformation();
@@ -250,7 +256,7 @@ namespace StocksMonitor
             var setToStatus = !selectedStock.filters.hidden;
             List<string> names = [];
 
-            foreach(DataGridViewRow row in dataGrid.SelectedRows)
+            foreach (DataGridViewRow row in dataGrid.SelectedRows)
             {
                 names.Add(row.Cells["Name"].Value.ToString());
                 row.Cells["Hidden"].Value = setToStatus ? "X" : "";
@@ -272,7 +278,7 @@ namespace StocksMonitor
 
             updateStockFilterInformation();
         }
-        
+
         private void clearHiddenButton_Click(object sender, EventArgs e)
         {
             foreach (Stock stock in store.stocks)
@@ -316,10 +322,10 @@ namespace StocksMonitor
                 try
                 {
                     name = selectedRow.Cells["Name"].Value.ToString();
-                    if(name == null)
+                    if (name == null)
                     {
                         StocksMonitorLogger.WriteMsg("WARNING: could not read name of selected stock");
-                        return; 
+                        return;
                     }
 
                     selectedStock = store.stocks.Single(s => s.Name == name);
@@ -350,6 +356,11 @@ namespace StocksMonitor
         private void oneYearRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             dataGrid_SelectionChanged(sender, e);
+        }
+
+        private void addCustomButton_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             consoleOutput = new RichTextBox();
             helpProvider1 = new HelpProvider();
             menuStrip1 = new MenuStrip();
@@ -66,6 +66,9 @@
             oneMonthRadioButton = new RadioButton();
             oneYearRadioButton = new RadioButton();
             selectedLabel = new Label();
+            fromCalander = new MonthCalendar();
+            toCalender = new MonthCalendar();
+            addCustomButton = new Button();
             ((System.ComponentModel.ISupportInitialize)stockChart).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGrid).BeginInit();
             StockFiltersGroupBox.SuspendLayout();
@@ -96,17 +99,17 @@
             // stockChart
             // 
             stockChart.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
-            chartArea2.Name = "ChartArea1";
-            stockChart.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            stockChart.Legends.Add(legend2);
-            stockChart.Location = new Point(1032, 55);
+            chartArea1.Name = "ChartArea1";
+            stockChart.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            stockChart.Legends.Add(legend1);
+            stockChart.Location = new Point(1053, 55);
             stockChart.Name = "stockChart";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            stockChart.Series.Add(series2);
-            stockChart.Size = new Size(1190, 767);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            stockChart.Series.Add(series1);
+            stockChart.Size = new Size(1169, 767);
             stockChart.TabIndex = 5;
             stockChart.Text = "chart1";
             // 
@@ -314,9 +317,9 @@
             // 
             StockFiltersGroupBox.Controls.Add(intrestedButton);
             StockFiltersGroupBox.Controls.Add(hiddenButton);
-            StockFiltersGroupBox.Location = new Point(845, 309);
+            StockFiltersGroupBox.Location = new Point(845, 242);
             StockFiltersGroupBox.Name = "StockFiltersGroupBox";
-            StockFiltersGroupBox.Size = new Size(127, 181);
+            StockFiltersGroupBox.Size = new Size(127, 144);
             StockFiltersGroupBox.TabIndex = 32;
             StockFiltersGroupBox.TabStop = false;
             StockFiltersGroupBox.Text = "Stock filters";
@@ -379,11 +382,36 @@
             selectedLabel.TabIndex = 36;
             selectedLabel.Text = "Selected psc";
             // 
+            // fromCalander
+            // 
+            fromCalander.Location = new Point(821, 435);
+            fromCalander.Name = "fromCalander";
+            fromCalander.TabIndex = 37;
+            // 
+            // toCalender
+            // 
+            toCalender.Location = new Point(821, 615);
+            toCalender.Name = "toCalender";
+            toCalender.TabIndex = 38;
+            // 
+            // addCustomButton
+            // 
+            addCustomButton.Location = new Point(851, 411);
+            addCustomButton.Name = "addCustomButton";
+            addCustomButton.Size = new Size(121, 23);
+            addCustomButton.TabIndex = 31;
+            addCustomButton.Text = "AddCustom";
+            addCustomButton.UseVisualStyleBackColor = true;
+            addCustomButton.Click += addCustomButton_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(2234, 828);
+            Controls.Add(addCustomButton);
+            Controls.Add(toCalender);
+            Controls.Add(fromCalander);
             Controls.Add(selectedLabel);
             Controls.Add(oneYearRadioButton);
             Controls.Add(oneMonthRadioButton);
@@ -450,5 +478,8 @@
         private RadioButton oneYearRadioButton;
         private Label selectedLabel;
         private TextBox Ma200Highlimit;
+        private MonthCalendar fromCalander;
+        private MonthCalendar toCalender;
+        private Button addCustomButton;
     }
 }

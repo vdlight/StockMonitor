@@ -147,7 +147,10 @@ namespace StocksMonitor.Simulation.DataContainerNS
         {
             dataGrid.Rows.Clear(); // Clear existing rows
 
-            simulations.AddRange(SimulationDefinitions.generateSimulations());
+
+            // TODO, make this selectable. unique Stock, or market based
+            simulations.AddRange(SimulationDefinitions.generateSimulationForInduvidualStocks());
+            //simulations.AddRange(SimulationDefinitions.generateSimulations());
 
             var simCount = simulations.Count(); // TODO, rename to like configuration?
             StocksMonitorLogger.WriteMsg("Running " + simCount + " simulations...");
@@ -164,6 +167,15 @@ namespace StocksMonitor.Simulation.DataContainerNS
             Task.WhenAll(tasks).Wait();
             simulations.ForEach(s => AddSimulationToDataGrid(s));
             StocksMonitorLogger.WriteMsg("Simulations Done");
+        }
+
+        public void AddCustomSimulation()
+        {
+            StocksMonitorLogger.WriteMsg("Running custom simulation... ");
+
+
+
+            StocksMonitorLogger.WriteMsg("Simulation done");
         }
 
         public void AddSimulationToDataGrid(SimulationConfiguration sim)
