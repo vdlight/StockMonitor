@@ -102,7 +102,7 @@ namespace StocksMonitor.src.StockScreener
                         historyScope = stock.History.Where(h => h.Date > stock.History.Last().Date.AddMonths(-1));
                     }
 
-                    foreach (var history in historyScope.Reverse())
+                    foreach (var history in historyScope)
                     {
                         chart.Series[price].Points.AddXY(history.Date, history.Price);
                         chart.Series[MA].Points.AddXY(history.Date, CalculateMAFromPriceAndMAPercentage(history.Price, history.MA200));
