@@ -13,11 +13,12 @@ namespace StocksMonitor.Simulation.ConfigurationNS
         public bool indexCalculation;
 
         public bool balanceInvestment;
-
+        public bool doubleStake;
 
         public List<Rule> buyRules;
         public List<Rule> sellRules;
         public List<Rule> adjustBuyRules;
+        public List<Rule> adjustSellRules;
     };
 
     public class SimulationConfiguration
@@ -63,6 +64,8 @@ namespace StocksMonitor.Simulation.ConfigurationNS
             configuration.buyRules = [];
             configuration.sellRules = [];
             configuration.adjustBuyRules = [];
+            configuration.adjustSellRules = [];
+            configuration.doubleStake = false;
 
             individualStock = "";
         }
@@ -86,7 +89,6 @@ namespace StocksMonitor.Simulation.ConfigurationNS
             }
             else
             {
-
                 name += ": Buy:";
                 foreach (var rule in configuration.buyRules)
                 {
@@ -98,8 +100,13 @@ namespace StocksMonitor.Simulation.ConfigurationNS
                     name += " " + rule.rule + " " + rule.RuleValue;
                 }
 
-                name += ". Sell:";
+                name += ": Sell:";
                 foreach (var rule in configuration.sellRules)
+                {
+                    name += " " + rule.rule + " " + rule.RuleValue;
+                }
+                name += ": adj :";
+                foreach (var rule in configuration.adjustSellRules)
                 {
                     name += " " + rule.rule + " " + rule.RuleValue;
                 }
@@ -107,9 +114,8 @@ namespace StocksMonitor.Simulation.ConfigurationNS
 
             if (configuration.balanceInvestment)
             {
-                name += " balance inv.";
+                name += ". Balance";
             }
-
             if (configuration.dividentRequired)
             {
                 name += ". Div";
@@ -117,6 +123,10 @@ namespace StocksMonitor.Simulation.ConfigurationNS
             if (configuration.profitRequired)
             {
                 name += ". Prof";
+            }
+            if (configuration.doubleStake)
+            {
+                name += ". Double";
             }
 
             return name;
@@ -132,7 +142,8 @@ namespace StocksMonitor.Simulation.ConfigurationNS
             if(individualStock != "")
             {
                 filtred = stocks.Where(s => s.Name == individualStock);
-            }else
+            }
+            else
             {
                 switch (stockMarket)
                 {
@@ -156,18 +167,15 @@ namespace StocksMonitor.Simulation.ConfigurationNS
                         filtred = stocks.Where(s => s.Name == "OMX Stockholm GI");
                         configuration.indexCalculation = true;
                         break;
-
                     case TMarket.AllExceptFirstNorth:
                         filtred = stocks.Where(s => s.List != markets[TMarket.FirstNorth] && s.List != "Index");
                         break;
-
                     case TMarket.LargeCap:
                     case TMarket.MidCap:
                     case TMarket.SmallCap:
                     case TMarket.FirstNorth:
                         filtred = stocks.Where(s => s.List == markets[stockMarket]);
                         break;
-
                     case TMarket.All:
                     default:
                         filtred = stocks.Where(s => s.List != "Index");
@@ -194,8 +202,13 @@ namespace StocksMonitor.Simulation.ConfigurationNS
         // t.,exa att titta på historik, för att hitta MA brytpunkter, eller att sortera datan, på .tex. närmast MA för att köpa först där, isf det som ligger högst upp på intervall.
 
 
-        public List<Stock> getStocksFromDate(DateTime from)
+        public List<Stock> getStocksFromDate(DateTime from, DateTime? To = null)
         {
+            if(To == null)
+            {
+                To = DateTime.Now;
+            }
+
             return simulatorStocks
                 .Select(stock => new Stock
                 {
@@ -207,7 +220,7 @@ namespace StocksMonitor.Simulation.ConfigurationNS
                     PeValue = stock.PeValue,
                     PurPrice = stock.PurPrice,
                     History = stock.History
-                    .Where(h => h.Date >= from)
+                    .Where(h => h.Date >= from && h.Date <= To)
                     .OrderBy(h => h.Date)
                     .ToList()
                 })
@@ -227,13 +240,13 @@ namespace StocksMonitor.Simulation.ConfigurationNS
             var newestDate = stockHistories.Last().Date;
 
             var customDateSim = new SimulationNew(
-                getStocksFromDate(newestDate.AddYears(-15)),
+                getStocksFromDate(from: newestDate.AddYears(-15) ),
                 configuration: configuration);
 
-            var tasks = new List<Task>();
-            tasks.Add(
-                Task.Run( () => customDateSim.SimulateStocks()
-                ));
+            var tasks = new List<Task>
+            {
+                Task.Run(() => customDateSim.SimulateStocks())
+            };
             
             Task.WhenAll(tasks).Wait();
 
@@ -243,6 +256,7 @@ namespace StocksMonitor.Simulation.ConfigurationNS
             Value = customDateSim.Value;
             Wallet = customDateSim.Wallet;
         }
+
         public void Run(List<Stock> stocks)
         {
             // TODO skriva owned cnt i stocklistan, per historik, för att få koll på utvekcling, väldigt lik vanliga procentuella uträkningen också
@@ -287,7 +301,6 @@ namespace StocksMonitor.Simulation.ConfigurationNS
                 tenYearsSim,
                 fifteenYearsSim,
             ];
-
             
             var tasks = new List<Task>();
 

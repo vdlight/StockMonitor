@@ -63,7 +63,6 @@ namespace StocksMonitor.Simulation.VisualizationNS
                         color = Color.DarkBlue;
 
                     }
-                    // TODO, markera flera aktier för jämförelse, ritar inte graf korrekt längre.
 
                     var price = $"Price {names[i]}";
                     chart.Series.Add(price);

@@ -5,6 +5,8 @@ using StocksMonitor.Data.StockNS;
 using StocksMonitor.Simulation.ConfigurationNS;
 using StocksMonitor.Simulation.SimulationNS;
 using StocksMonitor.Simulation.DefinitionsNS;
+using StocksMonitor.Simulation.VisualizationNS;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace StocksMonitor.Simulation.DataContainerNS
 {
@@ -14,7 +16,7 @@ namespace StocksMonitor.Simulation.DataContainerNS
         private DataGridView dataGrid;
         private DataStore store;
         private int investmentTarget = 500; // TODO, make adjustable
-
+        private SimulationDataVisualization dataVisualization;
         private List<SimulationConfiguration> simulations;
 
         private static readonly Dictionary<TMarket, string> markets = new Dictionary<TMarket, string>
@@ -33,11 +35,17 @@ namespace StocksMonitor.Simulation.DataContainerNS
         };
 
 
-        public DataContainer(DataGridView dataGridView, DataStore store)
+        public DataContainer(DataGridView dataGridView, DataStore store, Chart stockChart)
         {
             dataGrid = dataGridView;
+            dataVisualization = new SimulationDataVisualization(stockChart);
             this.store = store;
             simulations = new();
+        }
+
+        public void SelectedRows(List<string> names, bool rangeOneYear)
+        {
+            dataVisualization.SelectedRows(names, store.stocks, rangeOneYear);
         }
 
         public void init()
@@ -141,8 +149,6 @@ namespace StocksMonitor.Simulation.DataContainerNS
             dataGrid.Columns[0].MinimumWidth = 250;
         }
 
-       
-
         public void UpdateData()
         {
             dataGrid.Rows.Clear(); // Clear existing rows
@@ -199,6 +205,7 @@ namespace StocksMonitor.Simulation.DataContainerNS
             dataGrid.Rows.Add(row);
         }
     }
+
     public class Portfolio
     {
         public decimal wallet;

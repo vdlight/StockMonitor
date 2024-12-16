@@ -13,11 +13,6 @@ namespace StocksMonitor
         DataStore store = new DataStore();
         private bool startup = true;
 
-#if SIMULATIONS
-        private SimulationDataVisualization dataVisualization;
-#else
-        private StockDataVisualization dataVisualization;
-#endif
         private DataContainer dataContainer;
 
         private List<Stock> multiSelect = new List<Stock>();
@@ -36,7 +31,7 @@ namespace StocksMonitor
 
 #if DEBUG
             this.Text = "StocksMonitor debug";
-            dataContainer = new DataContainer(dataGrid, store);
+            dataContainer = new DataContainer(dataGrid, store, stockChart);
             dataContainer.init();
 
             // TODO, react for changes
@@ -51,15 +46,13 @@ namespace StocksMonitor
             this.Text = "StocksMonitor simulations";
             WarningsGroupBox.Visible = false;
             StockFiltersGroupBox.Visible = false;
-            dataContainer = new DataContainer(dataGrid, store);
+            dataContainer = new DataContainer(dataGrid, store, stockChart);
             dataContainer.init();
-            dataVisualization = new SimulationDataVisualization(stockChart);
-
 #else
             this.Text = "StocksMonitor " + "RELEASE ";
-            dataContainer = new DataContainer(dataGrid, store);
+            dataContainer = new DataContainer(dataGrid, store, stockChart);
             dataContainer.init();
-            dataVisualization = new StockDataVisualization(stockChart);
+            
             fromCalander.Visible = false;
             toCalender.Visible = false;
             addCustomButton.Visible = false;
@@ -340,7 +333,7 @@ namespace StocksMonitor
                     {
                         selectedNames.Add(row.Cells["Name"].Value.ToString());
                     }
-                    dataVisualization.SelectedRows(selectedNames, store.stocks, oneYearRadioButton.Checked);
+                    dataContainer.SelectedRows(selectedNames, oneYearRadioButton.Checked);
                 }
                 catch (Exception exception)
                 {
@@ -360,7 +353,11 @@ namespace StocksMonitor
 
         private void addCustomButton_Click(object sender, EventArgs e)
         {
+            var fromDate = fromCalander.SelectionStart;
+            var toDate = toCalender.SelectionStart;
 
+            StocksMonitorLogger.WriteMsg("from " + fromDate);
+            StocksMonitorLogger.WriteMsg("To " + toDate);
         }
     }
 }

@@ -9,7 +9,6 @@ namespace StocksMonitor.Avanza.OwnedListParserNS
 
         private readonly List<Stock> stocks = [];
 
-
         public OwnedListParser(List<Stock> stocks) : this()
         {
             this.stocks = stocks;
@@ -55,7 +54,6 @@ namespace StocksMonitor.Avanza.OwnedListParserNS
             }
 
             lines.RemoveRange(startIndex, lines.Count() - startIndex);
-
         }
 
         void populateStocks()

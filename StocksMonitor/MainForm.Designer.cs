@@ -144,7 +144,6 @@
             dataGrid.Name = "dataGrid";
             dataGrid.Size = new Size(810, 646);
             dataGrid.TabIndex = 9;
-            dataGrid.SelectionChanged += dataGrid_SelectionChanged;
             // 
             // hiddenCheckBox
             // 
@@ -384,14 +383,18 @@
             // 
             // fromCalander
             // 
-            fromCalander.Location = new Point(821, 435);
+            fromCalander.Location = new Point(826, 446);
+            fromCalander.MaxSelectionCount = 1;
             fromCalander.Name = "fromCalander";
+            fromCalander.ShowTodayCircle = false;
             fromCalander.TabIndex = 37;
             // 
             // toCalender
             // 
-            toCalender.Location = new Point(821, 615);
+            toCalender.Location = new Point(824, 615);
+            toCalender.MaxSelectionCount = 1;
             toCalender.Name = "toCalender";
+            toCalender.ShowTodayCircle = false;
             toCalender.TabIndex = 38;
             // 
             // addCustomButton

@@ -36,7 +36,6 @@ namespace StocksMonitor.Simulation.SimulationNS
         PeAbove,
         AdjustBuy,
         SellProfit,
-        None,
         Never
     }
     public class Rule
@@ -62,6 +61,7 @@ namespace StocksMonitor.Simulation.SimulationNS
         private readonly Configuration configuration;
 
         public decimal result { get; private set; }
+        public List<Portfolio> portfolioHistory;
 
         private List<Stock> simulationStocks;
         public SimulationNew(List<Stock> filteredStocks, Configuration configuration)
@@ -72,7 +72,7 @@ namespace StocksMonitor.Simulation.SimulationNS
 
         public void SimulateStocks()
         {
-            List<Portfolio> portfolioHistory = []; // TODO, if date is more than data, return 0
+            portfolioHistory = []; // TODO, if date is more than data, return 0
 
             var ClearInvestmentFirstSimulationDay = true;
 
@@ -90,7 +90,6 @@ namespace StocksMonitor.Simulation.SimulationNS
             {
                 AddToWallet(originalInvestment);
             }
-
 
             while (simulationDay != newestStock.Date.AddDays(1).Date)
             {
@@ -169,28 +168,37 @@ namespace StocksMonitor.Simulation.SimulationNS
             // Buy
             if (stock.OwnedCnt == 0)
             {
+                // Buy --> Not owning any stocks, make first investment.
                 if (ComplyToRules(configuration.buyRules, datapoint))
                 {
-                    var (count, totalCost) = CalculateCost(dataPoint: datapoint, wallet: Wallet, ownedCnt: stock.OwnedCnt);
+                    var (count, totalCost) = CalculateCost(dataPoint: datapoint, wallet: Wallet, ownedCnt: stock.OwnedCnt, investmentTarget);
                     Wallet -= totalCost;
                     stock.OwnedCnt += count;
                 }
             }
-            else
-            {   // SELL ALL
+            else 
+            {   // SELL ALL --> Stock low in value, no reason to keep anymore
                 if (ComplyToRules(configuration.sellRules, datapoint))
                 {
                     Wallet += stock.OwnedCnt * datapoint.Price;
                     stock.OwnedCnt = 0;
                 }
-                // buy more if room
+                // Adj buy, --> if there is room to invest more, after earlier balancing or just double up
                 else if (ComplyToRules(configuration.adjustBuyRules, datapoint))
                 {
-                    var (count, totalCost) = CalculateCost(dataPoint: datapoint, wallet: Wallet, ownedCnt: stock.OwnedCnt);
+                    var target = configuration.doubleStake ? investmentTarget * 2 : investmentTarget;
+                    var (count, totalCost) = CalculateCost(dataPoint: datapoint, wallet: Wallet, ownedCnt: stock.OwnedCnt, target);
                     Wallet -= totalCost;
                     stock.OwnedCnt += count;
                 }
-                // sell off to balance
+                // Adj sell --> If stock is low, but does not want to sell all
+                else if (ComplyToRules(configuration.adjustSellRules, datapoint))
+                {
+                    var (count, totalCost) = CalculateEarning(dataPoint: datapoint, wallet: Wallet, ownedCnt: stock.OwnedCnt, investmentTarget);
+                    Wallet += totalCost;
+                    stock.OwnedCnt -= count;
+                }
+                // Balance --> if price movement is good, just want to sell of some to balance investment.
                 else if (configuration.balanceInvestment)
                 {
                     var (count, totalValue) = CalculateBalancing(dataPoint: datapoint, wallet: Wallet, ownedCnt: stock.OwnedCnt);
@@ -203,11 +211,11 @@ namespace StocksMonitor.Simulation.SimulationNS
             {
                 wallet += 0.03m * stock.OwnedCnt * datapoint.Price / 4; // assume three precent per year / pay out quarterly
             }
-
         }
-        protected (int, decimal) CalculateCost(History dataPoint, decimal wallet, int ownedCnt)
+
+        protected (int, decimal) CalculateCost(History dataPoint, decimal wallet, int ownedCnt, decimal target)
         {
-            int buyCount = (int)((investmentTarget - ownedCnt * dataPoint.Price) / dataPoint.Price);
+            int buyCount = (int)((target - ownedCnt * dataPoint.Price) / dataPoint.Price);
             decimal cost = dataPoint.Price * buyCount;
 
             if (cost == 0) // cant fit more stocks in investment target
@@ -223,6 +231,19 @@ namespace StocksMonitor.Simulation.SimulationNS
             }
 
             return (buyCount, cost);
+        }
+
+        protected (int, decimal) CalculateEarning(History dataPoint, decimal wallet, int ownedCnt, decimal target)
+        {
+            int sellCount = (int)(((ownedCnt * dataPoint.Price) - target) / dataPoint.Price);
+            decimal earning = dataPoint.Price * sellCount;
+
+            if (earning == 0) // cant sell to keep stocks in investment target
+            {
+                return (0, 0);
+            }
+
+            return (sellCount, earning);
         }
 
         private bool ComplyToRules(List<Rule> rules, History datapoint)
@@ -266,10 +287,11 @@ namespace StocksMonitor.Simulation.SimulationNS
                 return (0, 0);
             }
 
-            const decimal minAdjustment = investmentTarget * 0.20m;
-            var invested = dataPoint.Price * ownedCnt;
-            var room = invested - investmentTarget;
+            decimal target = configuration.doubleStake ? investmentTarget * 2 : investmentTarget;
 
+            decimal minAdjustment = target * 0.20m;
+            var invested = dataPoint.Price * ownedCnt;
+            var room = invested - target;
 
             int sellCount = (int)(room / dataPoint.Price);
 
@@ -283,6 +305,7 @@ namespace StocksMonitor.Simulation.SimulationNS
             }
             return (0, 0);
         }
+
         private void AddToWallet(decimal value)
         {
             Wallet += value;

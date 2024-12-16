@@ -14,11 +14,12 @@ namespace StocksMonitor.Simulation.DefinitionsNS
     {
         public static List<SimulationConfiguration> generateSimulationForInduvidualStocks()
         {
-            List<SimulationConfiguration> returnSims = new List<SimulationConfiguration>();
+            List<SimulationConfiguration> returnSims = AddIndexes();
+
             var names = new List<String> 
             {
-                "Atlas Copco B",
-                "Cibus Nordic"
+                "Atlas Copco A",
+                "Cloetta"
             };
 
             //TODO INV value osv, kopiera till senaste. 
@@ -72,7 +73,7 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                                     },
                                     sellRules =
                                     {
-                                        new Rule(TRule.None)
+                                        new Rule(TRule.Never)
                                     }
                                 },
                                 individualStock = name
@@ -86,7 +87,7 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                                     balanceInvestment = balance == 1,
                                     buyRules =
                                     {
-                                        new Rule(TRule.None),
+                                        new Rule(TRule.Never),
                                     },
                                     adjustBuyRules =
                                     {
@@ -94,7 +95,7 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                                     },
                                     sellRules =
                                     {
-                                        new Rule(TRule.None)
+                                        new Rule(TRule.Never)
                                     }
                                 },
                                 individualStock = name
@@ -108,7 +109,7 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                                     balanceInvestment = balance == 1,
                                     buyRules =
                                     {
-                                        new Rule(TRule.None),
+                                        new Rule(TRule.Never),
                                     },
                                     adjustBuyRules =
                                     {
@@ -131,7 +132,7 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                                     balanceInvestment = balance == 1,
                                     buyRules =
                                     {
-                                        new Rule(TRule.None),
+                                        new Rule(TRule.Never),
                                     },
                                     adjustBuyRules =
                                     {
@@ -151,6 +152,7 @@ namespace StocksMonitor.Simulation.DefinitionsNS
             }
             return returnSims;
         }
+
         public static List<SimulationConfiguration> generateSimulations()
         {
             List<SimulationConfiguration> returnSims = AddIndexes();
@@ -167,6 +169,35 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                     {
                         for (int divident = 0; divident <= 1; divident++)
                         {
+                            // buy over ma, 2 * limit. adj if below ma, never sell
+                            returnSims.Add(new SimulationConfiguration()
+                            {
+                                configuration = {
+                                    dividentRequired = divident == 1,
+                                    profitRequired = profitRequired == 1,
+                                    balanceInvestment = balance == 1,
+                                    doubleStake = true,
+                                    buyRules =
+                                    {
+                                        new Rule(TRule.AboveMa, 0),
+                                        new Rule(TRule.BelowMa, 15),
+                                    },
+                                    adjustBuyRules =
+                                    {
+                                        new Rule(TRule.AboveMa, 1)
+                                    },
+                                    adjustSellRules =
+                                    {
+                                        new Rule(TRule.BelowMa, -2)
+                                    },
+                                    sellRules =
+                                    {
+                                        new Rule(TRule.Never)
+                                    }
+                                },
+                                stockMarket = market,
+                            }); 
+
                             // buy within ma limits. never adjust, sell
                             returnSims.Add(new SimulationConfiguration()
                             {
@@ -180,6 +211,10 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                                         new Rule(TRule.BelowMa, 15),
                                     },
                                     adjustBuyRules =
+                                    {
+                                        new Rule(TRule.Never)
+                                    },
+                                    adjustSellRules =
                                     {
                                         new Rule(TRule.Never)
                                     },
@@ -206,9 +241,13 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                                     {
                                         new Rule(TRule.Never)
                                     },
+                                    adjustSellRules =
+                                    {
+                                        new Rule(TRule.Never)
+                                    },
                                     sellRules =
                                     {
-                                        new Rule(TRule.None)
+                                        new Rule(TRule.Never)
                                     }
                                 },
                                 stockMarket = market,
@@ -222,15 +261,19 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                                     balanceInvestment = balance == 1,
                                     buyRules =
                                     {
-                                        new Rule(TRule.None),
+                                        new Rule(TRule.Never),
                                     },
                                     adjustBuyRules =
                                     {
                                         new Rule(TRule.Never)
                                     },
+                                    adjustSellRules =
+                                    {
+                                        new Rule(TRule.Never)
+                                    },
                                     sellRules =
                                     {
-                                        new Rule(TRule.None)
+                                        new Rule(TRule.Never)
                                     }
                                 },
                                 stockMarket = market,
@@ -244,7 +287,11 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                                     balanceInvestment = balance == 1,
                                     buyRules =
                                     {
-                                        new Rule(TRule.None),
+                                        new Rule(TRule.Never),
+                                    },
+                                    adjustSellRules =
+                                    {
+                                        new Rule(TRule.Never)
                                     },
                                     adjustBuyRules =
                                     {
@@ -267,12 +314,16 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                                     balanceInvestment = balance == 1,
                                     buyRules =
                                     {
-                                        new Rule(TRule.None),
+                                        new Rule(TRule.Never),
                                     },
                                     adjustBuyRules =
                                     {
                                         new Rule(TRule.AboveMa, 0),
                                         new Rule(TRule.BelowMa, 15)
+                                    },
+                                    adjustSellRules =
+                                    {
+                                        new Rule(TRule.Never)
                                     },
                                     sellRules =
                                     {
@@ -286,11 +337,10 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                 }
             }
             return returnSims;
-            // TODO, kan generera namn, från TOString() eller så, för objekten, så de genereras. När datacolum skivs
         }
+
         private static List<SimulationConfiguration> AddIndexes()
         {
-
             return new List<SimulationConfiguration> {
 
                 new SimulationConfiguration()
@@ -303,7 +353,7 @@ namespace StocksMonitor.Simulation.DefinitionsNS
                         profitRequired = false,
                         buyRules =
                         {
-                            new Rule (TRule.None)
+                            new Rule (TRule.Never)
                         },
                         sellRules =
                         {

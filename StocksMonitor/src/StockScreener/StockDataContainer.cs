@@ -1,5 +1,9 @@
 ﻿using StocksMonitor.Data.DataStoreNS;
 using StocksMonitor.Data.StockNS;
+using StocksMonitor.DatavisualizationNS;
+using StocksMonitor.Simulation.VisualizationNS;
+using StocksMonitor.StockScreener.VisualizationNS;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace StocksMonitor.StockScreener.DataContainerNS
 {
@@ -7,6 +11,7 @@ namespace StocksMonitor.StockScreener.DataContainerNS
     public class DataContainer { 
         private DataGridView dataGrid;
         private DataStore store;
+        private StockDataVisualization dataVisualization;
         private int investmentTarget = 500; // TODO, make adjustable
         private int Ma200Warning = 0;
         private int overProfitWarning = 0;
@@ -28,10 +33,16 @@ namespace StocksMonitor.StockScreener.DataContainerNS
             overProfitLimitSetting = overProfit;
             refillProfitLimitSetting = refillLimit;
         }
-        public DataContainer(DataGridView dataGridView, DataStore store)
+        public void SelectedRows(List<string> names, bool rangeOneYear)
+        {
+            dataVisualization.SelectedRows(names, store.stocks, rangeOneYear);
+        }
+
+        public DataContainer(DataGridView dataGridView, DataStore store, Chart stockChart)
         {
             this.dataGrid = dataGridView;
             this.store = store;
+            dataVisualization = new StockDataVisualization(stockChart);
         }
         // TODO, möjlighet attjämföra och se hur index går. T.ex. om FirstN ligger i negativ trend, dvs ma < 0, så ska jag nog inte köpa där om jag inte ser något speciellt. Marknaderna är lite fristående. Ibland går stora bolag bra, ibland smått.
         public void init()

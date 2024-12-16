@@ -18,7 +18,6 @@ namespace StocksMonitor.BorsData.BorsdataNS
         private Dictionary<string, long> _marketsId;
         private Dictionary<string, long> _CountriesId;
 
-
         // <markets
         const string marketLargeCap = "Large Cap";
         const string marketMidcap = "Mid Cap";
@@ -27,7 +26,6 @@ namespace StocksMonitor.BorsData.BorsdataNS
         const string marketIndex = "Index";
 
         const string countrySE = "Sverige";
-
 
          public readonly List<string> indexes = new List<String> {
             "First North All",
@@ -45,11 +43,11 @@ namespace StocksMonitor.BorsData.BorsdataNS
             _marketsId = new Dictionary<string, long>();
             _CountriesId = new Dictionary<string, long>();
             _api = new BD_API();
+            _instruments = [];
         }
 
         public string GetMarketName(string instrumentName)
         {
-
             var instrument = _instruments.Find(i => i.Name == instrumentName);
             
             if (instrument != null) {
@@ -63,7 +61,6 @@ namespace StocksMonitor.BorsData.BorsdataNS
             StocksMonitorLogger.WriteMsg("ERROR could not get market name, for stock with name " + instrumentName);
 
             return "";
-
         }
 
         public decimal CalculateMa200Percentage(IEnumerable<StockPriceV1> values)
@@ -79,12 +76,18 @@ namespace StocksMonitor.BorsData.BorsdataNS
             // to take the latest 200, need to reverse list, since data is from old --> new. newest is last
             var sum = values.Take(selectedMa).Sum(s => s.C);
 
-            var ma200 = sum / selectedMa;
-            var ma200Percent = (decimal)((newestValue - ma200) / ma200 * 100);
-
-            return ma200Percent;
+            if(newestValue != null && sum != null)
+            {
+                var ma200 = sum / selectedMa;
+                var ma200Percent = (decimal)((newestValue - ma200) / ma200 * 100);
+                return ma200Percent;
+            }
+            else
+            {
+                StocksMonitorLogger.WriteMsg("Could not calculate MA200 value");
+                return 0;
+            }
         }
-
 
         public void Run()
         {
@@ -126,14 +129,18 @@ namespace StocksMonitor.BorsData.BorsdataNS
 
             // TODO, get KPIs for all instruments, then assign, faster than asking one by one
 
-            foreach (var instrument in _instruments)
+            foreach (var instrument in _instruments) 
             {
-
-                var PE = _api.GetKpiScreenerSingle((long)instrument.InsId, peKey, TimeType.last, CalcType.latest);
-                var div = _api.GetKpiScreenerSingle((long)instrument.InsId, dividentKey, TimeType.last, CalcType.latest);
+                if(instrument == null  || instrument.InsId == null)
+                {
+                    continue;
+                }
 
                 try
                 {
+                    var PE = _api.GetKpiScreenerSingle((long)instrument.InsId, peKey, TimeType.last, CalcType.latest);
+                    var div = _api.GetKpiScreenerSingle((long)instrument.InsId, dividentKey, TimeType.last, CalcType.latest);
+
                     InstrumentDatas[instrument.Name].Divident = (decimal)(div?.Value.N ?? 0);
                     InstrumentDatas[instrument.Name].PE = (decimal)(PE?.Value.N ?? 0);
                 }
@@ -142,7 +149,6 @@ namespace StocksMonitor.BorsData.BorsdataNS
                     StocksMonitorLogger.WriteMsg("WARNING, could not enter instrument data with name " + instrument.Name);        
                 }                
             }
-
         }
 
         public void GetAllCountries()
@@ -173,7 +179,6 @@ namespace StocksMonitor.BorsData.BorsdataNS
         {
             StocksMonitorLogger.WriteMsg("Get all instruments from BD");
             _instruments = _api.GetInstruments().Instruments;
-
         }
 
         private void FillStockPrices()
